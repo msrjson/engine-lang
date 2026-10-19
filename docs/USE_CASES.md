@@ -1,7 +1,7 @@
 # Architectural Domains & Killer Use Cases for Continuum
-**Document ID**: `CTM-DOC-03.1`  
-**Status**: Official Architectural Guide  
-**Target Audience**: Systems Architects, Chief Technology Officers, Compiler Researchers, Distributed Systems Engineers  
+**Document ID**: `CTM-DOC-03.1`
+**Status**: Official Architectural Guide
+**Target Audience**: Systems Architects, Chief Technology Officers, Compiler Researchers, Distributed Systems Engineers
 
 ---
 
@@ -90,7 +90,7 @@ Engineers must maintain two disconnected databases: a primary database (PostgreS
        id: UUIDv7,
        title: Text,
        embedding: Vector(1536),
-       
+
        invariant { len(self.title) > 0 }
    }
    ```
@@ -169,3 +169,4 @@ Choose **Continuum** when:
 1. **Data Integrity is Non-Negotiable**: You require mathematical compile-time proof (Z3 SMT) that business rules cannot be broken.
 2. **Infrastructure Independence is Mandatory**: You refuse to be held hostage by hyperscaler proprietary database services.
 3. **Predictable Tail Latency Matters**: You need deterministic $p_{99} < 1\text{ ms}$ response times without fragile cache invalidation routines.
+
