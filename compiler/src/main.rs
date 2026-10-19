@@ -10,6 +10,7 @@ mod lexer;
 mod memory;
 mod parser;
 mod smt;
+mod web;
 
 use clap::{Parser as ClapParser, Subcommand};
 use std::fs;
@@ -82,6 +83,25 @@ enum Commands {
         /// Single-session test mode for automated verification
         #[arg(long)]
         test_mode: bool,
+    },
+
+    /// Serve the Continuum HTTP Web Gateway and PostgreSQL bridge concurrently
+    Serve {
+        /// HTTP gateway port to listen on (default: 8090)
+        #[arg(long, default_value = "8090")]
+        http_port: u16,
+
+        /// PostgreSQL bridge port to listen on (default: 5432)
+        #[arg(long, default_value = "5432")]
+        pg_port: u16,
+
+        /// Host address to bind to (default: 0.0.0.0)
+        #[arg(long, default_value = "0.0.0.0")]
+        host: String,
+
+        /// Path to .nvram file
+        #[arg(long, default_value = "./data/continuum.nvram")]
+        nvram: PathBuf,
     },
 }
 
@@ -250,6 +270,34 @@ fn main() -> ExitCode {
             let bridge = bridge::PostgresBridge::new(&addr);
             if let Err(e) = bridge.start_server(test_mode) {
                 eprintln!("❌ Bridge server error: {}", e);
+                ExitCode::FAILURE
+            } else {
+                ExitCode::SUCCESS
+            }
+        }
+
+        Commands::Serve { http_port, pg_port, host, nvram } => {
+            if !nvram.exists() {
+                if let Some(parent) = nvram.parent() {
+                    let _ = fs::create_dir_all(parent);
+                }
+                println!("📦 Initializing SLS container at: {}", nvram.display());
+                let _ = memory::NvramStorage::initialize_nvram(&nvram, 32);
+            }
+
+            let pg_addr = format!("{}:{}", host, pg_port);
+            let http_addr = format!("{}:{}", host, http_port);
+
+            // Start PostgreSQL bridge in background thread
+            let pg_bridge = bridge::PostgresBridge::new(&pg_addr);
+            std::thread::spawn(move || {
+                let _ = pg_bridge.start_server(false);
+            });
+
+            // Start HTTP Web Gateway on main thread
+            let web_server = web::WebServer::new(&http_addr);
+            if let Err(e) = web_server.start() {
+                eprintln!("❌ Web server error: {}", e);
                 ExitCode::FAILURE
             } else {
                 ExitCode::SUCCESS

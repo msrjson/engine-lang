@@ -61,6 +61,6 @@ ENV CONTINUUM_ENV=production
 ENV CONTINUUM_NVRAM_PATH=/app/data/continuum.nvram
 ENV RUST_LOG=info
 
-# Default entrypoint: verify vehicle fleet domain and initialize SLS
-CMD ["sh", "-c", "ctmc init-nvram --path /app/data/continuum.nvram --size-mib 32 && ctmc check /app/examples/02_persistent_vehicle_fleet.ctm && ctmc run /app/examples/01_hello_causal.ctm --nvram /app/data/continuum.nvram && ctmc bridge --port 5432"]
+# Default entrypoint: verify causal blog domain, initialize SLS and serve HTTP + Postgres bridge
+CMD ["sh", "-c", "ctmc init-nvram --path /app/data/continuum.nvram --size-mib 32 && ctmc check /app/examples/04_causal_blog.ctm && ctmc run /app/examples/04_causal_blog.ctm --nvram /app/data/continuum.nvram && ctmc serve --http-port 8090 --pg-port 5432 --host 0.0.0.0 --nvram /app/data/continuum.nvram"]
 
