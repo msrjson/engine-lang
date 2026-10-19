@@ -192,7 +192,8 @@ continuum-lang/
 ├── examples/
 │   ├── 01_hello_causal.ctm    # Basic atomic mutation and causal logging
 │   ├── 02_persistent_vehicle_fleet.ctm  # Canonical fleet domain with IPVA history
-│   └── 03_vector_ai_search.ctm# Native 1536-dim vector cosine search
+│   ├── 03_vector_ai_search.ctm# Native 1536-dim vector cosine search
+│   └── 04_causal_blog.ctm     # Complete blog engine with auth, categories & posts
 ├── Continuum.toml             # Workspace manifest & memory engine configuration
 ├── CONTRIBUTING.md            # RFC process, proof guidelines & coding standards
 ├── LICENSE                    # Apache License 2.0

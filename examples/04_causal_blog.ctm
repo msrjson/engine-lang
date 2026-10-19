@@ -1,0 +1,227 @@
+// Continuum Language Example 04: Causal Blog Engine
+// Demonstrates persistent entities, user authentication, categorized posts, SMT invariants, and causal publication pipelines.
+
+module Examples::CausalBlog;
+
+// Refined Types enforced at compile-time via Z3 SMT
+type NonEmptyText = Text where len(value) > 0;
+type Slug = Text where len(value) >= 3 && is_alphanumeric(value);
+type Email = Text where len(value) >= 5 && is_alphanumeric(value);
+type PasswordHash = Text where len(value) == 64; // SHA-256 hex digest
+type ViewCount = Int where value >= 0;
+
+enum UserRole {
+    Admin,
+    Author,
+    Reader
+}
+
+enum PostStatus {
+    Draft,
+    Published(EpochTimestamp),
+    Archived
+}
+
+// Persistent user account stored in Single-Level Store
+@persistent
+@TenantGuard(strict: true)
+entity User {
+    id: UUIDv7,
+    email: Email,
+    name: NonEmptyText,
+    password_hash: PasswordHash,
+    role: UserRole,
+    post_count: Int where value >= 0,
+
+    invariant {
+        len(self.email) >= 5 &&
+        len(self.password_hash) == 64 &&
+        self.post_count >= 0
+    }
+}
+
+// Persistent blog category hierarchy
+@persistent
+entity Category {
+    id: UUIDv7,
+    name: NonEmptyText,
+    slug: Slug,
+    total_posts: Int where value >= 0,
+
+    invariant {
+        len(self.slug) >= 3 &&
+        self.total_posts >= 0
+    }
+}
+
+// Persistent blog article with native 1536-dimensional vector embedding
+@persistent
+entity Post {
+    id: UUIDv7,
+    author_id: UUIDv7,
+    category_id: UUIDv7,
+    title: NonEmptyText,
+    slug: Slug,
+    content: NonEmptyText,
+    views: ViewCount,
+    status: PostStatus,
+    embedding: Vector(1536),
+
+    // Formal contract: views must never be negative and title/content cannot be blank
+    invariant {
+        self.views >= 0 &&
+        len(self.title) > 0 &&
+        len(self.content) > 0
+    }
+}
+
+struct AuthSession {
+    user_id: UUIDv7,
+    token: Text,
+    role: UserRole
+}
+
+// Action: Register new author account
+action register_author(
+    email: Email,
+    name: NonEmptyText,
+    password_hash: PasswordHash
+) -> Result<User, Text> {
+    let new_user = User {
+        id: uuid::v7_now(),
+        email: email,
+        name: name,
+        password_hash: password_hash,
+        role: UserRole::Author,
+        post_count: 0
+    };
+
+    return Ok(new_user);
+}
+
+// Action: Authenticate user login
+action authenticate_login(
+    user: &User,
+    provided_hash: PasswordHash
+) -> Result<AuthSession, Text> {
+    if user.password_hash != provided_hash {
+        return Err("Authentication failed: invalid credentials");
+    }
+
+    let session = AuthSession {
+        user_id: user.id,
+        token: "ctm_session_auth_token_sample",
+        role: user.role
+    };
+
+    return Ok(session);
+}
+
+// Action: Create persistent category
+action create_category(name: NonEmptyText, slug: Slug) -> Result<Category, Text> {
+    let cat = Category {
+        id: uuid::v7_now(),
+        name: name,
+        slug: slug,
+        total_posts: 0
+    };
+    return Ok(cat);
+}
+
+// Atomic action: Publish post, establishing causal lineage and updating counters
+action publish_post(
+    author: &mut User,
+    category: &mut Category,
+    title: NonEmptyText,
+    slug: Slug,
+    content: NonEmptyText,
+    embedding: Vector(1536)
+) -> Result<Post, Text> {
+    let now = epoch::now();
+    let post_id = uuid::v7_now();
+
+    let mut new_post = Post {
+        id: post_id,
+        author_id: author.id,
+        category_id: category.id,
+        title: title,
+        slug: slug,
+        content: content,
+        views: 0,
+        status: PostStatus::Published(now),
+        embedding: embedding
+    };
+
+    atomic {
+        // Causal graph dependency: author -> post -> category
+        author.post_count += 1;
+        category.total_posts += 1;
+        new_post.views = 1; // Initial creation impression
+
+        // Hardware durability commit (CLWB + SFENCE) triggered at block exit
+    }
+
+    return Ok(new_post);
+}
+
+// Action: Search posts using native SIMD cosine metric operator (<=>)
+action search_posts(
+    corpus: List<Post>,
+    query_vec: Vector(1536),
+    threshold: Decimal(5, 4)
+) -> List<Post> {
+    let mut matches: List<Post> = [];
+
+    for p in corpus {
+        let similarity: Decimal(5, 4) = p.embedding <=> query_vec;
+        if similarity >= threshold {
+            matches.push(p);
+        }
+    }
+
+    return matches;
+}
+
+// HTTP Gateway Boundary Definition
+boundary BlogGateway {
+    @locality(public: true)
+    route POST "/api/v1/auth/login" -> authenticate_login;
+
+    @TenantGuard(require_auth: true)
+    route POST "/api/v1/posts" -> publish_post;
+
+    @locality(public: true)
+    route GET "/api/v1/categories" -> create_category;
+}
+
+// Entrypoint simulating complete Blog Journey
+pub action main() -> Result<(), Text> {
+    // 1. Author Registration
+    let valid_hash: PasswordHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    let mut author = register_author("author1@continuum.org", "Alan Kay", valid_hash)?;
+
+    // 2. Login Authentication
+    let session = authenticate_login(&author, valid_hash)?;
+    io::println("Session created for user: " + author.name);
+
+    // 3. Category Creation
+    let mut cat_tech = create_category("Distributed Systems", "distributed")?;
+    io::println("Category created: " + cat_tech.name);
+
+    // 4. Atomic Post Publishing
+    let sample_vector = vector::zeros(1536);
+    let post = publish_post(
+        &mut author,
+        &mut cat_tech,
+        "Single-Level Store: The Future of Compute",
+        "sls-future",
+        "Why relational databases will be replaced by NVRAM causal graphs...",
+        sample_vector
+    )?;
+
+    io::println("Post published: " + post.title + " by " + author.name);
+    io::println("Category total posts: " + string::from_int(cat_tech.total_posts));
+    io::println("Author post count: " + string::from_int(author.post_count));
+
+    return Ok(());
+}

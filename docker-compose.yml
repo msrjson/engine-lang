@@ -32,5 +32,5 @@ services:
       - ./compiler:/build/compiler
       - ./examples:/build/examples
       - ./data:/build/data
-    command: ["sh", "-c", "cd /build/compiler && cargo test && cargo run -- check /build/examples/01_hello_causal.ctm && cargo run -- check /build/examples/02_persistent_vehicle_fleet.ctm && cargo run -- check /build/examples/03_vector_ai_search.ctm"]
+    command: ["sh", "-c", "cd /build/compiler && cargo test && cargo run -- check /build/examples/01_hello_causal.ctm && cargo run -- check /build/examples/02_persistent_vehicle_fleet.ctm && cargo run -- check /build/examples/03_vector_ai_search.ctm && cargo run -- check /build/examples/04_causal_blog.ctm && cargo run -- run /build/examples/04_causal_blog.ctm"]
 
