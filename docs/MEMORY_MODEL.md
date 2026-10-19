@@ -1,8 +1,8 @@
 # Continuum Memory Consistency Model & Concurrency Specification
-**Document ID**: `CTM-MEM-01.1`  
-**Status**: Official Normative Specification  
-**Hardware Targets**: x86-64 (Total Store Order - TSO, CLWB, SFENCE), ARM64 (Weakly Ordered - Acquire/Release, DC CVAP, DSB)  
-**Memory Subsystems**: NVRAM / CXL.mem / Direct Access (DAX)  
+**Document ID**: `CTM-MEM-01.1`
+**Status**: Official Normative Specification
+**Hardware Targets**: x86-64 (Total Store Order - TSO, CLWB, SFENCE), ARM64 (Weakly Ordered - Acquire/Release, DC CVAP, DSB)
+**Memory Subsystems**: NVRAM / CXL.mem / Direct Access (DAX)
 
 ---
 
@@ -118,3 +118,4 @@ Continuum mathematically eliminates deadlocks through three structural compiler 
 1. **No Distributed Two-Phase Locking**: Continuum uses Multi-Version Causal Memory (MVCM). Readers never block writers; writers never block readers.
 2. **Deterministic Resource Ordering**: In transactions that touch multiple entities, the compiler sorts targets by their physical 64-bit NVRAM offset before emitting CAS instructions.
 3. **Bounded Atomic Execution**: Unbounded loops or blocking network I/O inside `atomic { ... }` are prohibited at compile time (`CTM-OP-014`).
+

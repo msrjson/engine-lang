@@ -1,8 +1,8 @@
 # Continuum Refinement Types & Formal SMT Invariants Specification
-**Document ID**: `CTM-SMT-01.1`  
-**Status**: Official Normative Specification  
-**Formal Solver**: Z3 Theorem Prover Backend (SMT-LIB2 Standard)  
-**Verification Target**: Compile-Time Invariant Proofs & Refinement Verification  
+**Document ID**: `CTM-SMT-01.1`
+**Status**: Official Normative Specification
+**Formal Solver**: Z3 Theorem Prover Backend (SMT-LIB2 Standard)
+**Verification Target**: Compile-Time Invariant Proofs & Refinement Verification
 
 ---
 
@@ -97,10 +97,10 @@ For mathematical properties proven outside the language (e.g., cryptographic has
 ```continuum
 action verify_hash(data: Text, expected_hash: Text) {
     let computed = crypto::sha256(data);
-    
+
     // Explicit assumption documented for compiler proof context
     assume(len(computed) == 64);
-    
+
     let is_valid: Bool = computed == expected_hash;
     return is_valid;
 }
@@ -115,3 +115,4 @@ unsafe_invariant {
 }
 ```
 Use of `unsafe_invariant` generates a mandatory security warning in CI builds.
+

@@ -1,7 +1,7 @@
 # Continuum Foreign Function Interface (FFI) & System Bridge Specification
-**Document ID**: `CTM-FFI-01.1`  
-**Status**: Official Normative Specification  
-**Interoperability**: C / POSIX ABI, Linux Kernel Direct Access (DAX / PMDK), PostgreSQL Wire Protocol v3.0  
+**Document ID**: `CTM-FFI-01.1`
+**Status**: Official Normative Specification
+**Interoperability**: C / POSIX ABI, Linux Kernel Direct Access (DAX / PMDK), PostgreSQL Wire Protocol v3.0
 
 ---
 
@@ -97,3 +97,4 @@ To eliminate the objection that *"Continuum is an isolated silo incompatible wit
 
 ### Security:
 The bridge operates in **read-only mode** by default, ensuring that external SQL clients cannot bypass compile-time SMT refinement checks.
+

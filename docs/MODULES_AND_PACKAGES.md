@@ -1,8 +1,8 @@
 # Continuum Modules, Packages & Visibility Specification
-**Document ID**: `CTM-PKG-01.1`  
-**Status**: Official Normative Specification  
-**Toolchain**: `ctm-pkg` / `ctmc pkg`  
-**Manifest Standard**: `Continuum.toml`  
+**Document ID**: `CTM-PKG-01.1`
+**Status**: Official Normative Specification
+**Toolchain**: `ctm-pkg` / `ctmc pkg`
+**Manifest Standard**: `Continuum.toml`
 
 ---
 
@@ -118,3 +118,4 @@ When building a Continuum package with `ctmc pkg build`:
 2. Every downloaded source file is verified against the SHA-256 digest in `Continuum.lock`.
 3. If any remote file diverges by a single bit, the build halts with `CTM-PKG-042 (Integrity Check Failure)`.
 4. The compiler compiles dependencies into the static binary, eliminating external dynamic library lookups at runtime.
+

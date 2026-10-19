@@ -107,3 +107,4 @@ Bravo: Epoch 100       Bravo: advances 201 -> 260 (Local sales)   Bravo: Receive
 3. **Stream Pipeline**: Nodes stream only the compressed Delta records from Region 2 of their respective `.nvram` containers.
 4. **Hardware Flush**: Received deltas are applied to local shadow pages, verified via CRC-64, committed to the journal, and flushed via `clwb` + `sfence`.
 5. **Convergence Guarantee**: Within milliseconds of stream completion, both nodes have mathematically identical physical graph representations.
+
