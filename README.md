@@ -176,6 +176,7 @@ continuum-lang/
 │   ├── MODULES_AND_PACKAGES.md# Package manager (ctm-pkg) & 4-tier visibility
 │   ├── REFINEMENT_TYPES_SMT.md# SMT refinement theory, VC generation & timeouts
 │   ├── FFI_AND_SYSTEM_BRIDGE.md # POSIX C FFI & embedded PostgreSQL wire bridge
+│   ├── USE_CASES.md           # Killer use cases, business domains & cost analysis
 │   └── ROADMAP.md             # Complete roadmap from Phase 1 to Phase 5
 ├── compiler/                  # Reference bootstrap compiler (ctmc) in Rust
 │   ├── Cargo.toml
