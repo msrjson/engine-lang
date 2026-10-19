@@ -1,0 +1,23 @@
+services:
+  continuum-genesis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: continuum-genesis-node
+    restart: unless-stopped
+    ports:
+      - "8090:8090"  # HTTP / @boundary Web Gateway
+      - "5442:5432"  # PostgreSQL Wire Protocol Bridge (ctm-bridge)
+      - "9443:9443"  # Distributed Causal Mesh Wire Protocol (P2P)
+    volumes:
+      - ./data:/app/data
+    environment:
+      - CONTINUUM_ENV=production
+      - CONTINUUM_NVRAM_PATH=/app/data/continuum.nvram
+    healthcheck:
+      test: ["CMD-SHELL", "ctmc inspect /app/data/continuum.nvram || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+

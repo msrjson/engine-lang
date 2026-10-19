@@ -61,7 +61,7 @@ enum Commands {
     /// Initialize a new crash-consistent NVRAM Single-Level Store container
     InitNvram {
         /// Target path for the .nvram file
-        #[arg(default_value = "./data/continuum.nvram")]
+        #[arg(short, long, default_value = "./data/continuum.nvram")]
         path: PathBuf,
 
         /// Initial size in Megabytes (minimum 16 MiB)
@@ -71,6 +71,10 @@ enum Commands {
 
     /// Start the embedded PostgreSQL wire protocol virtual bridge (ctm-bridge)
     Bridge {
+        /// Host address to bind to (default: 0.0.0.0)
+        #[arg(long, default_value = "0.0.0.0")]
+        host: String,
+
         /// Port to listen on (default: 5432)
         #[arg(short, long, default_value = "5432")]
         port: u16,
@@ -241,8 +245,8 @@ fn main() -> ExitCode {
             }
         }
 
-        Commands::Bridge { port, test_mode } => {
-            let addr = format!("127.0.0.1:{}", port);
+        Commands::Bridge { host, port, test_mode } => {
+            let addr = format!("{}:{}", host, port);
             let bridge = bridge::PostgresBridge::new(&addr);
             if let Err(e) = bridge.start_server(test_mode) {
                 eprintln!("❌ Bridge server error: {}", e);
