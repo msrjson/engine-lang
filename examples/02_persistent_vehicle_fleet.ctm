@@ -1,0 +1,108 @@
+// Continuum Language Example 02: Persistent Vehicle Fleet & IPVA Tax History
+// Demonstrates domain refinement types, SMT invariants, multi-tenancy, and atomic rollback (?!).
+
+module Examples::FleetManagement;
+
+// Refined Types enforced by Z3 SMT at compile-time
+type LicensePlate = Text where len(value) == 7 && is_alphanumeric(value);
+type ModelYear = Int where value >= 1970 && value <= 2030;
+type Currency = Decimal(18, 4) where value >= 0.0000;
+type Percentage = Decimal(5, 4) where value >= 0.0000 && value <= 1.0000;
+
+enum TaxPaymentStatus {
+    Unpaid,
+    Paid(EpochTimestamp),
+    Exempt(Text)
+}
+
+// Struct representing a yearly vehicle tax assessment (IPVA)
+struct TaxAssessment {
+    year: ModelYear,
+    assessed_value: Currency,
+    rate: Percentage,
+    tax_due: Currency,
+    status: TaxPaymentStatus
+}
+
+// Persistent entity stored in NVRAM Single-Level Store
+@persistent
+@TenantGuard(strict: true)
+entity Vehicle {
+    id: UUIDv7,
+    plate: LicensePlate,
+    model: Text,
+    year: ModelYear,
+    fipe_value: Currency,
+    tax_history: List<TaxAssessment>,
+    total_tax_paid: Currency,
+
+    // Formal contract: Market value and total tax must be non-negative
+    invariant {
+        self.fipe_value >= 0.0000 &&
+        self.total_tax_paid >= 0.0000 &&
+        len(self.plate) == 7
+    }
+}
+
+// Authorize payment with tax department via boundary service
+action authorize_state_payment(vehicle_plate: LicensePlate, amount: Currency) -> Result<EpochTimestamp, Text> {
+    if amount <= 0.0000 {
+        return Err("Payment amount must be strictly positive");
+    }
+    // Returns timestamp of confirmed state ledger receipt
+    return Ok(epoch::now());
+}
+
+// Atomic transaction with transactional rollback operator (?!)
+action process_yearly_tax(
+    vehicle: &mut Vehicle,
+    tax_year: ModelYear,
+    state_rate: Percentage
+) -> Result<(), Text> {
+    let calculated_tax = vehicle.fipe_value * state_rate;
+
+    atomic {
+        let assessment = TaxAssessment {
+            year: tax_year,
+            assessed_value: vehicle.fipe_value,
+            rate: state_rate,
+            tax_due: calculated_tax,
+            status: TaxPaymentStatus::Unpaid
+        };
+
+        vehicle.tax_history.push(assessment);
+
+        // Transactional collapse operator (?!):
+        // If state payment authorization fails, the entire atomic block rolls back
+        // in NVRAM, discarding the pushed tax history entry and restoring original state.
+        let confirmation_epoch = authorize_state_payment(vehicle.plate, calculated_tax)?!;
+
+        vehicle.total_tax_paid += calculated_tax;
+
+        let last_idx = len(vehicle.tax_history) - 1;
+        vehicle.tax_history[last_idx].status = TaxPaymentStatus::Paid(confirmation_epoch);
+
+        // Hardware durability commit (CLWB + SFENCE) triggered at block exit
+    }
+
+    return Ok(());
+}
+
+pub action main() -> Result<(), Text> {
+    let mut car = Vehicle {
+        id: uuid::v7_now(),
+        plate: "ABC1D23",
+        model: "Continuum Electric Sedan GT",
+        year: 2025,
+        fipe_value: 150000.0000,
+        tax_history: [],
+        total_tax_paid: 0.0000
+    };
+
+    let ipva_rate: Percentage = 0.0400; // 4.00% standard rate
+    process_yearly_tax(&mut car, 2025, ipva_rate)?;
+
+    io::println("Vehicle: " + car.plate + " | Total IPVA Paid: " + string::from_decimal(car.total_tax_paid));
+    return Ok(());
+}
+

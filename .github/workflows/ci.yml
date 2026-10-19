@@ -1,0 +1,73 @@
+name: Continuum Core CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  compiler-build-and-verify:
+    name: Compiler Build, Test, and Formal SMT Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Continuum Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install Z3 Theorem Prover
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y z3 libz3-dev
+
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            compiler/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('compiler/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Check Rust Formatting
+        run: |
+          cd compiler
+          cargo fmt --check
+
+      - name: Run Clippy Linter
+        run: |
+          cd compiler
+          cargo clippy -- -D warnings
+
+      - name: Run Compiler Unit & Integration Tests
+        run: |
+          cd compiler
+          cargo test --verbose
+
+      - name: Verify Canonical Language Examples via ctmc
+        run: |
+          cd compiler
+          cargo run -- check ../examples/01_hello_causal.ctm
+          cargo run -- check ../examples/02_persistent_vehicle_fleet.ctm
+          cargo run -- check ../examples/03_vector_ai_search.ctm
+
+      - name: Run Simulation Engine on Examples
+        run: |
+          cd compiler
+          cargo run -- run ../examples/01_hello_causal.ctm
+          cargo run -- run ../examples/02_persistent_vehicle_fleet.ctm
+          cargo run -- run ../examples/03_vector_ai_search.ctm
+

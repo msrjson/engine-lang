@@ -1,0 +1,13 @@
+# Rust build artifacts
+target/
+compiler/target/
+**/*.rs.bk
+
+# Single-Level Store binary memory files
+data/*.nvram
+*.nvram
+
+# Logs and environment
+*.log
+.env
+

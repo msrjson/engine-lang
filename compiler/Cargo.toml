@@ -1,0 +1,19 @@
+[package]
+name = "ctmc"
+version = "0.2.0"
+edition = "2021"
+authors = ["Continuum Language Core Working Group <architects@continuum-lang.org>"]
+description = "Reference Bootstrap Compiler and Verification Toolchain for Continuum"
+license = "Apache-2.0"
+
+[[bin]]
+name = "ctmc"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+thiserror = "1.0"
+byteorder = "1.5"
+
+[dev-dependencies]
+

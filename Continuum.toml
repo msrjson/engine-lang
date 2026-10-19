@@ -1,0 +1,60 @@
+# Continuum Language Workspace Manifest
+# Standard specification compliance: CTM-SPEC-02.1 / CTM-SLS-01.1
+
+[package]
+name = "continuum-core"
+version = "0.2.0"
+authors = ["Continuum Language Core Working Group <architects@continuum-lang.org>"]
+edition = "2026"
+license = "Apache-2.0"
+description = "Continuum Systems Programming Language - Single-Level Store Reference Workspace"
+
+[compiler]
+target_arch = "x86_64"
+opt_level = 3
+smt_solver = "z3"
+smt_timeout_ms = 5000
+strict_invariants = true
+enforce_atomic_mutations = true
+
+[storage]
+backend = "sls-nvram"
+mount_path = "./data/continuum.nvram"
+initial_size_gib = 8
+max_size_gib = 128
+page_size_kib = 4
+huge_page_size_mib = 2
+dax_alignment_bytes = 64
+journal_size_mib = 10
+crc_algorithm = "crc64-nvme"
+sync_primitive = "clwb_sfence"
+
+[memory]
+global_epoch_interval_ms = 100
+causal_gc_low_priority_thread = true
+shadow_page_limit = 1024
+lockfree_bitmap_cas_retries = 32
+
+[network.mesh]
+cluster_id = "018f6c44-3291-7f81-b552-87ad18f6c440"
+node_id = 1
+listen_addr = "0.0.0.0:9443"
+transport = "quic"
+mutual_tls = true
+bootstrap_peers = [
+    "quic://node-alpha.continuum-lang.org:9443",
+    "quic://node-bravo.continuum-lang.org:9443"
+]
+
+[boundary.http]
+enabled = true
+listen_port = 8080
+max_payload_bytes = 10485760
+keep_alive_timeout_secs = 60
+
+[boundary.postgres_bridge]
+enabled = true
+listen_port = 5432
+virtual_catalog_name = "continuum_sls"
+read_only = false
+

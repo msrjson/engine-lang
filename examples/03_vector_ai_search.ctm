@@ -1,0 +1,74 @@
+// Continuum Language Example 03: Native Vector AI Search
+// Demonstrates high-dimensional vector embeddings, cosine metric (<=>), and semantic search.
+
+module Examples::VectorSearch;
+
+type SimilarityScore = Decimal(5, 4) where value >= -1.0000 && value <= 1.0000;
+
+// Persistent entity with native 1536-dimensional vector embedding
+@persistent
+entity KnowledgeDocument {
+    id: UUIDv7,
+    title: Text,
+    category: Text,
+    embedding: Vector(1536),
+
+    invariant {
+        len(self.title) > 0
+    }
+}
+
+struct SearchResult {
+    document_id: UUIDv7,
+    title: Text,
+    score: SimilarityScore
+}
+
+// Compute cosine similarity between document embedding and query vector
+action rank_document(doc: &KnowledgeDocument, query_vec: Vector(1536)) -> SearchResult {
+    // High-dimensional cosine metric operator (<=>) compiles to SIMD FMA instructions
+    let similarity: SimilarityScore = doc.embedding <=> query_vec;
+
+    return SearchResult {
+        document_id: doc.id,
+        title: doc.title,
+        score: similarity
+    };
+}
+
+// Query persistent documents matching threshold
+action search_semantic_knowledge(
+    corpus: List<KnowledgeDocument>,
+    query_vec: Vector(1536),
+    threshold: SimilarityScore
+) -> List<SearchResult> {
+    let mut results: List<SearchResult> = [];
+
+    for doc in corpus {
+        let scored = rank_document(&doc, query_vec);
+        if scored.score >= threshold {
+            results.push(scored);
+        }
+    }
+
+    return results;
+}
+
+pub action main() -> Result<(), Text> {
+    let doc_id = uuid::v7_now();
+    let sample_embedding = vector::zeros(1536);
+
+    let doc = KnowledgeDocument {
+        id: doc_id,
+        title: "Single-Level Store Architecture on CXL Memory",
+        category: "Systems Research",
+        embedding: sample_embedding
+    };
+
+    let query = vector::zeros(1536);
+    let match_result = rank_document(&doc, query);
+
+    io::println("Matched: " + match_result.title + " | Similarity: " + string::from_decimal(match_result.score));
+    return Ok(());
+}
+

@@ -1,0 +1,65 @@
+// Continuum Language Example 01: Hello Causal World
+// Demonstrates Single-Level Store (@persistent), atomic mutation, and causal pipelines.
+
+module Examples::HelloCausal;
+
+// Type Refinement enforcing non-empty message
+type NonEmptyText = Text where len(value) > 0;
+
+// Persistent entity stored directly in NVRAM Region 3
+@persistent
+entity SystemLog {
+    id: UUIDv7,
+    node_id: Int,
+    counter: Int where value >= 0,
+    message: NonEmptyText,
+
+    invariant {
+        self.counter >= 0 &&
+        len(self.message) > 0
+    }
+}
+
+// Transform message through a pure functional pipeline
+action format_message(raw: Text) -> Text {
+    return raw
+        |> string::trim
+        |> string::to_uppercase;
+}
+
+// Causal atomic mutation with hardware durability
+action record_event(log: &mut SystemLog, event_desc: Text) -> Result<(), Text> {
+    if len(event_desc) == 0 {
+        return Err("Event description cannot be empty");
+    }
+
+    let processed_text = format_message(event_desc);
+
+    atomic {
+        // Increment monotonic counter
+        log.counter += 1;
+        log.message = processed_text;
+
+        // Automatically emits CLWB [log] + SFENCE at the end of the atomic block
+    }
+
+    return Ok(());
+}
+
+// Entry point action
+pub action main() -> Result<(), Text> {
+    let mut log_entry = SystemLog {
+        id: uuid::v7_now(),
+        node_id: 1,
+        counter: 0,
+        message: "SYSTEM_INITIALIZED"
+    };
+
+    record_event(&mut log_entry, "node joined causal mesh")?;
+
+    io::println("Log counter: " + string::from_int(log_entry.counter));
+    io::println("Log message: " + log_entry.message);
+
+    return Ok(());
+}
+
