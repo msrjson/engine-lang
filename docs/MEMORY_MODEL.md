@@ -1,5 +1,5 @@
-# Continuum Memory Consistency Model & Concurrency Specification
-**Document ID**: `CTM-MEM-01.1`
+# Engine Lang Memory Consistency Model & Concurrency Specification
+**Document ID**: `ENG-MEM-01.1`
 **Status**: Official Normative Specification
 **Hardware Targets**: x86-64 (Total Store Order - TSO, CLWB, SFENCE), ARM64 (Weakly Ordered - Acquire/Release, DC CVAP, DSB)
 **Memory Subsystems**: NVRAM / CXL.mem / Direct Access (DAX)
@@ -10,7 +10,7 @@
 
 In traditional architectures, concurrency and persistence are managed by decoupled subsystems: the language memory model (e.g., C++11, Java Memory Model, Rust `std::sync`) governs volatile RAM, while database storage engines (WAL, redo/undo logs) manage disk durability.
 
-Continuum unifies volatile and persistent concurrency into a single mathematical memory model:
+Engine Lang unifies volatile and persistent concurrency into a single mathematical memory model:
 1. **Unified Virtual Address Space**: Volatile stack frames and non-volatile heap entities reside in the same 64-bit flat address space.
 2. **Causal Consistency with Sequential Transactional Equivalence**: Read operations observe a causally consistent prefix of global epochs. Atomic mutations within `atomic { ... }` blocks are isolated and commit with total store ordering across hardware cache-line flushes.
 3. **Hardware Barrier Minimization**: Software memory barriers (`Acquire`, `Release`, `SeqCst`) are fused with hardware cache-line writebacks (`clwb`, `sfence`, `DC CVAP`) to eliminate redundant pipeline stalls.
@@ -19,11 +19,11 @@ Continuum unifies volatile and persistent concurrency into a single mathematical
 
 ## 2. Memory Access Taxonomy
 
-Every memory access in Continuum falls into one of three physical tiers:
+Every memory access in Engine Lang falls into one of three physical tiers:
 
 ```
 +--------------------------------------------------------------------------+
-|                       CONTINUUM MEMORY ACCESS TIERS                       |
+|                       ENGINE LANG MEMORY ACCESS TIERS                       |
 +-------------------+---------------------------+--------------------------+
 | Tier 0: Volatile  | Tier 1: Read-Only Causal  | Tier 2: Persistent Atomic|
 | Stack / Registers | Persistent Graph Nodes    | Shadow Allocations & Log |
@@ -44,13 +44,13 @@ Every memory access in Continuum falls into one of three physical tiers:
 ### Tier 2: Persistent Atomic Mutation
 - Mutable references (`&mut T`) to `@persistent entity` fields.
 - Strictly confined to `atomic { ... }` blocks.
-- Uses **Shadow Paging** in Region 3 of the `.nvram` file: modifications write to a newly reserved shadow page, followed by a hardware commit in Region 2's journal.
+- Uses **Shadow Paging** in Region 3 of the `.db` file: modifications write to a newly reserved shadow page, followed by a hardware commit in Region 2's journal.
 
 ---
 
 ## 3. The Causal Epoch Consistency Model
 
-Continuum guarantees that all nodes in a cluster advance through discrete **Global Epochs** ($e \in \mathbb{N}$), coordinated by monotonically increasing 64-bit counters.
+Engine Lang guarantees that all nodes in a cluster advance through discrete **Global Epochs** ($e \in \mathbb{N}$), coordinated by monotonically increasing 64-bit counters.
 
 ### Formal Ordering Definitions
 
@@ -68,9 +68,9 @@ Continuum guarantees that all nodes in a cluster advance through discrete **Glob
 
 ## 4. Hardware Barrier Translation Rules
 
-The `ctmc` compiler maps Continuum language constructs directly to CPU instructions:
+The `enginec` compiler maps Engine Lang language constructs directly to CPU instructions:
 
-| Continuum Language Construct | x86-64 Machine Code | ARM64 Machine Code | Hardware Effect |
+| Engine Lang Construct | x86-64 Machine Code | ARM64 Machine Code | Hardware Effect |
 |---|---|---|---|
 | `let x = entity.field;` | `mov rax, [rbx + offset]` | `ldr x0, [x1, #offset]` | Zero-copy direct read from NVRAM. |
 | `atomic { ... }` Enter | Register shadow page reservation. | Register shadow page reservation. | Lock-free CAS in Allocation Bitmap. |
@@ -114,8 +114,8 @@ When two concurrent fibers attempt to mutate the same persistent entity root poi
 
 ## 6. Deadlock Prevention Guarantee
 
-Continuum mathematically eliminates deadlocks through three structural compiler invariants:
-1. **No Distributed Two-Phase Locking**: Continuum uses Multi-Version Causal Memory (MVCM). Readers never block writers; writers never block readers.
+Engine Lang mathematically eliminates deadlocks through three structural compiler invariants:
+1. **No Distributed Two-Phase Locking**: Engine Lang uses Multi-Version Causal Memory (MVCM). Readers never block writers; writers never block readers.
 2. **Deterministic Resource Ordering**: In transactions that touch multiple entities, the compiler sorts targets by their physical 64-bit NVRAM offset before emitting CAS instructions.
-3. **Bounded Atomic Execution**: Unbounded loops or blocking network I/O inside `atomic { ... }` are prohibited at compile time (`CTM-OP-014`).
+3. **Bounded Atomic Execution**: Unbounded loops or blocking network I/O inside `atomic { ... }` are prohibited at compile time (`ENG-OP-014`).
 

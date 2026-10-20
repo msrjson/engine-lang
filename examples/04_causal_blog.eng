@@ -1,4 +1,4 @@
-// Continuum Language Example 04: Causal Blog Engine
+// Engine Lang Example 04: Causal Blog Engine
 // Demonstrates persistent entities, user authentication, categorized posts, SMT invariants, and causal publication pipelines.
 
 module Examples::CausalBlog;
@@ -22,7 +22,7 @@ enum PostStatus {
     Archived
 }
 
-// Persistent user account stored in Single-Level Store
+// Persistent user account stored in Single-Level Store (.db)
 @persistent
 @TenantGuard(strict: true)
 entity User {
@@ -110,7 +110,7 @@ action authenticate_login(
 
     let session = AuthSession {
         user_id: user.id,
-        token: "ctm_session_auth_token_sample",
+        token: "engine_session_auth_token_sample",
         role: user.role
     };
 
@@ -198,7 +198,7 @@ boundary BlogGateway {
 pub action main() -> Result<(), Text> {
     // 1. Author Registration
     let valid_hash: PasswordHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-    let mut author = register_author("author1@continuum.org", "Alan Kay", valid_hash)?;
+    let mut author = register_author("author1@engine-lang.org", "Alan Kay", valid_hash)?;
 
     // 2. Login Authentication
     let session = authenticate_login(&author, valid_hash)?;
@@ -215,7 +215,7 @@ pub action main() -> Result<(), Text> {
         &mut cat_tech,
         "Single-Level Store: The Future of Compute",
         "sls-future",
-        "Why relational databases will be replaced by NVRAM causal graphs...",
+        "Why relational databases will be replaced by Engine DB causal graphs...",
         sample_vector
     )?;
 

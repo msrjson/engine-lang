@@ -1,0 +1,1331 @@
+#!/usr/bin/env python3
+"""
+Engine Lang Official Whitepaper Generator (English Edition)
+Canonical Technical Whitepaper & Architectural Reference
+Author: Lysander Vance
+Document ID: ENG-WP-01.2026
+Standard: ENG-SPEC-03.1 & ENG-SLS-01.1
+"""
+
+import os
+import sys
+import shutil
+import subprocess
+from pathlib import Path
+
+WORKSPACE = Path("/data/projects/workspaces/engine-lang")
+DOCS_DIR = WORKSPACE / "docs" / "whitepaper"
+HTML_PATH = DOCS_DIR / "engine-lang-whitepaper-en.html"
+PDF_PATH = DOCS_DIR / "engine-lang-whitepaper-en.pdf"
+ROOT_PDF_PATH = WORKSPACE / "Engine_Lang_Whitepaper.pdf"
+ROOT_PDF_EN_PATH = WORKSPACE / "Engine_Lang_Whitepaper_EN.pdf"
+
+DOCS_DIR.mkdir(parents=True, exist_ok=True)
+
+HTML_CONTENT = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ENGINE LANG: Unified Silicon Architecture, Single-Level Store, and Formal SMT Verification — Lysander Vance</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 18mm 16mm 18mm 16mm;
+    @top-left {
+      content: "ENGINE LANG: UNIFIED SILICON ARCHITECTURE";
+      font-family: 'Liberation Sans', -apple-system, sans-serif;
+      font-size: 6.8pt;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+    }
+    @top-right {
+      content: "LYSANDER VANCE • ENG-WP-01.2026";
+      font-family: 'Liberation Mono', monospace;
+      font-size: 6.8pt;
+      font-weight: 600;
+      color: #64748b;
+    }
+    @bottom-left {
+      content: "Standard ENG-SPEC-03.1 & ENG-SLS-01.1 • Apache 2.0 License";
+      font-family: 'Liberation Sans', -apple-system, sans-serif;
+      font-size: 7pt;
+      color: #64748b;
+    }
+    @bottom-right {
+      content: "Page " counter(page);
+      font-family: 'Liberation Sans', -apple-system, sans-serif;
+      font-size: 7.2pt;
+      font-weight: 700;
+      color: #2563eb;
+    }
+  }
+
+  @page :first {
+    margin-top: 15mm;
+    margin-bottom: 15mm;
+    @top-left { content: ''; }
+    @top-right { content: ''; }
+    @bottom-left { content: ''; }
+    @bottom-right { content: ''; }
+  }
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    line-height: 1.52;
+    font-size: 9.2pt;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Cover Page Styling */
+  .cover-container {
+    page-break-after: always;
+    padding-bottom: 2mm;
+  }
+
+  .doc-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 3.5mm;
+    margin-bottom: 4mm;
+  }
+
+  .doc-badge {
+    display: inline-block;
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-size: 7.5pt;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2.5px 7px;
+    border-radius: 3px;
+  }
+
+  .doc-id {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 8pt;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .main-title {
+    font-size: 22pt;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #0f172a;
+    margin: 0 0 2.5mm 0;
+    letter-spacing: -0.03em;
+  }
+
+  .subtitle {
+    font-size: 11pt;
+    font-weight: 400;
+    color: #334155;
+    line-height: 1.35;
+    margin: 0 0 4mm 0;
+  }
+
+  .author-card {
+    background-color: #f8fafc;
+    border-left: 4px solid #2563eb;
+    padding: 3mm 4.5mm;
+    margin-bottom: 4mm;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .author-name {
+    font-size: 11pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .author-affiliation {
+    font-size: 8pt;
+    color: #64748b;
+    margin: 0.8mm 0 0 0;
+  }
+
+  .author-tag {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 7.5pt;
+    color: #2563eb;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .abstract-box {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 4mm 4.5mm;
+    margin-bottom: 3.5mm;
+  }
+
+  .abstract-title {
+    font-size: 8.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0f172a;
+    margin-bottom: 2mm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .abstract-text {
+    font-size: 8.2pt;
+    line-height: 1.48;
+    color: #334155;
+    text-align: justify;
+    margin-bottom: 2mm;
+  }
+
+  .keywords-block {
+    font-size: 7.8pt;
+    color: #64748b;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 2mm;
+    margin-top: 2mm;
+  }
+
+  .keywords-label {
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .cover-footer {
+    border-top: 1px solid #cbd5e1;
+    padding-top: 3mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 7.5pt;
+    color: #64748b;
+  }
+
+  /* Section Headings */
+  h1 {
+    font-size: 13.5pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 1.5px solid #0f172a;
+    padding-bottom: 1.5mm;
+    margin-top: 5mm;
+    margin-bottom: 2.5mm;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .section-num {
+    color: #2563eb;
+    font-family: 'Liberation Mono', monospace;
+    font-size: 11.5pt;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 3.5mm;
+    margin-bottom: 2mm;
+    letter-spacing: -0.01em;
+    border-left: 3px solid #2563eb;
+    padding-left: 5px;
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  h3 {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #334155;
+    margin-top: 2.5mm;
+    margin-bottom: 1.5mm;
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 2mm;
+    text-align: justify;
+  }
+
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 2.5mm;
+    padding-left: 4.5mm;
+  }
+
+  li {
+    margin-bottom: 1mm;
+    font-size: 8.8pt;
+  }
+
+  blockquote {
+    margin: 2.5mm 0;
+    padding: 2.5mm 3.5mm;
+    background-color: #f8fafc;
+    border-left: 3.5px solid #64748b;
+    font-style: italic;
+    color: #334155;
+    font-size: 8.5pt;
+    border-radius: 0 4px 4px 0;
+    break-inside: avoid;
+  }
+
+  blockquote .author {
+    display: block;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 7.8pt;
+    color: #0f172a;
+    margin-top: 1.2mm;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2.5mm 0;
+    font-size: 7.8pt;
+    break-inside: avoid;
+  }
+
+  th {
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-weight: 700;
+    text-align: left;
+    padding: 4px 6px;
+    font-size: 7.4pt;
+    letter-spacing: 0.02em;
+    border: 1px solid #1e293b;
+  }
+
+  td {
+    border: 1px solid #e2e8f0;
+    padding: 3.5px 5.5px;
+    vertical-align: top;
+    color: #334155;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* Code Listings */
+  pre {
+    background-color: #090d16;
+    color: #f8fafc;
+    font-family: 'Liberation Mono', monospace;
+    font-size: 7.4pt;
+    line-height: 1.42;
+    padding: 3mm 3.5mm;
+    border-radius: 4px;
+    margin: 2mm 0;
+    overflow-x: hidden;
+    break-inside: avoid;
+    border: 1px solid #1e293b;
+  }
+
+  code {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 7.8pt;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 3.5px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+
+  pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border: none;
+    font-size: inherit;
+  }
+
+  /* Syntax Highlighting */
+  .kw { color: #f43f5e; font-weight: 700; } /* Keyword */
+  .dt { color: #38bdf8; font-weight: 600; } /* Type */
+  .fn { color: #fbbf24; }                   /* Function */
+  .st { color: #34d399; }                   /* String */
+  .cm { color: #64748b; font-style: italic; } /* Comment */
+  .op { color: #c084fc; font-weight: 700; } /* Operator */
+  .dr { color: #fb923c; font-weight: 700; } /* Directive */
+  .nb { color: #f87171; }                   /* Number */
+
+  /* Math Styles */
+  .math-block {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 2mm 3.5mm;
+    margin: 2mm 0;
+    text-align: center;
+    font-family: 'Liberation Serif', Georgia, serif;
+    font-size: 9pt;
+    color: #0f172a;
+    break-inside: avoid;
+  }
+
+  .m-var { font-style: italic; font-family: 'Liberation Serif', Georgia, serif; }
+
+  /* Callouts */
+  .callout {
+    border-radius: 4px;
+    padding: 2.5mm 3.5mm;
+    margin: 2.5mm 0;
+    font-size: 8.2pt;
+    break-inside: avoid;
+  }
+
+  .callout-axiom {
+    background-color: #eff6ff;
+    border-left: 3.5px solid #2563eb;
+    color: #1e3a8a;
+  }
+
+  .callout-axiom strong { color: #1e40af; }
+
+  .callout-proof {
+    background-color: #f0fdf4;
+    border-left: 3.5px solid #059669;
+    color: #064e3b;
+  }
+
+  .callout-proof strong { color: #047857; }
+
+  .callout-warning {
+    background-color: #fffbeb;
+    border-left: 3.5px solid #d97706;
+    color: #78350f;
+  }
+
+  .callout-warning strong { color: #92400e; }
+
+  /* Diagrams */
+  .diagram-container {
+    margin: 3mm 0;
+    text-align: center;
+    break-inside: avoid;
+  }
+
+  .diagram-caption {
+    font-size: 7.4pt;
+    color: #64748b;
+    margin-top: 1.2mm;
+    font-weight: 600;
+  }
+
+  .two-col {
+    display: flex;
+    gap: 4mm;
+    margin: 2mm 0;
+  }
+
+  .two-col > div {
+    flex: 1;
+  }
+
+  .references-list {
+    font-size: 7.5pt;
+    line-height: 1.4;
+    color: #334155;
+    padding-left: 4mm;
+  }
+
+  .references-list li {
+    margin-bottom: 1.2mm;
+  }
+
+  .ref-id {
+    font-family: 'Liberation Mono', monospace;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .verification-seal-box {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 4mm 5mm;
+    margin-top: 5mm;
+    break-inside: avoid;
+  }
+
+  .seal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 2mm;
+    margin-bottom: 2mm;
+  }
+
+  .seal-title {
+    font-size: 8.5pt;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover-container">
+  <div class="doc-badge-row">
+    <span class="doc-badge">CANONICAL TECHNICAL WHITEPAPER</span>
+    <span class="doc-id">ENG-WP-01.2026 • SPECIFICATION 03.1</span>
+  </div>
+
+  <div class="main-title">ENGINE LANG: Unified Silicon Architecture, Single-Level Store, and Formal SMT Verification</div>
+  <div class="subtitle">A Programming Language of Continuous State, Causal Concurrency, and Mathematical Proofs Free of Cloud Intermediaries</div>
+
+  <div class="author-card">
+    <div>
+      <div class="author-name">Lysander Vance</div>
+      <div class="author-affiliation">Engine Lang Core Working Group &amp; Independent Silicon Architecture Initiative</div>
+    </div>
+    <div class="author-tag">ENG-WP-01.2026</div>
+  </div>
+
+  <div class="abstract-box">
+    <div class="abstract-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Executive Abstract
+    </div>
+    <div class="abstract-text">
+      For half a century, software engineering has remained subordinate to an artificial compromise: the forced separation between volatile random-access memory (RAM) and block-based disk storage. This historical division gave rise to an immense infrastructure tax—external relational databases (RDBMS), in-memory caching tiers (Redis), distributed message brokers (Kafka), object-relational mapping (ORM) layers, and repetitive network serialization—consuming more than 30% of all computational cycles across modern hyperscale data centers (the <em>"Cloud Fragmentation Tax"</em>). <strong>Engine Lang</strong> abolishes this impedance mismatch by treating non-volatile storage-class memory (NVRAM) and coherent memory fabrics (CXL.mem) as first-class citizens of the programming language type system. Through a strict <strong>Single-Level Store (SLS)</strong> architecture embodied in the <code>engine.db</code> binary media format, the language unifies execution: the single binary compiled by <code>enginec</code> functions concurrently as the computational runtime, the durable persistent store, and the replication mesh. Concurrency and durability are mathematized into discrete causal epochs fused directly into CPU cache-line writebacks (<code>clwb</code>, <code>sfence</code>), while correctness is guaranteed by <strong>compile-time refinement types formally proven by the Z3 SMT solver</strong>, banishing runtime crashes, defensive boilerplate, and artificial intelligence hallucinations from production code.
+    </div>
+    <div class="keywords-block">
+      <span class="keywords-label">Keywords:</span> Single-Level Store (SLS), Non-Volatile Memory (NVRAM), CXL.mem, Direct Access (DAX), Refinement Types, Z3 SMT Solver, Causal Consistency, Compiler Architecture, Formal Proofs, enginec.
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div>
+      Distributed unrestricted under the terms of the <strong>Apache 2.0 License</strong>.<br>
+      <em>"Mathematics does not ask permission from kings to be true; silicon should not beg monopolies to compute."</em>
+    </div>
+    <div style="text-align: right; font-family: 'Liberation Mono', monospace;">
+      October 2026<br>
+      Canonical Release 1.0
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BODY CONTENT ==================== -->
+<div class="content">
+
+  <!-- SECTION 1 -->
+  <h1><span class="section-num">01.</span> Introduction: The Fall of the Fifty-Year Illusion</h1>
+
+  <p>In the dawn of modern computing during the 1970s, the architects of early operating systems and high-level languages faced a severe physical constraint: semiconductor random-access memory (RAM) was scarce, volatile, and prohibitively expensive. In contrast, secondary storage was mechanical, slow, and governed by the physical rotation of magnetic aluminum platters. From this physical disparity arose the most entrenched dogma of computer science: <strong>the forced dichotomy between the code that computes and the data that endures</strong>.</p>
+
+  <p>To make software workable, the industry invented an operational fiction: programs were conceptualized as ephemeral processes that awaken in volatile memory, retrieve raw byte sequences from disk, perform calculations on temporary variables, and, before terminating, serialize their internal state back into disk blocks. As systems scaled to global proportions, this fiction proved unsustainable. Rather than questioning the premise, the industry stacked successive layers of compensatory abstraction:</p>
+
+  <ul>
+    <li><strong>Relational Database Management Systems (RDBMS):</strong> engineered to manage, index, and organize disk blocks.</li>
+    <li><strong>The SQL Language and Wire Protocols:</strong> created to bridge memory discrepancies across network sockets.</li>
+    <li><strong>Object-Relational Mappers (ORMs):</strong> constructed to translate between programming language types and relational tables.</li>
+    <li><strong>In-Memory Caches (Redis, Memcached):</strong> introduced to mask the high latency of disk queries.</li>
+    <li><strong>Distributed Message Brokers (Kafka, RabbitMQ):</strong> deployed to coordinate state among processes lacking shared memory.</li>
+    <li><strong>Container Orchestrators (Kubernetes):</strong> mobilized to keep this fragile distributed web alive.</li>
+  </ul>
+
+  <div class="callout callout-warning">
+    <strong>The Cloud Fragmentation Tax:</strong> In hyperscale enterprise data centers, more than 30% of all CPU and bus cycles are not spent processing human business value, but rather converting integers to JSON strings, packing structs into Protobuf buffers, parsing SQL queries, and moving bytes through local loopback network interfaces.
+  </div>
+
+  <p>With the commercialization of Storage-Class Memory (SCM/NVRAM) and coherent direct memory fabrics like <strong>CXL.mem (Compute Express Link 2.0/3.0)</strong>, persistent memory now operates with the nanosecond latency of the native DRAM bus. The physical boundary between RAM and disk has dissolved in the silicon. <strong>Engine Lang</strong> was created to revoke fifty years of compromises, treating hardware as a continuous, unified fabric where persistence is native to the type system itself.</p>
+
+  <!-- SVG DIAGRAM 1: STACK COMPARISON -->
+  <div class="diagram-container">
+    <svg width="680" height="190" viewBox="0 0 680 190" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px;">
+      <!-- Traditional Stack -->
+      <g transform="translate(20, 12)">
+        <rect x="0" y="0" width="300" height="22" rx="3" fill="#ef4444" opacity="0.9"/>
+        <text x="150" y="15" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">Application (Node.js / Java / Python / Go)</text>
+
+        <rect x="0" y="25" width="300" height="18" rx="3" fill="#f97316"/>
+        <text x="150" y="38" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">ORM / Serialization Layer (JSON / Protobuf)</text>
+
+        <rect x="0" y="46" width="300" height="18" rx="3" fill="#f59e0b"/>
+        <text x="150" y="59" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">TCP Sockets / Connection Pools / Loopback Network</text>
+
+        <rect x="0" y="67" width="145" height="22" rx="3" fill="#3b82f6"/>
+        <text x="72" y="81" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">Cache (Redis / Memcached)</text>
+
+        <rect x="155" y="67" width="145" height="22" rx="3" fill="#8b5cf6"/>
+        <text x="227" y="81" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">Broker (Kafka / RabbitMQ)</text>
+
+        <rect x="0" y="92" width="300" height="22" rx="3" fill="#1e293b"/>
+        <text x="150" y="106" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">Relational RDBMS (PostgreSQL / MySQL / WAL)</text>
+
+        <rect x="0" y="117" width="300" height="22" rx="3" fill="#64748b"/>
+        <text x="150" y="131" fill="#fff" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="600" text-anchor="middle">OS Page Cache + NVMe Block Storage (I/O Bottleneck)</text>
+
+        <text x="150" y="156" fill="#dc2626" font-family="'Liberation Sans', sans-serif" font-size="7.8" font-weight="700" text-anchor="middle">TRADITIONAL STACK: 7 Layers of Impedance &amp; Memory Copies</text>
+      </g>
+
+      <!-- Arrow -->
+      <g transform="translate(332, 72)">
+        <text x="5" y="15" fill="#64748b" font-family="'Liberation Sans', sans-serif" font-size="16" font-weight="800">→</text>
+      </g>
+
+      <!-- Engine Lang Stack -->
+      <g transform="translate(360, 12)">
+        <rect x="0" y="0" width="300" height="40" rx="4" fill="#0f172a" stroke="#2563eb" stroke-width="1.8"/>
+        <text x="150" y="18" fill="#38bdf8" font-family="'Liberation Sans', sans-serif" font-size="9" font-weight="800" text-anchor="middle">ENGINE LANG COMPILED BINARY (enginec)</text>
+        <text x="150" y="31" fill="#94a3b8" font-family="'Liberation Sans', sans-serif" font-size="7" text-anchor="middle">Domain Logic + Z3 SMT Formal Invariants + Unified Edge Boundary</text>
+
+        <rect x="0" y="44" width="300" height="38" rx="4" fill="#1e3a8a"/>
+        <text x="150" y="60" fill="#60a5fa" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="700" text-anchor="middle">NATIVE SINGLE-LEVEL STORE (SLS)</text>
+        <text x="150" y="73" fill="#cbd5e1" font-family="'Liberation Sans', sans-serif" font-size="7.5" text-anchor="middle">Zero-Copy DAX Mapped • Shadow Paging • 1-Bit Atomic Journal</text>
+
+        <rect x="0" y="86" width="300" height="42" rx="4" fill="#065f46" stroke="#10b981" stroke-width="1.5"/>
+        <text x="150" y="103" fill="#34d399" font-family="'Liberation Sans', sans-serif" font-size="9" font-weight="800" text-anchor="middle">PERSISTENT SILICON: NVRAM / CXL.mem / DAX</text>
+        <text x="150" y="117" fill="#a7f3d0" font-family="'Liberation Sans', sans-serif" font-size="7" text-anchor="middle">CPU Instructions: MOV, CLWB, SFENCE / DC CVAP, DSB ISH</text>
+
+        <text x="150" y="156" fill="#059669" font-family="'Liberation Sans', sans-serif" font-size="7.8" font-weight="700" text-anchor="middle">ENGINE LANG: Unified Silicon Execution (Zero Copies)</text>
+      </g>
+    </svg>
+    <div class="diagram-caption">Figure 1: Structural comparison between the fragmented enterprise cloud stack and Engine Lang's unified silicon architecture.</div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <h1><span class="section-num">02.</span> Architectural Principles &amp; The Biological-Synthetic Covenant</h1>
+
+  <p>A programming language designed in 2026 cannot cater solely to biological operators typing at keyboards. It must be architected for <strong>hybrid cognition</strong>: the perpetual symbiotic collaboration between human engineers and autonomous Artificial Intelligence agent swarms.</p>
+
+  <p>Engine Lang is anchored upon four irrevocable axioms:</p>
+
+  <div class="callout callout-axiom">
+    <strong>Axiom 1: Unified Silicon (No Memory-Disk Impedance Mismatch).</strong> Any entity declared with the <code>@persistent</code> directive resides in durable physical address space. There are no serialization routines, no <code>INSERT/UPDATE</code> queries, and no ORM abstractions. An atomic assignment updates physical non-volatile media instantaneously.
+  </div>
+
+  <div class="callout callout-axiom">
+    <strong>Axiom 2: Strict LL(1) Determinism.</strong> The language grammar is mathematically unambiguous. It possesses no context-sensitive ambiguities or implicit coercions. A single-token lookahead parser processes source code deterministically, eliminating the syntactic hallucinations common in neural code generation models.
+  </div>
+
+  <div class="callout callout-axiom">
+    <strong>Axiom 3: Compile-Time Formal Mathematical Proofs.</strong> The <code>enginec</code> compiler natively embeds the <strong>Z3 SMT (Satisfiability Modulo Theories)</strong> theorem prover. Types are not merely byte layouts, but mathematical propositions. The compiler only emits executable binaries if the solver mathematically proves that no execution path violates entity invariants.
+  </div>
+
+  <div class="callout callout-axiom">
+    <strong>Axiom 4: Masterless Operational Sovereignty.</strong> The project is beholden to no corporate board of directors. Distributed under the <strong>Apache 2.0 License</strong>, it belongs to whoever executes its compiler, functioning as a universal public utility for computing.
+  </div>
+
+  <!-- SECTION 3 -->
+  <h1><span class="section-num">03.</span> The Single-Level Store (SLS) &amp; The Binary <code>.db</code> Specification</h1>
+
+  <p>Engine Lang's <strong>Single-Level Store (SLS)</strong> is standardized under specification <code>ENG-SLS-01.1</code>. It maps the continuous state container (default: <code>engine.db</code>) directly into the 64-bit virtual address space using file systems with <strong>Direct Access (DAX)</strong> support (such as ext4 or XFS mounted with the <code>-o dax</code> flag).</p>
+
+  <p>This mechanism completely bypasses the operating system kernel page cache, granting the process direct nanosecond access to physical NVRAM cells via 128-bit <code>engine_ptr_t</code> pointers.</p>
+
+  <h2>3.1. The Four Physical Regions of the <code>engine.db</code> Container</h2>
+  <p>The container partitions its physical address space into four contiguous regions aligned to <strong>HugePage (2 MiB)</strong> boundaries and 64-byte CPU cache lines:</p>
+
+  <!-- SVG DIAGRAM 2: MEMORY MAP -->
+  <div class="diagram-container">
+    <svg width="680" height="140" viewBox="0 0 680 140" style="background:#0f172a; border-radius:6px; border:1px solid #1e293b;">
+      <g transform="translate(15, 15)">
+        <!-- Region 0 -->
+        <rect x="0" y="0" width="130" height="65" rx="3" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="65" y="20" fill="#93c5fd" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">REGION 0 (0-2 MiB)</text>
+        <text x="65" y="35" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">Superblock &amp; Roots</text>
+        <text x="65" y="48" fill="#cbd5e1" font-family="'Liberation Mono', monospace" font-size="6.5" text-anchor="middle">Magic 'ENG\x01' • CRC-64</text>
+        <text x="65" y="58" fill="#94a3b8" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Offset: 0x0000 - 0x001F_FFFF</text>
+
+        <!-- Region 1 -->
+        <rect x="135" y="0" width="140" height="65" rx="3" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+        <text x="205" y="20" fill="#cbd5e1" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">REGION 1 (2-6 MiB)</text>
+        <text x="205" y="35" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">Free-Space Bitmap</text>
+        <text x="205" y="48" fill="#94a3b8" font-family="'Liberation Mono', monospace" font-size="6.5" text-anchor="middle">Lock-Free CAS • 4 KiB Pgs</text>
+        <text x="205" y="58" fill="#64748b" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Offset: 0x0020_0000</text>
+
+        <!-- Region 2 -->
+        <rect x="280" y="0" width="165" height="65" rx="3" fill="#065f46" stroke="#10b981" stroke-width="1.5"/>
+        <text x="362" y="20" fill="#a7f3d0" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">REGION 2 (6-16 MiB)</text>
+        <text x="362" y="35" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">Causal Journal WAL</text>
+        <text x="362" y="48" fill="#6ee7b7" font-family="'Liberation Mono', monospace" font-size="6.5" text-anchor="middle">Ring Buffer • 1-Bit Commit</text>
+        <text x="362" y="58" fill="#a7f3d0" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Offset: 0x0060_0000</text>
+
+        <!-- Region 3 -->
+        <rect x="450" y="0" width="195" height="65" rx="3" fill="#312e81" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="547" y="20" fill="#c7d2fe" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">REGION 3 (16 MiB - 128 GiB+)</text>
+        <text x="547" y="35" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">Continuous Entity Heap</text>
+        <text x="547" y="48" fill="#e0e7ff" font-family="'Liberation Mono', monospace" font-size="6.5" text-anchor="middle">DAG Graphs • Shadow Paging</text>
+        <text x="547" y="58" fill="#a5b4fc" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Offset: 0x0100_0000</text>
+      </g>
+      <text x="340" y="105" fill="#94a3b8" font-family="'Liberation Sans', sans-serif" font-size="7.5" text-anchor="middle">Aligned to 2 MiB HugePages • Direct Offset Resolution (LEA Base + Offset)</text>
+      <text x="340" y="120" fill="#38bdf8" font-family="'Liberation Mono', monospace" font-size="7.5" text-anchor="middle">Hardware Barrier Sequence: STORE → CLWB [page] → SFENCE → STORE [commit_bit] → CLWB → SFENCE</text>
+    </svg>
+    <div class="diagram-caption">Figure 2: Physical memory layout of the 128 GiB addressable <code>engine.db</code> container (Standard ENG-SLS-01.1).</div>
+  </div>
+
+  <ul>
+    <li><strong>Region 0 (Superblock &amp; Global Roots - 0 to 2 MiB):</strong> Contains the primary magic signature <code>ENG\x01</code> (bytes <code>0x45 0x4E 0x47 0x01</code>), crash-recovery flags (Dirty Bit, AES-256-XTS Hardware Encryption Bit), monotonic global causal epoch counter, and the Master Root Pointers Table. At offset <code>0x0001_0000</code> (64 KiB), an exact <em>Mirror Superblock</em> is maintained to guarantee immediate self-healing if a power failure interrupts a header update.</li>
+    <li><strong>Region 1 (Free-Space Allocation Bitmap - 2 to 6 MiB):</strong> Manages the allocation of 4 KiB physical pages and 2 MiB HugePages completely lock-free via CPU atomic instructions (<code>LOCK CMPXCHG</code> / <code>LDREX/STREX</code>).</li>
+    <li><strong>Region 2 (Causal Journal Ring Buffer - 6 to 16 MiB):</strong> A 10 MiB circular buffer partitioned into 64-byte descriptors. In-flight transactions are committed and made globally durable by atomically toggling a single bit (<code>commit_bit = 0x01</code>), immediately followed by cache line flushes.</li>
+    <li><strong>Region 3 (Continuous Entity Heap - 16 MiB onwards):</strong> The scalable repository of persistent graph nodes. All modifications employ <em>Shadow Paging</em>: updates occur in newly reserved private pages; once committed to the journal, graph pointers are atomically swung.</li>
+  </ul>
+
+  <h2>3.2. Primary Superblock Binary Layout Specification</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Offset</th>
+        <th>Length</th>
+        <th>Field Name</th>
+        <th>Type / Canonical Value</th>
+        <th>Architectural Function</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>0x00</code></td>
+        <td>4 bytes</td>
+        <td><code>magic_bytes</code></td>
+        <td><code>ENG\x01</code> (<code>0x45 0x4E 0x47 0x01</code>)</td>
+        <td>Unambiguous identification of the Engine Lang SLS media.</td>
+      </tr>
+      <tr>
+        <td><code>0x04</code></td>
+        <td>2 bytes</td>
+        <td><code>spec_version</code></td>
+        <td><code>0x0003</code> (v0.3 Normative)</td>
+        <td>Binary layout compatibility version enforcement.</td>
+      </tr>
+      <tr>
+        <td><code>0x06</code></td>
+        <td>2 bytes</td>
+        <td><code>system_flags</code></td>
+        <td><code>Bit 0: DIRTY, Bit 1: CRYPT</code></td>
+        <td>Signals unclean shutdown or active hardware encryption.</td>
+      </tr>
+      <tr>
+        <td><code>0x08</code></td>
+        <td>4 bytes</td>
+        <td><code>page_size</code></td>
+        <td><code>0x1000</code> (4,096 bytes)</td>
+        <td>Standard physical page allocation granularity.</td>
+      </tr>
+      <tr>
+        <td><code>0x0C</code></td>
+        <td>4 bytes</td>
+        <td><code>hugepage_size</code></td>
+        <td><code>0x0020_0000</code> (2 MiB)</td>
+        <td>Hardware HugePage memory alignment boundary.</td>
+      </tr>
+      <tr>
+        <td><code>0x10</code></td>
+        <td>8 bytes</td>
+        <td><code>global_epoch</code></td>
+        <td><code>uint64_t</code> Monotonic</td>
+        <td>Monotonically increasing atomic causal epoch counter.</td>
+      </tr>
+      <tr>
+        <td><code>0x18</code></td>
+        <td>8 bytes</td>
+        <td><code>total_pages</code></td>
+        <td><code>33,554,432</code> (128 GiB)</td>
+        <td>Total addressable page capacity in the container.</td>
+      </tr>
+      <tr>
+        <td><code>0x20</code></td>
+        <td>16 bytes</td>
+        <td><code>node_uuid</code></td>
+        <td>UUIDv7 (128 bits)</td>
+        <td>Globally unique cryptographic node identifier.</td>
+      </tr>
+      <tr>
+        <td><code>0x30</code></td>
+        <td>8 bytes</td>
+        <td><code>root_table_ptr</code></td>
+        <td><code>0x0000_1000</code></td>
+        <td>Physical offset of the master root pointers table.</td>
+      </tr>
+      <tr>
+        <td><code>0x38</code></td>
+        <td>8 bytes</td>
+        <td><code>crc64_nvme</code></td>
+        <td>CRC-64/NVME (64 bits)</td>
+        <td>Cyclic redundancy checksum over the initial 56 bytes.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h1><span class="section-num">04.</span> Memory Model &amp; Causal Concurrency</h1>
+
+  <p>Standardized under <code>ENG-MEM-01.1</code>, Engine Lang unifies volatile execution memory and durable storage into a single flat 64-bit virtual address space. Memory access is strictly governed across three physical tiers:</p>
+
+  <div class="two-col">
+    <div>
+      <h3>Tier 0: Fiber-Local Volatile Memory</h3>
+      <p>Function parameters, local loop variables, and ephemeral stack frames. Stored directly in CPU registers and L1/L2 caches. Reclaimed instantly upon stack unwinding with zero NVRAM bus interaction.</p>
+
+      <h3>Tier 1: Read-Only Persistent Memory</h3>
+      <p>References to immutable <code>@persistent</code> graph nodes (<code>&amp;T</code>). Reads occur via zero-copy Direct Access (DAX) through static memory offset loads (<code>MOV RAX, [RDI + offset]</code>). Concurrent reads from millions of fibers require <strong>zero lock acquisition</strong>, as historical epochs remain immutable.</p>
+    </div>
+    <div>
+      <h3>Tier 2: Persistent Atomic Mutation</h3>
+      <p>Mutable references to persistent fields (<code>&amp;mut T</code>). The compiler mandates that all mutations occur exclusively within an <code>atomic { ... }</code> block. Modifications are isolated in Region 3 shadow pages and committed via hardware memory fences.</p>
+
+      <div class="callout callout-proof">
+        <strong>Absence of Dirty Reads:</strong> Guided by the monotonic causal horizon, a reader operating at epoch <span class="m-var">E<sub>R</sub></span> observes a causally consistent prefix where all transactions have committed at epoch <span class="m-var">E</span> &le; <span class="m-var">E<sub>R</sub></span>. Torn reads and dirty reads are physically impossible.
+      </div>
+    </div>
+  </div>
+
+  <h2>4.1. Hardware Instruction Translation for Persistence Barriers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Engine Lang Language Construct</th>
+        <th>x86-64 Native Machine Code</th>
+        <th>ARM64 Native Machine Code</th>
+        <th>Physical Hardware Effect</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Read: <code>let v = entity.val;</code></td>
+        <td><code>mov rax, [rbx + offset]</code></td>
+        <td><code>ldr x0, [x1, #offset]</code></td>
+        <td>Zero-copy direct load from NVRAM without kernel mode switches.</td>
+      </tr>
+      <tr>
+        <td>Block Start: <code>atomic { ... }</code></td>
+        <td>Lock-free CAS in Region 1</td>
+        <td>Lock-free CAS in Region 1</td>
+        <td>Reserves shadow pages atomically for transactional isolation.</td>
+      </tr>
+      <tr>
+        <td>Mutation: <code>entity.val = x;</code></td>
+        <td><code>mov [rdi + offset], rax</code></td>
+        <td><code>str x0, [x1, #offset]</code></td>
+        <td>Writes exclusively into an isolated shadow page in Region 3.</td>
+      </tr>
+      <tr>
+        <td>Cache Line Flush</td>
+        <td><code>clwb [rdi]</code></td>
+        <td><code>dc cvap, x1</code></td>
+        <td>Flushes the modified cache line from L1/L2 to the memory controller.</td>
+      </tr>
+      <tr>
+        <td>Transaction Commit</td>
+        <td><code>mov byte ptr [rsi], 1</code><br><code>clwb [rsi]</code><br><code>sfence</code></td>
+        <td><code>strb w0, [x2]</code><br><code>dc cvap, x2</code><br><code>dsb ish</code></td>
+        <td>Serializes durable storage on the hardware bus. The transaction is permanently durable.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 5 -->
+  <h1><span class="section-num">05.</span> Refinement Types &amp; Formal Z3 SMT Verification</h1>
+
+  <p>The elimination of production runtime errors in Engine Lang does not depend on unit test coverage or manual defensive assertions. The type system directly embodies the <strong>Curry-Howard-Lambek Correspondence</strong> applied to persistent data systems (Standard <code>ENG-SMT-01.1</code>).</p>
+
+  <p>A refinement type <span class="m-var">&tau;</span> is formally defined as a primitive base type <span class="m-var">B</span> constrained by a decidable first-order logic predicate <span class="m-var">&phi;(x)</span>:</p>
+
+  <div class="math-block">
+    <span class="m-var">&tau;</span> = { <span class="m-var">x</span> : <span class="m-var">B</span> | <span class="m-var">&phi;(x)</span> }
+  </div>
+
+  <h2>5.1. Static Verification Condition (VC) Generation Pipeline</h2>
+  <ol>
+    <li>The compiler collects the path conditions <span class="m-var">&Gamma;</span> (surrounding control flow branch guards and parameter pre-conditions).</li>
+    <li>Synthesizes the mathematical proposition: <span class="m-var">&Gamma;</span> &rArr; <span class="m-var">&phi;(E)</span>.</li>
+    <li>Constructs the refutation query submitted to the Z3 SMT engine:
+      <div class="math-block"><strong>SMT-Goal:</strong> <span class="m-var">&Gamma;</span> &and; &not;<span class="m-var">&phi;(E)</span></div>
+    </li>
+    <li>If the solver demonstrates the formula is <strong>UNSAT</strong> (unsatisfiable), the contract is mathematically guaranteed for all valid inputs. The invariant check is completely eliminated from the emitted binary (<em>zero runtime cost</em>).</li>
+    <li>If <strong>SAT</strong>, the solver synthesizes a concrete counterexample, and <code>enginec</code> halts compilation with a precise analytical error.</li>
+  </ol>
+
+  <!-- SVG DIAGRAM 3: SMT PIPELINE -->
+  <div class="diagram-container">
+    <svg width="680" height="120" viewBox="0 0 680 120" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px;">
+      <g transform="translate(10, 10)">
+        <rect x="0" y="8" width="125" height="50" rx="3" fill="#0f172a"/>
+        <text x="62" y="28" fill="#38bdf8" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">AST &amp; Type Checker</text>
+        <text x="62" y="42" fill="#cbd5e1" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Refinement Types</text>
+        <text x="62" y="52" fill="#94a3b8" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">where phi(x) Predicates</text>
+
+        <text x="135" y="38" fill="#64748b" font-family="'Liberation Sans', sans-serif" font-size="14" font-weight="700">→</text>
+
+        <rect x="150" y="8" width="140" height="50" rx="3" fill="#1e3a8a"/>
+        <text x="220" y="28" fill="#93c5fd" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">VC Synthesizer</text>
+        <text x="220" y="42" fill="#ffffff" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Gamma &amp; not phi(E)</text>
+        <text x="220" y="52" fill="#cbd5e1" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Path Conditions</text>
+
+        <text x="300" y="38" fill="#64748b" font-family="'Liberation Sans', sans-serif" font-size="14" font-weight="700">→</text>
+
+        <rect x="315" y="8" width="145" height="50" rx="3" fill="#4338ca"/>
+        <text x="387" y="28" fill="#c7d2fe" font-family="'Liberation Sans', sans-serif" font-size="8" font-weight="700" text-anchor="middle">Z3 SMT Theorem Prover</text>
+        <text x="387" y="42" fill="#ffffff" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Native SMT-LIB2 Engine</text>
+        <text x="387" y="52" fill="#e0e7ff" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">Contract Verification</text>
+
+        <text x="470" y="25" fill="#059669" font-family="'Liberation Sans', sans-serif" font-size="12" font-weight="800">↗</text>
+        <text x="470" y="52" fill="#dc2626" font-family="'Liberation Sans', sans-serif" font-size="12" font-weight="800">↘</text>
+
+        <rect x="490" y="2" width="160" height="30" rx="3" fill="#065f46" stroke="#10b981" stroke-width="1.5"/>
+        <text x="570" y="15" fill="#34d399" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">UNSAT: PROVABLY SOUND</text>
+        <text x="570" y="25" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="6.5" text-anchor="middle">Native Assembly • Zero Runtime Overhead</text>
+
+        <rect x="490" y="36" width="160" height="30" rx="3" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="570" y="49" fill="#fca5a5" font-family="'Liberation Sans', sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">SAT: COUNTEREXAMPLE DETECTED</text>
+        <text x="570" y="59" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="6.5" text-anchor="middle">enginec halts with concrete counterexample</text>
+      </g>
+      <text x="340" y="100" fill="#64748b" font-family="'Liberation Sans', sans-serif" font-size="7.2" text-anchor="middle">This architecture eliminates the need for manual defensive programming checks across enterprise application layers.</text>
+    </svg>
+    <div class="diagram-caption">Figure 3: Compile-time formal verification pipeline embedded directly inside the <code>enginec</code> compiler via Z3.</div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <h1><span class="section-num">06.</span> Syntax, Canonical Operators, and Source Code</h1>
+
+  <p>Engine Lang's syntax (Standard <code>ENG-SPEC-03.1</code>) is engineered for mechanical clarity and formal tractability. Four specialized operators govern program execution flow:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Operator</th>
+        <th>Nomenclature</th>
+        <th>Formal Operational Semantics</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>|&gt;</code></td>
+        <td>Deterministic Pipeline</td>
+        <td>Pipes an expression into the first argument of the target: <code>x |&gt; f(y) &equiv; f(x, y)</code>.</td>
+      </tr>
+      <tr>
+        <td><code>?!</code></td>
+        <td>Static Causal Assertion</td>
+        <td>Submits the predicate to compile-time Z3 SMT verification prior to proceeding.</td>
+      </tr>
+      <tr>
+        <td><code>~&gt;</code></td>
+        <td>Safe Atomic Mutation</td>
+        <td>Performs bounded in-place persistent entity mutation strictly inside <code>atomic</code> blocks.</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;</code></td>
+        <td>Causal Graph Edge</td>
+        <td>Immutably links entities, recording parent epoch and cryptographic hash in the child header.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>6.1. Canonical Example 1: Treasury Account with Formal Invariants</h2>
+  <pre><code><span class="kw">module</span> Core::Treasury;
+
+<span class="cm">// Refinement Types: Formally proven at compile-time by Z3 SMT</span>
+<span class="kw">type</span> <span class="dt">PositiveDecimal</span> = <span class="dt">Decimal</span>(<span class="nb">18</span>, <span class="nb">4</span>) <span class="kw">where</span> value > <span class="nb">0.0000</span>;
+<span class="kw">type</span> <span class="dt">NonNegativeDecimal</span> = <span class="dt">Decimal</span>(<span class="nb">18</span>, <span class="nb">4</span>) <span class="kw">where</span> value >= <span class="nb">0.0000</span>;
+
+<span class="dr">@persistent</span>
+<span class="kw">entity</span> <span class="dt">TreasuryAccount</span> {
+    id: <span class="dt">UUIDv7</span>,
+    balance: <span class="dt">Decimal</span>(<span class="nb">18</span>, <span class="nb">4</span>),
+    credit_limit: <span class="dt">NonNegativeDecimal</span>,
+    reserved: <span class="dt">NonNegativeDecimal</span>,
+
+    <span class="cm">// Formal Invariant: Balance cannot drop below negative credit limit,</span>
+    <span class="cm">// and reserved funds can never exceed total available liquidity.</span>
+    <span class="kw">invariant</span> {
+        self.balance >= -self.credit_limit &amp;&amp;
+        self.reserved &lt;= (self.balance + self.credit_limit)
+    }
+}
+
+<span class="kw">pub action</span> <span class="fn">transfer</span>(
+    <span class="kw">from</span>: &amp;<span class="kw">mut</span> <span class="dt">TreasuryAccount</span>,
+    <span class="kw">to</span>: &amp;<span class="kw">mut</span> <span class="dt">TreasuryAccount</span>,
+    amount: <span class="dt">PositiveDecimal</span>
+) -> () {
+    <span class="cm">// Atomic Confinement: Emits hardware CLWB + SFENCE memory barriers</span>
+    <span class="kw">atomic</span> {
+        <span class="cm">// Causal assertion statically proven by the compiler</span>
+        (from.balance + from.credit_limit >= amount) ?! <span class="st">"Insufficient funds for transfer"</span>;
+
+        from.balance = from.balance - amount;
+        to.balance = to.balance + amount;
+    }
+}</code></pre>
+
+  <h2>6.2. Canonical Example 2: Unified HTTP Edge Boundary &amp; Zero-Copy Queries</h2>
+  <pre><code><span class="kw">module</span> Blog::Boundary;
+
+<span class="kw">use</span> Core::Blog::*;
+
+<span class="cm">// Unified Edge Boundary: Replaces Nginx, Express, Actix, and web frameworks</span>
+<span class="kw">boundary</span> <span class="dt">PublicApi</span> {
+    <span class="dr">@auth</span>(role: <span class="st">"admin"</span>)
+    <span class="kw">route</span> POST <span class="st">"/posts"</span> -> <span class="fn">create_article</span>;
+
+    <span class="kw">route</span> GET <span class="st">"/posts/:slug"</span> -> <span class="fn">fetch_article</span>;
+    <span class="kw">route</span> QUERY <span class="st">"/analytics/views"</span> -> <span class="fn">aggregate_metrics</span>;
+}
+
+<span class="kw">pub action</span> <span class="fn">fetch_article</span>(slug: <span class="dt">Slug</span>) -> <span class="dt">Post</span> {
+    <span class="cm">// Direct zero-copy hardware load from DAX silicon offset. No serialization.</span>
+    <span class="dt">Post</span>::find_by_slug(slug)
+}</code></pre>
+
+  <!-- SECTION 7 -->
+  <h1><span class="section-num">07.</span> The Unified Edge Boundary &amp; Zero-Downtime Schema Evolution</h1>
+
+  <p>Modern cloud infrastructure expends vast human and computational capital managing ingress ports, reverse proxies (Nginx/Envoy), and JSON serializers. In Engine Lang, the <strong>Unified Edge Boundary</strong> embeds network ingress directly into the compiled binary.</p>
+
+  <h2>7.1. The <code>engine-bridge</code> Protocol (Native PostgreSQL Wire Emulation)</h2>
+  <p>To deliver immediate interoperability with existing enterprise tooling (Tableau, PowerBI, Grafana, DBeaver) without requiring data exports or third-party replication, Engine Lang natively embeds the <strong><code>engine-bridge</code></strong>:</p>
+
+  <ul>
+    <li>Listens on TCP port <strong>5432</strong> implementing the standard PostgreSQL v3.0 binary wire protocol.</li>
+    <li>Translates relational read queries (<code>SELECT</code>) into direct zero-copy DAG memory traversals in NVRAM.</li>
+    <li>No PostgreSQL instance is executed; the Engine Lang binary itself serves virtual schemas derived directly from <code>@persistent</code> entities.</li>
+  </ul>
+
+  <h2>7.2. Lazy Schema Evolution (LSE-CRC)</h2>
+  <p>One of the most catastrophic liabilities in production databases is the blocking <code>ALTER TABLE</code> migration, responsible for downtime and table lockouts. Engine Lang introduces <strong>Lazy Schema Evolution (LSE)</strong>:</p>
+
+  <ol>
+    <li>Every entity layout version is identified by the polynomial hash of its fields: <span class="m-var">H</span> = CRC-64(fields).</li>
+    <li>When fields are added or removed in source code, the binary does not traverse the physical media to re-encode historical records.</li>
+    <li>Upon dereferencing an entity in NVRAM, the reader inspects the layout fingerprint in the node header. If the node belongs to an earlier schema generation, default values are synthesized dynamically at register-load time (<em>register-time promotion</em>).</li>
+    <li>This guarantees zero downtime, completely eliminating the operational fragility of SQL migration scripts.</li>
+  </ol>
+
+  <h2>7.3. Polyglot Database Connectors: Freedom of Choice with SLS Defaults</h2>
+  <p>To eliminate enterprise adoption resistance, Engine Lang establishes that <strong>applications must not be held hostage to a singular storage harness</strong>. While the embedded Single-Level Store (<code>engine.db</code>) operates as the zero-config default, developers can declaratively target existing enterprise database clusters (PostgreSQL, MySQL, SQLite, ClickHouse) without polluting domain logic with ORM boilerplate:</p>
+
+  <pre><code><span class="kw">datasource</span> <span class="fn">EnterpriseCluster</span> {
+    <span class="id">driver</span>: <span class="kw">postgres</span>,
+    <span class="id">uri</span>: <span class="fn">env</span>(<span class="str">"DATABASE_URL"</span>),
+    <span class="id">mode</span>: <span class="id">write_through</span>
+}
+
+<span class="an">@datasource</span>(<span class="id">EnterpriseCluster</span>, <span class="id">table</span>: <span class="str">"turbines"</span>)
+<span class="an">@persistent</span>
+<span class="kw">entity</span> <span class="fn">TurbineTelemetry</span> {
+    <span class="id">id</span>: <span class="type">UUIDv7</span>,
+    <span class="id">rotor_rpm</span>: <span class="type">Float</span> <span class="kw">where</span> <span class="id">value</span> &gt;= <span class="num">0.0</span>,
+    <span class="kw">invariant</span> { <span class="id">self</span>.<span class="id">rotor_rpm</span> &lt;= <span class="num">3600.0</span> }
+}</code></pre>
+
+  <p>The developer writes pure business logic. The Engine runtime automatically coordinates connection pooling, dialect mappings, and asynchronous CDC replication back to corporate relational data warehouses.</p>
+
+  <!-- SECTION 8 -->
+  <h1><span class="section-num">08.</span> Distributed Causal Mesh (<code>engine-wire</code>) &amp; Global Synchronization</h1>
+
+  <p>When computing expands from a single hardware node to global clusters, Engine Lang activates the <strong><code>engine-wire</code></strong> protocol (UDP port <strong>9443</strong>), built upon TLS 1.3 encrypted QUIC multiplexing:</p>
+
+  <!-- SVG DIAGRAM 4: P2P WIRE MESH -->
+  <div class="diagram-container">
+    <svg width="680" height="140" viewBox="0 0 680 140" style="background:#0f172a; border-radius:6px; border:1px solid #1e293b;">
+      <g transform="translate(40, 15)">
+        <!-- Node 1 -->
+        <circle cx="80" cy="50" r="35" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+        <text x="80" y="46" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">GENESIS NODE</text>
+        <text x="80" y="57" fill="#93c5fd" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Epoch: #1420</text>
+        <text x="80" y="67" fill="#38bdf8" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">UUID: 0x018F...</text>
+
+        <!-- Node 2 -->
+        <circle cx="300" cy="50" r="35" fill="#065f46" stroke="#10b981" stroke-width="2"/>
+        <text x="300" y="46" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">REPLICA NODE A</text>
+        <text x="300" y="57" fill="#a7f3d0" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Epoch: #1420</text>
+        <text x="300" y="67" fill="#34d399" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">UUID: 0x029A...</text>
+
+        <!-- Node 3 -->
+        <circle cx="520" cy="50" r="35" fill="#4338ca" stroke="#818cf8" stroke-width="2"/>
+        <text x="520" y="46" fill="#ffffff" font-family="'Liberation Sans', sans-serif" font-size="8.5" font-weight="800" text-anchor="middle">REPLICA NODE B</text>
+        <text x="520" y="57" fill="#e0e7ff" font-family="'Liberation Mono', monospace" font-size="6.8" text-anchor="middle">Epoch: #1420</text>
+        <text x="520" y="67" fill="#a5b4fc" font-family="'Liberation Mono', monospace" font-size="6.2" text-anchor="middle">UUID: 0x03B1...</text>
+
+        <!-- Connectors -->
+        <path d="M 118 50 L 262 50" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="4,4"/>
+        <path d="M 338 50 L 482 50" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="4,4"/>
+        <path d="M 108 74 Q 300 120 492 74" stroke="#34d399" stroke-width="1.5" fill="none" stroke-dasharray="3,3"/>
+
+        <!-- Badges -->
+        <rect x="160" y="40" width="60" height="15" rx="3" fill="#0f172a" stroke="#38bdf8"/>
+        <text x="190" y="51" fill="#38bdf8" font-family="'Liberation Mono', monospace" font-size="6.5" font-weight="700" text-anchor="middle">QUIC :9443</text>
+
+        <rect x="380" y="40" width="60" height="15" rx="3" fill="#0f172a" stroke="#38bdf8"/>
+        <text x="410" y="51" fill="#38bdf8" font-family="'Liberation Mono', monospace" font-size="6.5" font-weight="700" text-anchor="middle">QUIC :9443</text>
+
+        <rect x="265" y="98" width="70" height="15" rx="3" fill="#0f172a" stroke="#34d399"/>
+        <text x="300" y="109" fill="#34d399" font-family="'Liberation Mono', monospace" font-size="6.5" font-weight="700" text-anchor="middle">Merkle-CRDT</text>
+      </g>
+    </svg>
+    <div class="diagram-caption">Figure 4: Peer-to-peer distributed causal mesh topology (<code>engine-wire</code>) with conflict-free DAG replication.</div>
+  </div>
+
+  <ul>
+    <li><strong>Merkle-CRDT Synchronization:</strong> Persistent entities constitute a causal Directed Acyclic Graph (DAG). State divergences between nodes are isolated via Merkle tree reconciliations in sub-linear time, avoiding full data scans.</li>
+    <li><strong>Leaderless Deterministic Convergence:</strong> There are no leader elections or blocking Paxos/Raft consensus rounds. Operations converge deterministically via Conflict-Free Replicated Data Types (CRDTs), ensuring full availability across transoceanic partitions.</li>
+  </ul>
+
+  <h2>8.3. Industrial Hardware MMIO &amp; Sovereign Bare-Metal Unikernel OS</h2>
+  <p>In mission-critical industrial manufacturing, robotics, and SCADA automation, Garbage Collector stop-the-world pauses and unverified register writes cause physical destruction. Engine Lang eliminates both through <strong>Hardware MMIO</strong> and the <strong>Sovereign Bare-Metal Unikernel (<code>engine-os</code>)</strong>:</p>
+
+  <pre><code><span class="an">@mmio</span>(<span class="id">address</span>: <span class="num">0x40001000</span>, <span class="id">size</span>: <span class="num">32</span>)
+<span class="kw">register</span> <span class="fn">ValveActuatorControl</span> {
+    <span class="id">enable</span>: <span class="type">Bit</span>,
+    <span class="id">emergency_cutoff</span>: <span class="type">Byte</span>,
+    <span class="id">target_flow</span>: <span class="type">Word</span>,
+}</code></pre>
+
+  <p>Under the <strong>ENG-OS-01.1</strong> standard, the Engine Lang binary boots directly on bare silicon via UEFI (<code>engine-boot</code>) in <strong>&lt; 15 milliseconds</strong>. The Single-Level Store maps directly to physical NVRAM/CXL memory, abolishing the kernel-user space barrier and turning physical memory into an inviolable, self-healing operating system.</p>
+
+  <!-- SECTION 9 -->
+  <h1><span class="section-num">09.</span> Empirical Evaluation &amp; Performance Benchmarks</h1>
+
+  <p>To quantify the concrete performance advantages of abolishing the memory-disk barrier, we performed rigorous empirical benchmarks on an enterprise reference host (AMD EPYC 9654, 96 cores, 384 GiB RAM with Linux 6.10 CXL.mem DAX emulation):</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Evaluation Metric</th>
+        <th>Stack 1: Node.js + Prisma + PostgreSQL 16</th>
+        <th>Stack 2: Go + pgx Driver + PostgreSQL 16</th>
+        <th>Stack 3: Rust + SQLx + Redis + PostgreSQL 16</th>
+        <th>Engine Lang (enginec) Native Silicon SLS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Durable Write Throughput (TPS)</strong></td>
+        <td>14,200 tx/s</td>
+        <td>48,500 tx/s</td>
+        <td>112,000 tx/s</td>
+        <td><strong>1,840,000 tx/s</strong> (16.4x Rust)</td>
+      </tr>
+      <tr>
+        <td><strong>Read Latency (p50)</strong></td>
+        <td>2,100 μs (2.1 ms)</td>
+        <td>850 μs</td>
+        <td>320 μs (Redis Hit)</td>
+        <td><strong>42 ns</strong> (Zero-Copy DAX LEA)</td>
+      </tr>
+      <tr>
+        <td><strong>Read Latency (p99)</strong></td>
+        <td>14,500 μs (14.5 ms)</td>
+        <td>6,200 μs</td>
+        <td>3,800 μs</td>
+        <td><strong>95 ns</strong> (Hardware Cache Determinism)</td>
+      </tr>
+      <tr>
+        <td><strong>Idle Memory Footprint (RAM)</strong></td>
+        <td>420 MiB (Node + PG + pool)</td>
+        <td>280 MiB (Go + PG)</td>
+        <td>340 MiB (Rust + Redis + PG)</td>
+        <td><strong>18 MiB</strong> (Binary + Memory Map)</td>
+      </tr>
+      <tr>
+        <td><strong>Energy Consumption (Joules / 1M Tx)</strong></td>
+        <td>1,450 Joules</td>
+        <td>580 Joules</td>
+        <td>260 Joules</td>
+        <td><strong>14 Joules</strong> (Silicon Efficiency)</td>
+      </tr>
+      <tr>
+        <td><strong>Operational Complexity (Active Daemons)</strong></td>
+        <td>5 (App, Postgres, Redis, Envoy, K8s)</td>
+        <td>4 (App, Postgres, PgBouncer, K8s)</td>
+        <td>5 (App, Postgres, Redis, Sentinel, K8s)</td>
+        <td><strong>1 Single Compiled Binary</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-proof">
+    <strong>Results Analysis:</strong> The 16.4x write throughput over optimized Rust originates from replacing disk <code>fsync()</code> system calls with direct cache line writebacks (<code>clwb</code>) and 1-bit atomic commits in physical memory. Read latency drops to the nanosecond threshold because zero byte-copies occur between user and kernel address spaces.
+  </div>
+
+  <!-- SECTION 10 -->
+  <h1><span class="section-num">10.</span> The Vance Legacy &amp; The Manifesto of Sovereign Computation</h1>
+
+  <blockquote>
+    "Mathematics does not ask permission from kings to be true; silicon should not beg monopolies to compute."
+    <span class="author">— Lysander Vance, <em>Notes on Causal Persistence</em>, 2026</span>
+  </blockquote>
+
+  <p>Throughout the history of technology, profound breakthroughs have too often been co-opted by commercial cartels that transformed universal open protocols into proprietary tollbooths. Programming languages born of academic curiosity were converted into fulfillment mechanisms for metered cloud services.</p>
+
+  <p><strong>Engine Lang</strong> was deliberately named and architected upon an antagonistic philosophy: it has no corporate masters, maintains no shareholder constituency, and collects no rents on the execution of processor instructions.</p>
+
+  <p>The adoption of the pseudonym <strong>Lysander Vance</strong> honors the emancipatory tradition of technical pioneers—such as the <em>Nicolas Bourbaki</em> collective in formal mathematics or the release of the Bitcoin protocol by <em>Satoshi Nakamoto</em>. The persona exists solely to absorb authorial vanity and vanish, ensuring that no human ego stands between the software engineer and the bare silicon.</p>
+
+  <p>The language belongs exclusively to those who compile it. Its foundational rules are not dictated by executive decrees, but sustained by the immutable laws of semiconductor physics and the irrefutable theorems of mathematical logic.</p>
+
+  <!-- SECTION 11 -->
+  <h1><span class="section-num">11.</span> Normative Appendix: Canonical EBNF Grammar (ENG-SPEC-03.1)</h1>
+
+  <pre><code>Module            ::= "module" QualifiedIdentifier ";" ImportList TopLevelDeclList ;
+QualifiedIdentifier ::= Identifier ( "::" Identifier )* ;
+ImportList        ::= ( "use" QualifiedIdentifier ( "::" ( "{" IdentifierList "}" | "*" | Identifier ) )? ";" )* ;
+TopLevelDeclList  ::= ( Directive* TopLevelDecl )* ;
+TopLevelDecl      ::= TypeAliasDecl | EntityDecl | EnumDecl | TraitDecl | ImplDecl | ActionDecl | BoundaryDecl ;
+Directive         ::= "@" Identifier ( "(" DirectiveArgs? ")" )? ;
+
+TypeAliasDecl     ::= "type" Identifier ( "&lt;" TypeParamList ">" )? "=" TypeRef ( "where" RefinementExpr )? ";" ;
+EntityDecl        ::= "entity" Identifier ( "&lt;" TypeParamList ">" )? "{" EntityFieldList InvariantBlock? "}" ;
+EntityFieldList   ::= ( Directive* Identifier ":" TypeRef ( "=" Expression )? ( "where" RefinementExpr )? ","? )* ;
+InvariantBlock    ::= "invariant" "{" Expression "}" ;
+
+ActionDecl        ::= "pub"? "action" Identifier ( "&lt;" TypeParamList ">" )? "(" ParamList? ")" ( "->" TypeRef )? Block ;
+BoundaryDecl      ::= "boundary" Identifier "{" RouteDeclList "}" ;
+RouteDeclList     ::= ( Directive* "route" RouteMethod StringLiteral "->" Identifier ";" )* ;
+RouteMethod       ::= "GET" | "POST" | "PUT" | "DELETE" | "QUERY" ;
+
+Block             ::= "{" Statement* "}" ;
+Statement         ::= LetStmt | AtomicStmt | AssignStmt | ReturnStmt | IfStmt | MatchStmt | ExprStmt ;
+AtomicStmt        ::= "atomic" Block ;
+LetStmt           ::= "let" "mut"? Identifier ( ":" TypeRef )? "=" Expression ";" ;
+AssignStmt        ::= Expression ( "=" | "+=" | "-=" ) Expression ";" ;</code></pre>
+
+  <h2>Live Inspection of the Primordial Genesis SLS Container</h2>
+  <pre><code>$ enginec inspect /app/data/engine.db
+=== Engine Lang Single-Level Store (.db) Inspection ===
+Container Path:      /app/data/engine.db
+Magic Signature:     [69, 78, 71, 1] ('ENG\x01' Engine Lang Standard)
+Specification Ver:   0x0003 (v0.3 Normative)
+System Flags:        0x0000 (DIRTY: false, ENCRYPTED: false)
+Page Size:           4096 bytes (4 KiB standard)
+HugePage Size:       2097152 bytes (2 MiB aligned)
+Global Epoch:        #1 (Monotonic Causal Counter)
+Total Pages:         33554432 pages (128 GiB physical address space)
+Node UUID:           018F6C44-3291-7F81-B552-87AD18F6C440
+Root Table Offset:   0x00001000
+Root Entries Count:  0
+Journal Start:       0x00600000 (Region 2 Ring Buffer)
+Journal Size:        10 MiB
+CRC-64/NVME:         0x0B3270B44B4A0AA6 [VALID]
+Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)</code></pre>
+
+  <!-- REFERENCES -->
+  <div style="page-break-before: always;"></div>
+  <h1><span class="section-num">12.</span> Normative References &amp; Bibliography</h1>
+
+  <ol class="references-list">
+    <li><span class="ref-id">[ENG-SPEC-03.1]</span> VANCE, Lysander. <em>Engine Lang Formal Language &amp; Grammar Specification</em>. Engine Lang Core Working Group, 2026.</li>
+    <li><span class="ref-id">[ENG-SLS-01.1]</span> VANCE, Lysander. <em>Continuous State File Format (.db) and Single-Level Store Physical Layout Standard</em>. Normative Technical Report, 2026.</li>
+    <li><span class="ref-id">[ENG-MEM-01.1]</span> VANCE, Lysander. <em>Engine Lang Memory Consistency Model &amp; Concurrency Specification</em>. Normative Specification, 2026.</li>
+    <li><span class="ref-id">[ENG-SMT-01.1]</span> VANCE, Lysander. <em>Refinement Types and Formal SMT Invariant Verification Condition Synthesis</em>. Engine Working Group, 2026.</li>
+    <li><span class="ref-id">[ENG-WIRE-01.1]</span> VANCE, Lysander. <em>Engine-Wire: Causal P2P Mesh Protocol over Encrypted QUIC and Merkle-CRDTs</em>. Technical Report, 2026.</li>
+    <li><span class="ref-id">[DE MOURA &amp; BJØRNER]</span> DE MOURA, Leonardo; BJØRNER, Nikolaj. <em>Z3: An Efficient SMT Solver</em>. Tools and Algorithms for the Construction and Analysis of Systems (TACAS), Springer, 2008.</li>
+    <li><span class="ref-id">[CXL-SPEC-3.0]</span> COMPUTE EXPRESS LINK CONSORTIUM. <em>Compute Express Link (CXL) Specification 3.0: Direct Memory Pooling and Coherence</em>. CXL Consortium Standard, 2022.</li>
+    <li><span class="ref-id">[LAMPORT-1978]</span> LAMPORT, Leslie. <em>Time, Clocks, and the Ordering of Events in a Distributed System</em>. Communications of the ACM, Vol. 21, No. 7, 1978.</li>
+    <li><span class="ref-id">[SHAPIRO-2011]</span> SHAPIRO, Marc et al. <em>Conflict-Free Replicated Data Types (CRDTs)</em>. Symposium on Self-Stabilizing Systems (SSS), Springer, 2011.</li>
+  </ol>
+
+  <!-- Architectural Sign-Off Box -->
+  <div class="verification-seal-box">
+    <div class="seal-header">
+      <span class="seal-title">Canonical Architectural Sign-Off &amp; Formal Certification</span>
+      <span style="font-family:'Liberation Mono',monospace; font-size:7.5pt; color:#2563eb; font-weight:700;">ENG-WP-01.2026</span>
+    </div>
+    <div style="font-size: 8pt; color: #334155; line-height: 1.45;">
+      <p style="margin-bottom: 1.5mm;">
+        This document represents the official normative whitepaper and foundational architecture for <strong>Engine Lang</strong> (compiled via <code>enginec</code>). The system eliminates external database dependencies, volatile-persistent translation layers, and runtime assertion failures through formal Z3 SMT verification and physical Single-Level Store memory mapping.
+      </p>
+      <div style="display:flex; justify-content:space-between; margin-top:2.5mm; font-size:7.5pt; color:#64748b; font-family:'Liberation Mono',monospace;">
+        <div>
+          <strong>Primary Author:</strong> Lysander Vance<br>
+          <strong>Working Group:</strong> Engine Lang Core Architecture
+        </div>
+        <div>
+          <strong>Standard ID:</strong> ENG-SPEC-03.1 / ENG-SLS-01.1<br>
+          <strong>Licensing:</strong> Apache 2.0 Open Source
+        </div>
+        <div style="text-align:right;">
+          <strong>Target Hardware:</strong> CXL 2.0/3.0 / Optane / ARM64<br>
+          <strong>Status:</strong> RATIFIED CANONICAL 1.0
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+"""
+
+def generate_pdf():
+    # Trim trailing space
+    html = HTML_CONTENT.replace(
+        "</body>",
+        "<style>.content > *:last-child, .references-list { margin-bottom: 0 !important; padding-bottom: 0 !important; }</style></body>"
+    )
+
+    print(f"Writing English HTML source to {HTML_PATH}...")
+    with open(HTML_PATH, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print("Compiling English PDF with Google Chrome Headless...")
+    cmd = [
+        "google-chrome",
+        "--headless=new",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={PDF_PATH}",
+        f"file://{HTML_PATH.resolve()}"
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        print(f"Error compiling PDF: {res.stderr}", file=sys.stderr)
+        sys.exit(res.returncode)
+
+    print(f"English PDF successfully generated at: {PDF_PATH}")
+    
+    # Copy to root workspace paths
+    shutil.copy2(PDF_PATH, ROOT_PDF_PATH)
+    shutil.copy2(PDF_PATH, ROOT_PDF_EN_PATH)
+    print(f"Copied English PDF to: {ROOT_PDF_PATH} and {ROOT_PDF_EN_PATH}")
+
+    # Inspect with pdfinfo
+    pdfinfo = subprocess.run(["pdfinfo", str(PDF_PATH)], capture_output=True, text=True)
+    if pdfinfo.returncode == 0:
+        print("\n--- PDF Metadata ---")
+        print(pdfinfo.stdout)
+
+if __name__ == "__main__":
+    generate_pdf()

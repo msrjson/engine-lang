@@ -1,4 +1,4 @@
-// Continuum Language Example 01: Hello Causal World
+// Engine Lang Example 01: Hello Causal World
 // Demonstrates Single-Level Store (@persistent), atomic mutation, and causal pipelines.
 
 module Examples::HelloCausal;
@@ -6,7 +6,7 @@ module Examples::HelloCausal;
 // Type Refinement enforcing non-empty message
 type NonEmptyText = Text where len(value) > 0;
 
-// Persistent entity stored directly in NVRAM Region 3
+// Persistent entity stored directly in Single-Level Store (.db) Region 3
 @persistent
 entity SystemLog {
     id: UUIDv7,

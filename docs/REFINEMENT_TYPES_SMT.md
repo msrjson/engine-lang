@@ -1,5 +1,5 @@
-# Continuum Refinement Types & Formal SMT Invariants Specification
-**Document ID**: `CTM-SMT-01.1`
+# Engine Lang Refinement Types & Formal SMT Invariants Specification
+**Document ID**: `ENG-SMT-01.1`
 **Status**: Official Normative Specification
 **Formal Solver**: Z3 Theorem Prover Backend (SMT-LIB2 Standard)
 **Verification Target**: Compile-Time Invariant Proofs & Refinement Verification
@@ -8,9 +8,9 @@
 
 ## 1. Overview and Theoretical Foundation
 
-Continuum embeds formal methods directly into the programming language, eliminating runtime invariant checks, manual defensive programming, and runtime `assert()` crashes in production.
+Engine Lang embeds formal methods directly into the programming language, eliminating runtime invariant checks, manual defensive programming, and runtime `assert()` crashes in production.
 
-By coupling the static type checker with the **Z3 SMT solver**, types in Continuum represent not merely memory layouts, but **mathematical propositions** (Curry-Howard-Lambek correspondence applied to persistent systems):
+By coupling the static type checker with the **Z3 SMT solver**, types in Engine Lang represent not merely memory layouts, but **mathematical propositions** (Curry-Howard-Lambek correspondence applied to persistent systems):
 
 $$\tau = \{ x : B \mid \phi(x) \}$$
 
@@ -22,7 +22,7 @@ Where $B$ is a base primitive type (`Int`, `Float`, `Decimal`, `Text`) and $\phi
 
 Refinement predicates are attached using the `where` keyword:
 
-```continuum
+```engine
 // Scaled monetary type preventing negative balances
 type PositiveMoney = Decimal(18, 4) where value > 0.0000;
 
@@ -40,7 +40,7 @@ When assigning expression $E$ to a variable of refined type $\{ x : B \mid \phi(
    $$\Gamma \implies \phi(E)$$
 3. The formula $\Gamma \land \neg \phi(E)$ is submitted to the Z3 SMT solver.
 4. If the formula is **UNSAT**, the assignment is proven sound.
-5. If the formula is **SAT**, the solver generates a concrete counterexample, and `ctmc` halts with an error.
+5. If the formula is **SAT**, the solver generates a concrete counterexample, and `enginec` halts with an error.
 
 ---
 
@@ -48,7 +48,7 @@ When assigning expression $E$ to a variable of refined type $\{ x : B \mid \phi(
 
 Entities declare structural domain contracts using the `invariant { ... }` block:
 
-```continuum
+```engine
 @persistent
 entity TreasuryAccount {
     id: UUIDv7,
@@ -88,13 +88,13 @@ To guarantee that SMT solver verification remains **decidable** and executes in 
 When reasoning about complex domains that exceed linear quantifier-free arithmetic:
 
 ### 5.1. Solver Timeout Policy
-- The default Z3 solver timeout is configured in `Continuum.toml` (`smt_timeout_ms = 5000`).
-- If Z3 does not reach a decision within the timeout, the compiler rejects the build with `CTM-SMT-091 (Solver Timeout / Incomplete Proof)`.
+- The default Z3 solver timeout is configured in `Engine Lang.toml` (`smt_timeout_ms = 5000`).
+- If Z3 does not reach a decision within the timeout, the compiler rejects the build with `ENG-SMT-091 (Solver Timeout / Incomplete Proof)`.
 
 ### 5.2. Explicit Axiomatic Assumptions (`assume`)
 For mathematical properties proven outside the language (e.g., cryptographic hash pre-image resistance or external hardware properties), developers may introduce explicit lemmas:
 
-```continuum
+```engine
 action verify_hash(data: Text, expected_hash: Text) {
     let computed = crypto::sha256(data);
 
@@ -108,7 +108,7 @@ action verify_hash(data: Text, expected_hash: Text) {
 
 ### 5.3. Unsafe Escape Hatch (`unsafe_invariant`)
 In performance-critical edge kernels where an invariant cannot be expressed in first-order logic, `unsafe_invariant` may be used:
-```continuum
+```engine
 unsafe_invariant {
     // Relies on developer manual proof audit; compiler logs audit warning
     custom_c_math_valid(self.raw_ptr)

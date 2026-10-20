@@ -3,11 +3,12 @@ target/
 compiler/target/
 **/*.rs.bk
 
-# Single-Level Store binary memory files
+# Single-Level Store binary database files
+data/*.db
+*.db
 data/*.nvram
 *.nvram
 
 # Logs and environment
 *.log
 .env
-

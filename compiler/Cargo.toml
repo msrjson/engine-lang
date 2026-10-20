@@ -1,13 +1,13 @@
 [package]
-name = "ctmc"
-version = "0.2.0"
+name = "enginec"
+version = "0.3.1"
 edition = "2021"
-authors = ["Continuum Language Core Working Group <architects@continuum-lang.org>"]
-description = "Reference Bootstrap Compiler and Verification Toolchain for Continuum"
+authors = ["Engine Lang Core Working Group <architects@engine-lang.org>"]
+description = "Reference Bootstrap Compiler and Verification Toolchain for Engine Lang"
 license = "Apache-2.0"
 
 [[bin]]
-name = "ctmc"
+name = "enginec"
 path = "src/main.rs"
 
 [dependencies]
@@ -16,4 +16,3 @@ thiserror = "1.0"
 byteorder = "1.5"
 
 [dev-dependencies]
-

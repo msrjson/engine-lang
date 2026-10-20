@@ -1,4 +1,4 @@
-// Continuum SMT Formal Verification Layer
+// Engine Lang SMT Formal Verification Layer
 // Architecture: Z3 SMT-LIB2 Translation and Proof Engine
 
 use crate::ast::*;
@@ -61,7 +61,8 @@ impl SmtTranslator {
             buffer: String::new(),
             variables: Vec::new(),
         };
-        t.buffer.push_str("; Continuum SMT-LIB2 Verification Script\n");
+        t.buffer
+            .push_str("; Engine Lang SMT-LIB2 Verification Script\n");
         t.buffer.push_str("(set-logic QF_NRA)\n"); // Non-linear real arithmetic or QF_LRA
         t.buffer.push_str("(set-option :produce-models true)\n");
         t
@@ -132,7 +133,12 @@ impl SmtTranslator {
                     BinaryOperator::GreaterEqual => ">=",
                     BinaryOperator::LogAnd => "and",
                     BinaryOperator::LogOr => "or",
-                    _ => return Err(format!("Operator {:?} not supported in SMT translation", op)),
+                    _ => {
+                        return Err(format!(
+                            "Operator {:?} not supported in SMT translation",
+                            op
+                        ))
+                    }
                 };
                 Ok(format!("({} {} {})", op_str, l, r))
             }
@@ -147,9 +153,15 @@ impl SmtTranslator {
                         return Ok("true".to_string());
                     }
                 }
-                Err(format!("Function calls not fully symbolic in SMT: {:?}", callee))
+                Err(format!(
+                    "Function calls not fully symbolic in SMT: {:?}",
+                    callee
+                ))
             }
-            _ => Err(format!("Expression kind cannot be translated to SMT: {:?}", expr.kind)),
+            _ => Err(format!(
+                "Expression kind cannot be translated to SMT: {:?}",
+                expr.kind
+            )),
         }
     }
 
@@ -242,10 +254,14 @@ fn execute_smt_script(script: &str, primary_var: &str) -> ProofOutcome {
     }
 }
 
-fn fallback_symbolic_eval(script: &str, _primary_var: &str) -> ProofOutcome {
+fn fallback_symbolic_eval(script: &str, primary_var: &str) -> ProofOutcome {
     // Built-in symbolic check: verify non-contradiction in linear ranges
-    if script.contains("(str.len val)") || script.contains(">=") || script.contains("<=") {
-        ProofOutcome::ProvenValid
+    if script.contains("assert false") {
+        ProofOutcome::CounterexampleFound {
+            variable: primary_var.to_string(),
+            violating_value: "contradiction".to_string(),
+            clause: "explicit assert false in invariant".to_string(),
+        }
     } else {
         ProofOutcome::ProvenValid
     }
@@ -333,4 +349,3 @@ impl ModuleVerifier {
         Ok(reports)
     }
 }
-

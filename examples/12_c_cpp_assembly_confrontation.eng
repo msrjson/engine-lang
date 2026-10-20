@@ -1,0 +1,93 @@
+// Engine Lang Canonical Example 12: Confronting C, C++, and Assembly
+// Reference: ENG-CG-01.1 & Chapter 12 of The Book of Engine Lang
+// Verification: Proved at compile time via Z3 SMT solver
+// Execution: Zero-cost machine code, deterministic single-level store, and verified MMIO
+
+module Hardware::SiliconConfrontation;
+
+// ============================================================================
+// 1. Confronting C: Bounded Refinement Types vs. Undefined Behavior
+// In C, signed integer overflows and buffer indices invite UB and CVE exploits.
+// In Engine Lang, bounds are proven by Z3 before assembly synthesis.
+// ============================================================================
+
+type BaudRateDivisor = Int where value >= 1 && value <= 1047;
+type TxByte = Int where value >= 0 && value <= 255;
+type BufferIndex = Int where value >= 0 && value < 64;
+
+// ============================================================================
+// 2. Confronting Assembly & C: Strongly-Typed Hardware MMIO Registers
+// Instead of unsafe volatile pointer casts: *(volatile uint8_t*)0x10000000
+// ============================================================================
+
+@mmio(address: 0x10000000, size: 8)
+register HardwareUART16550 {
+    rbr_thr: Byte,
+    ier: Byte,
+    iir_fcr: Byte,
+    lcr: Byte,
+    mcr: Byte,
+    lsr: Byte,
+    msr: Byte,
+    scr: Byte,
+}
+
+// ============================================================================
+// 3. Confronting C++: Persistent Telemetry without vtables or Heap Allocators
+// Physical NVRAM cache-line mapped directly into Single-Level Store (Region 3).
+// ============================================================================
+
+@persistent
+entity SiliconCoreTelemetry {
+    id: UUIDv7,
+    clock_divisor: BaudRateDivisor,
+    bytes_transmitted: Int,
+    is_active: Boolean,
+    invariant {
+        self.clock_divisor >= 1 &&
+        self.bytes_transmitted >= 0
+    }
+}
+
+// ============================================================================
+// 4. Mission-Critical Silicon Action: Atomic Persistence with Hardware Fences
+// Synthesizes CLWB + SFENCE directly on silicon without OS kernel context switches.
+// ============================================================================
+
+action transmit_telemetry_byte(
+    uart: &mut HardwareUART16550,
+    core: &mut SiliconCoreTelemetry,
+    data: TxByte
+) -> Result<(), Text> {
+    atomic {
+        // Safe register write verified against hardware bit-width
+        uart.rbr_thr = data;
+        core.bytes_transmitted = core.bytes_transmitted + 1;
+        // On exit, compiler automatically emits CLWB & SFENCE instructions
+    }
+    return Ok(());
+}
+
+action main() -> Result<(), Text> {
+    let mut core_state = SiliconCoreTelemetry {
+        id: "018f6c44-3291-7f81-b552-87ad18f6c442",
+        clock_divisor: 115,
+        bytes_transmitted: 0,
+        is_active: true,
+    };
+
+    let mut uart_device = HardwareUART16550 {
+        rbr_thr: 0,
+        ier: 0,
+        iir_fcr: 0,
+        lcr: 3,
+        mcr: 0,
+        lsr: 96,
+        msr: 0,
+        scr: 0,
+    };
+
+    transmit_telemetry_byte(&mut uart_device, &mut core_state, 65);
+    return Ok(());
+}
+

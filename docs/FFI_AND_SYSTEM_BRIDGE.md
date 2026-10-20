@@ -1,5 +1,5 @@
-# Continuum Foreign Function Interface (FFI) & System Bridge Specification
-**Document ID**: `CTM-FFI-01.1`
+# Engine Lang Foreign Function Interface (FFI) & System Bridge Specification
+**Document ID**: `ENG-FFI-01.1`
 **Status**: Official Normative Specification
 **Interoperability**: C / POSIX ABI, Linux Kernel Direct Access (DAX / PMDK), PostgreSQL Wire Protocol v3.0
 
@@ -7,11 +7,11 @@
 
 ## 1. Overview and Interoperability Philosophy
 
-While Continuum unifies memory and persistence to eliminate cloud middleware, enterprise adoption requires seamless integration with existing operating systems, hardware drivers, and analytical tooling.
+While Engine Lang unifies memory and persistence to eliminate cloud middleware, enterprise adoption requires seamless integration with existing operating systems, hardware drivers, and analytical tooling.
 
-Continuum provides two primary bridge interfaces:
+Engine Lang provides two primary bridge interfaces:
 1. **Low-Level C ABI FFI**: Direct interaction with POSIX system calls, hardware security modules (HSM), and kernel DAX drivers.
-2. **PostgreSQL Wire Protocol Bridge (`ctm-bridge`)**: Emulates a standard PostgreSQL database server on port 5432, enabling business intelligence tools (DBeaver, Power BI, Metabase, Tableau) to query the `.nvram` Single-Level Store directly using standard SQL queries without installing client drivers.
+2. **PostgreSQL Wire Protocol Bridge (`engine-bridge`)**: Emulates a standard PostgreSQL database server on port 5432, enabling business intelligence tools (DBeaver, Power BI, Metabase, Tableau) to query the `.db` Single-Level Store directly using standard SQL queries without installing client drivers.
 
 ---
 
@@ -19,7 +19,7 @@ Continuum provides two primary bridge interfaces:
 
 Foreign functions from C/Rust libraries are declared using the `boundary extern "C"` block:
 
-```continuum
+```engine
 module System::Crypto;
 
 boundary extern "C" {
@@ -40,13 +40,13 @@ boundary extern "C" {
 
 ## 3. Linux Kernel Direct Access (DAX) & Hardware PMDK Layer
 
-To achieve sub-microsecond latency, Continuum bypasses standard OS page caches using Linux DAX (Direct Access):
+To achieve sub-microsecond latency, Engine Lang bypasses standard OS page caches using Linux DAX (Direct Access):
 
 ```
 +─────────────────────────────────────────────────────────────+
-|           CONTINUUM RUNTIME DIRECT HARDWARE ACCESS          |
+|           ENGINE LANG RUNTIME DIRECT HARDWARE ACCESS          |
 |                                                             |
-|  [ ctmc Process Virtual Memory Space ]                      |
+|  [ enginec Process Virtual Memory Space ]                      |
 |                  │                                          |
 |                  ▼ (mmap with MAP_SHARED_VALIDATE | MAP_SYNC)
 |  [ /dev/pmem0 or ext4 -o dax Mount Point ]                  |
@@ -57,9 +57,9 @@ To achieve sub-microsecond latency, Continuum bypasses standard OS page caches u
 ```
 
 ### System Call Configuration
-When mounting an `.nvram` container:
+When mounting an `.db` container:
 ```c
-int fd = open("/mnt/pmem/continuum.nvram", O_RDWR | O_DIRECT);
+int fd = open("/mnt/pmem/engine.db", O_RDWR | O_DIRECT);
 void* sls_addr = mmap(
     NULL,
     size_bytes,
@@ -72,22 +72,22 @@ void* sls_addr = mmap(
 
 ---
 
-## 4. The PostgreSQL Wire Protocol Bridge (`ctm-bridge`)
+## 4. The PostgreSQL Wire Protocol Bridge (`engine-bridge`)
 
-To eliminate the objection that *"Continuum is an isolated silo incompatible with enterprise reporting"*, the runtime includes an embedded PostgreSQL v3.0 wire protocol responder:
+To eliminate the objection that *"Engine Lang is an isolated silo incompatible with enterprise reporting"*, the runtime includes an embedded PostgreSQL v3.0 wire protocol responder:
 
 ```
 [ DBeaver / Power BI / Tableau ] ────► [ TCP Port 5432: PostgreSQL Wire v3.0 ]
                                                       │
                                                       ▼
-                                       [ ctm-bridge Virtual Catalog ]
+                                       [ engine-bridge Virtual Catalog ]
                                                       │
                                                       ▼ (Zero-Copy Offset Read)
-                                       [ .nvram Single-Level Store ]
+                                       [ .db Single-Level Store ]
 ```
 
 ### Supported Operations:
-- **`StartupMessage` & `SSLRequest`**: Authenticates connecting clients and maps DB users to Continuum `@TenantGuard` tenant IDs.
+- **`StartupMessage` & `SSLRequest`**: Authenticates connecting clients and maps DB users to Engine Lang `@TenantGuard` tenant IDs.
 - **SQL-to-Graph Translation**: Translates simple `SELECT * FROM Vehicle WHERE plate = 'ABC1D23'` into direct binary graph offset lookups (`lea`).
 - **Data Type Streaming**: Emits binary tuple messages directly from the physical NVRAM layout without intermediate serialization:
   - `Text` $\to$ `VARCHAR` (OID 1043)

@@ -1,0 +1,94 @@
+// Engine Lang Book - Chapter 02: Refinement Types, SMT, and the Death of Runtime Bugs
+// Canonical Example: Formally Verified Multi-Account Bank Transfer & Business Rules
+// Demonstrates Refinement Types (where), Entity Invariants, SMT Z3 Proofs, and Compile-Time Verification.
+
+module Book::Chapter02::BankTransfer;
+
+// 1. Refinement Types: Predicates verified as mathematical theorems at compile time
+type Percentage = Int where value >= 0 && value <= 100;
+type PositiveAmount = Decimal(18, 4) where value > 0.0000;
+type AccountId = Text where len(value) >= 3;
+
+// 2. Persistent Entity with formal SMT invariant: balance can NEVER be negative
+@persistent
+entity BankAccount {
+    id: AccountId,
+    owner: Text,
+    balance: Decimal(18, 4) where value >= 0.0000,
+    transfers_completed: Int where value >= 0,
+
+    invariant {
+        self.balance >= 0.0000 &&
+        self.transfers_completed >= 0 &&
+        len(self.id) >= 3
+    }
+}
+
+// 3. Pure business action calculating cashback rebate
+// Because rate is strictly typed as 'Percentage' (0..100), Z3 formally proves the result is non-negative
+action compute_rebate(amount: PositiveAmount, rate: Percentage) -> Decimal(18, 4) {
+    let rebate: Decimal(18, 4) = (amount * string::from_int(rate)) / 100.0000;
+    return rebate;
+}
+
+// 4. Atomic Multi-Entity Transfer with Precondition Proofs
+action transfer(
+    from_acc: &mut BankAccount,
+    to_acc: &mut BankAccount,
+    amount: PositiveAmount
+) -> Result<(), Text> {
+    // Compile-time and runtime check: sender must hold sufficient funds
+    if from_acc.balance < amount {
+        return Err("Transfer rejected: Insufficient funds to satisfy balance invariant");
+    }
+
+    atomic {
+        // Debit sender
+        from_acc.balance -= amount;
+        from_acc.transfers_completed += 1;
+
+        // Credit recipient
+        to_acc.balance += amount;
+        to_acc.transfers_completed += 1;
+
+        // Both cache lines flushed to SLS with a single epoch commit
+    }
+
+    return Ok(());
+}
+
+// 5. Entry point demonstrating the proven flow
+pub action main() -> Result<(), Text> {
+    let mut alice = BankAccount {
+        id: "ACC-ALICE-01",
+        owner: "Alice Vance",
+        balance: 5000.0000,
+        transfers_completed: 0
+    };
+
+    let mut bob = BankAccount {
+        id: "ACC-BOB-02",
+        owner: "Bob Nakamoto",
+        balance: 1000.0000,
+        transfers_completed: 0
+    };
+
+    io::println("=== Engine Lang: Chapter 02 Verified Bank Transfer ===");
+    io::println("Alice Initial Balance: " + string::from_decimal(alice.balance));
+    io::println("Bob Initial Balance:   " + string::from_decimal(bob.balance));
+
+    // Execute formally verified transfer
+    let transfer_amount: PositiveAmount = 1500.0000;
+    transfer(&mut alice, &mut bob, transfer_amount)?;
+
+    io::println("--- After Transfer of 1500.0000 ---");
+    io::println("Alice Balance: " + string::from_decimal(alice.balance));
+    io::println("Bob Balance:   " + string::from_decimal(bob.balance));
+
+    // Calculate a 5% promotional cashback
+    let promo_rate: Percentage = 5;
+    let cashback = compute_rebate(transfer_amount, promo_rate);
+    io::println("Earned Cashback (5%): " + string::from_decimal(cashback));
+
+    return Ok(());
+}

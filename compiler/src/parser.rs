@@ -1,5 +1,5 @@
-// Continuum Recursive-Descent Parser Implementation
-// Architecture: CTM-SPEC-02.1 LL(1) Deterministic Parser
+// Engine Lang Recursive-Descent Parser Implementation
+// Architecture: ENG-SPEC-03.1 LL(1) Deterministic Parser
 
 use crate::ast::*;
 use crate::lexer::{Token, TokenKind};
@@ -18,7 +18,9 @@ impl Parser {
         if self.cursor < self.tokens.len() {
             &self.tokens[self.cursor]
         } else {
-            self.tokens.last().expect("Token stream must have at least EOF")
+            self.tokens
+                .last()
+                .expect("Token stream must have at least EOF")
         }
     }
 
@@ -26,7 +28,9 @@ impl Parser {
         if self.cursor + 1 < self.tokens.len() {
             &self.tokens[self.cursor + 1]
         } else {
-            self.tokens.last().expect("Token stream must have at least EOF")
+            self.tokens
+                .last()
+                .expect("Token stream must have at least EOF")
         }
     }
 
@@ -151,10 +155,32 @@ impl Parser {
         })
     }
 
+    fn parse_directive_name(&mut self) -> Result<(String, SourceLocation), String> {
+        let curr = self.current().clone();
+        match &curr.kind {
+            TokenKind::Identifier(name) => {
+                self.advance();
+                Ok((name.clone(), curr.loc))
+            }
+            TokenKind::Datasource => {
+                self.advance();
+                Ok(("datasource".to_string(), curr.loc))
+            }
+            TokenKind::Boundary => {
+                self.advance();
+                Ok(("boundary".to_string(), curr.loc))
+            }
+            _ => Err(format!(
+                "Parse error at {}: expected directive name, found {:?}",
+                curr.loc, curr.kind
+            )),
+        }
+    }
+
     fn parse_directives(&mut self) -> Result<Vec<Directive>, String> {
         let mut directives = Vec::new();
         while self.match_token(&TokenKind::At) {
-            let (name, loc) = self.expect_identifier()?;
+            let (name, loc) = self.parse_directive_name()?;
             let mut args = Vec::new();
 
             if self.match_token(&TokenKind::LParen) {
@@ -184,6 +210,9 @@ impl Parser {
     fn parse_top_level_decl(&mut self) -> Result<TopLevelDecl, String> {
         let directives = self.parse_directives()?;
 
+        if self.check(&TokenKind::Datasource) {
+            return self.parse_datasource_decl().map(TopLevelDecl::Datasource);
+        }
         if self.check(&TokenKind::Type) {
             return self.parse_type_alias_decl().map(TopLevelDecl::TypeAlias);
         }
@@ -193,16 +222,25 @@ impl Parser {
         if self.check(&TokenKind::Struct) {
             return self.parse_struct_decl(directives).map(TopLevelDecl::Struct);
         }
+        if self.check(&TokenKind::Register) {
+            return self
+                .parse_register_decl(directives)
+                .map(TopLevelDecl::Register);
+        }
         if self.check(&TokenKind::Enum) {
             return self.parse_enum_decl(directives).map(TopLevelDecl::Enum);
         }
-        if self.check(&TokenKind::Trait) || (self.check(&TokenKind::Pub) && self.peek().kind == TokenKind::Trait) {
+        if self.check(&TokenKind::Trait)
+            || (self.check(&TokenKind::Pub) && self.peek().kind == TokenKind::Trait)
+        {
             return self.parse_trait_decl().map(TopLevelDecl::Trait);
         }
         if self.check(&TokenKind::Impl) {
             return self.parse_impl_decl().map(TopLevelDecl::Impl);
         }
-        if self.check(&TokenKind::Action) || (self.check(&TokenKind::Pub) && self.peek().kind == TokenKind::Action) {
+        if self.check(&TokenKind::Action)
+            || (self.check(&TokenKind::Pub) && self.peek().kind == TokenKind::Action)
+        {
             return self.parse_action_decl().map(TopLevelDecl::Action);
         }
         if self.check(&TokenKind::Boundary) {
@@ -214,6 +252,66 @@ impl Parser {
             self.current().loc,
             self.current().kind
         ))
+    }
+
+    fn parse_datasource_decl(&mut self) -> Result<DatasourceDecl, String> {
+        let start = self.expect(&TokenKind::Datasource)?;
+        let (name, _) = self.expect_identifier()?;
+        self.expect(&TokenKind::LBrace)?;
+        let mut driver = String::from("sls");
+        let mut uri = Expr {
+            kind: ExprKind::Literal(Literal::String("memory://engine.db".to_string())),
+            loc: start.loc.clone(),
+        };
+        let mut mode = None;
+
+        while !self.check(&TokenKind::RBrace) && !self.check(&TokenKind::Eof) {
+            let (field_name, _) = self.expect_identifier()?;
+            self.expect(&TokenKind::Colon)?;
+            match field_name.as_str() {
+                "driver" => {
+                    if let TokenKind::Identifier(d) = &self.current().kind {
+                        driver = d.clone();
+                        self.advance();
+                    } else if let TokenKind::StringLiteral(d) = &self.current().kind {
+                        driver = d.clone();
+                        self.advance();
+                    } else {
+                        return Err(format!("Expected driver name at {}", self.current().loc));
+                    }
+                }
+                "uri" => {
+                    uri = self.parse_expression()?;
+                }
+                "mode" => {
+                    if let TokenKind::Identifier(m) = &self.current().kind {
+                        mode = Some(m.clone());
+                        self.advance();
+                    } else if let TokenKind::StringLiteral(m) = &self.current().kind {
+                        mode = Some(m.clone());
+                        self.advance();
+                    } else {
+                        return Err(format!("Expected mode at {}", self.current().loc));
+                    }
+                }
+                unknown => {
+                    return Err(format!(
+                        "Unknown datasource property '{}' at {}",
+                        unknown,
+                        self.current().loc
+                    ));
+                }
+            }
+            let _ = self.match_token(&TokenKind::Comma);
+        }
+        self.expect(&TokenKind::RBrace)?;
+        Ok(DatasourceDecl {
+            name,
+            driver,
+            uri,
+            mode,
+            loc: start.loc,
+        })
     }
 
     fn parse_type_alias_decl(&mut self) -> Result<TypeAliasDecl, String> {
@@ -323,6 +421,42 @@ impl Parser {
             directives,
             name,
             type_params,
+            fields,
+            loc: start.loc,
+        })
+    }
+
+    fn parse_register_decl(&mut self, directives: Vec<Directive>) -> Result<RegisterDecl, String> {
+        let start = self.expect(&TokenKind::Register)?;
+        let (name, _) = self.expect_identifier()?;
+        self.expect(&TokenKind::LBrace)?;
+        let mut fields = Vec::new();
+
+        while !self.check(&TokenKind::RBrace) && !self.check(&TokenKind::Eof) {
+            let (field_name, field_loc) = self.expect_identifier()?;
+            self.expect(&TokenKind::Colon)?;
+            let (type_name, _) = self.expect_identifier()?;
+            let bit_width = match type_name.as_str() {
+                "Bit" => 1,
+                "Byte" => 8,
+                "Word" => 16,
+                "DWord" => 32,
+                "QWord" => 64,
+                _ => 32,
+            };
+            fields.push(RegisterField {
+                name: field_name,
+                bit_width,
+                loc: field_loc,
+            });
+            self.match_token(&TokenKind::Comma);
+        }
+
+        self.expect(&TokenKind::RBrace)?;
+
+        Ok(RegisterDecl {
+            directives,
+            name,
             fields,
             loc: start.loc,
         })
@@ -569,7 +703,10 @@ impl Parser {
                 self.advance();
                 p
             } else {
-                return Err(format!("Expected path string literal at {}", self.current().loc));
+                return Err(format!(
+                    "Expected path string literal at {}",
+                    self.current().loc
+                ));
             };
 
             self.expect(&TokenKind::CausalEdge)?;
@@ -621,7 +758,10 @@ impl Parser {
                 self.advance();
                 n as usize
             } else {
-                return Err(format!("Expected integer dimension for Vector at {}", self.current().loc));
+                return Err(format!(
+                    "Expected integer dimension for Vector at {}",
+                    self.current().loc
+                ));
             };
             self.expect(&TokenKind::RParen)?;
             return Ok(TypeRef::Vector(dim));
@@ -632,14 +772,20 @@ impl Parser {
                 self.advance();
                 n as usize
             } else {
-                return Err(format!("Expected integer precision for Decimal at {}", self.current().loc));
+                return Err(format!(
+                    "Expected integer precision for Decimal at {}",
+                    self.current().loc
+                ));
             };
             self.expect(&TokenKind::Comma)?;
             let s = if let TokenKind::Integer(n) = self.current().kind {
                 self.advance();
                 n as usize
             } else {
-                return Err(format!("Expected integer scale for Decimal at {}", self.current().loc));
+                return Err(format!(
+                    "Expected integer scale for Decimal at {}",
+                    self.current().loc
+                ));
             };
             self.expect(&TokenKind::RParen)?;
             return Ok(TypeRef::Decimal(p, s));
@@ -870,10 +1016,17 @@ impl Parser {
             if s == "in" {
                 self.advance();
             } else {
-                return Err(format!("Expected 'in' in for loop, found '{}' at {}", s, self.current().loc));
+                return Err(format!(
+                    "Expected 'in' in for loop, found '{}' at {}",
+                    s,
+                    self.current().loc
+                ));
             }
         } else {
-            return Err(format!("Expected 'in' in for loop at {}", self.current().loc));
+            return Err(format!(
+                "Expected 'in' in for loop at {}",
+                self.current().loc
+            ));
         }
         let iterable = self.parse_expression()?;
         let body = self.parse_block()?;
@@ -936,7 +1089,10 @@ impl Parser {
             return Ok((Pattern::Identifier(qual_name), loc));
         }
 
-        Err(format!("Expected pattern at {}: found {:?}", curr.loc, curr.kind))
+        Err(format!(
+            "Expected pattern at {}: found {:?}",
+            curr.loc, curr.kind
+        ))
     }
 
     // =========================================================================
@@ -1115,7 +1271,7 @@ impl Parser {
             let op_loc = self.advance().loc;
             let right = self.parse_cosine_metric_level_9()?;
 
-            // Reject invalid chaining: a < b < c (CTM-OP-001)
+            // Reject invalid chaining: a < b < c (ENG-OP-001)
             if matches!(
                 self.current().kind,
                 TokenKind::Equal
@@ -1126,7 +1282,7 @@ impl Parser {
                     | TokenKind::GreaterEqual
             ) {
                 return Err(format!(
-                    "Syntax Error [CTM-OP-001] at {}: Chained relational comparisons are prohibited. Use explicit conjunction: a < b && b < c",
+                    "Syntax Error [ENG-OP-001] at {}: Chained relational comparisons are prohibited. Use explicit conjunction: a < b && b < c",
                     self.current().loc
                 ));
             }
@@ -1518,26 +1674,26 @@ impl Parser {
 
                     if is_struct_init {
                         self.advance(); // {
-                            let mut fields = Vec::new();
-                            while !self.check(&TokenKind::RBrace) && !self.check(&TokenKind::Eof) {
-                                let (fname, _) = self.expect_identifier()?;
-                                self.expect(&TokenKind::Colon)?;
-                                let fval = self.parse_expression()?;
-                                fields.push((fname, fval));
-                                if !self.match_token(&TokenKind::Comma) {
-                                    break;
-                                }
+                        let mut fields = Vec::new();
+                        while !self.check(&TokenKind::RBrace) && !self.check(&TokenKind::Eof) {
+                            let (fname, _) = self.expect_identifier()?;
+                            self.expect(&TokenKind::Colon)?;
+                            let fval = self.parse_expression()?;
+                            fields.push((fname, fval));
+                            if !self.match_token(&TokenKind::Comma) {
+                                break;
                             }
-                            self.expect(&TokenKind::RBrace)?;
-                            return Ok(Expr {
-                                kind: ExprKind::StructInit {
-                                    name: qual_name,
-                                    fields,
-                                },
-                                loc,
-                            });
                         }
+                        self.expect(&TokenKind::RBrace)?;
+                        return Ok(Expr {
+                            kind: ExprKind::StructInit {
+                                name: qual_name,
+                                fields,
+                            },
+                            loc,
+                        });
                     }
+                }
 
                 if qual_name.contains("::") {
                     let parts = qual_name.split("::").map(String::from).collect();

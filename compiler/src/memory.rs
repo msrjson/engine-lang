@@ -1,15 +1,15 @@
-// Continuum Single-Level Store (SLS) Memory Layout
-// Architecture: CTM-SLS-01.1 Binary Standard
+// Engine Lang Single-Level Store (SLS) Memory Layout
+// Architecture: ENG-SLS-01.1 Binary Standard
 
 use byteorder::{ByteOrder, LittleEndian};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
-pub const CTM_MAGIC: [u8; 4] = [0x43, 0x54, 0x4D, 0x01]; // 'C', 'T', 'M', 0x01
-pub const CTM_SPEC_VERSION: u16 = 0x0002;
-pub const REGION_0_SIZE: u64 = 2 * 1024 * 1024;  // 2 MiB
-pub const REGION_1_SIZE: u64 = 4 * 1024 * 1024;  // 4 MiB
+pub const ENG_MAGIC: [u8; 4] = [0x45, 0x4E, 0x47, 0x01]; // 'E', 'N', 'G', 0x01
+pub const ENG_SPEC_VERSION: u16 = 0x0003;
+pub const REGION_0_SIZE: u64 = 2 * 1024 * 1024; // 2 MiB
+pub const REGION_1_SIZE: u64 = 4 * 1024 * 1024; // 4 MiB
 pub const REGION_2_SIZE: u64 = 10 * 1024 * 1024; // 10 MiB
 pub const HEAP_START_OFFSET: u64 = 16 * 1024 * 1024; // 16 MiB
 pub const DEFAULT_PAGE_SIZE: u32 = 4096;
@@ -22,7 +22,7 @@ pub const FLAG_COMPACTING: u16 = 1 << 2;
 
 #[repr(C, align(64))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct CtmSuperblock {
+pub struct EngineSuperblock {
     pub magic: [u8; 4],
     pub spec_version: u16,
     pub flags: u16,
@@ -39,19 +39,19 @@ pub struct CtmSuperblock {
     pub crc64: u64,
 }
 
-impl Default for CtmSuperblock {
+impl Default for EngineSuperblock {
     fn default() -> Self {
         let mut sb = Self {
-            magic: CTM_MAGIC,
-            spec_version: CTM_SPEC_VERSION,
+            magic: ENG_MAGIC,
+            spec_version: ENG_SPEC_VERSION,
             flags: 0,
             page_size: DEFAULT_PAGE_SIZE,
             huge_page_size: DEFAULT_HUGE_PAGE_SIZE,
             global_epoch: 1,
             total_pages: 33554432, // 128 GiB / 4 KiB
             node_uuid: [
-                0x01, 0x8F, 0x6C, 0x44, 0x32, 0x91, 0x7F, 0x81,
-                0xB5, 0x52, 0x87, 0xAD, 0x18, 0xF6, 0xC4, 0x40,
+                0x01, 0x8F, 0x6C, 0x44, 0x32, 0x91, 0x7F, 0x81, 0xB5, 0x52, 0x87, 0xAD, 0x18, 0xF6,
+                0xC4, 0x40,
             ],
             root_table_offset: 0x1000,
             root_entries_count: 0,
@@ -65,7 +65,7 @@ impl Default for CtmSuperblock {
     }
 }
 
-impl CtmSuperblock {
+impl EngineSuperblock {
     pub fn compute_crc(&self) -> u64 {
         let mut bytes = [0u8; 56];
         bytes[0..4].copy_from_slice(&self.magic);
@@ -80,7 +80,7 @@ impl CtmSuperblock {
         crc64_nvme(&bytes)
     }
 
-    pub fn to_bytes(&self) -> [u8; 64] {
+    pub fn to_bytes(self) -> [u8; 64] {
         let mut bytes = [0u8; 64];
         bytes[0..4].copy_from_slice(&self.magic);
         LittleEndian::write_u16(&mut bytes[4..6], self.spec_version);
@@ -93,19 +93,21 @@ impl CtmSuperblock {
         LittleEndian::write_u64(&mut bytes[48..56], self.root_table_offset);
         LittleEndian::write_u16(&mut bytes[56..58], self.root_entries_count);
         bytes[58..64].copy_from_slice(&self.reserved_pad);
-        // Note: journal fields in extended 64-byte chunks or following offsets
         bytes
     }
 
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, String> {
         if bytes.len() < 64 {
-            return Err("Buffer too small for CtmSuperblock".to_string());
+            return Err("Buffer too small for EngineSuperblock".to_string());
         }
 
         let mut magic = [0u8; 4];
         magic.copy_from_slice(&bytes[0..4]);
-        if magic != CTM_MAGIC {
-            return Err(format!("Invalid magic bytes: {:?}", magic));
+        if magic != ENG_MAGIC {
+            return Err(format!(
+                "Invalid magic bytes: expected 'ENG\\x01', found {:?}",
+                magic
+            ));
         }
 
         let spec_version = LittleEndian::read_u16(&bytes[4..6]);
@@ -146,7 +148,7 @@ impl CtmSuperblock {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RootEntry {
     pub type_fingerprint: u64,
-    pub root_ptr: CtmCausalPtr,
+    pub root_ptr: EngineCausalPtr,
     pub last_mutated_epoch: u64,
     pub tenant_id: u64,
     pub canonical_name: [u8; 16],
@@ -155,8 +157,8 @@ pub struct RootEntry {
 
 #[repr(C, align(16))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct CtmCausalPtr {
-    pub offset: u64,          // Physical file offset in NVRAM
+pub struct EngineCausalPtr {
+    pub offset: u64,          // Physical file offset in storage (.db)
     pub epoch_id: u32,        // Creation epoch
     pub cluster_node_id: u32, // Host cluster node
 }
@@ -201,10 +203,10 @@ pub fn crc64_nvme(data: &[u8]) -> u64 {
     !crc
 }
 
-pub struct NvramStorage;
+pub struct EngineDbStorage;
 
-impl NvramStorage {
-    pub fn initialize_nvram<P: AsRef<Path>>(path: P, size_mib: u64) -> Result<(), String> {
+impl EngineDbStorage {
+    pub fn initialize_db<P: AsRef<Path>>(path: P, size_mib: u64) -> Result<(), String> {
         let total_bytes = size_mib * 1024 * 1024;
         let mut file = OpenOptions::new()
             .read(true)
@@ -212,17 +214,16 @@ impl NvramStorage {
             .create(true)
             .truncate(true)
             .open(&path)
-            .map_err(|e| format!("Failed to create NVRAM file: {}", e))?;
+            .map_err(|e| format!("Failed to create storage file: {}", e))?;
 
         // Allocate total file size
         file.set_len(total_bytes)
-            .map_err(|e| format!("Failed to set NVRAM file length: {}", e))?;
+            .map_err(|e| format!("Failed to set storage file length: {}", e))?;
 
         // Write primary superblock at 0x0000_0000
-        let sb = CtmSuperblock::default();
+        let sb = EngineSuperblock::default();
         let sb_bytes = sb.to_bytes();
-        file.seek(SeekFrom::Start(0))
-            .map_err(|e| e.to_string())?;
+        file.seek(SeekFrom::Start(0)).map_err(|e| e.to_string())?;
         file.write_all(&sb_bytes).map_err(|e| e.to_string())?;
 
         // Write mirror superblock at offset 0x0001_0000 (64 KiB)
@@ -235,38 +236,86 @@ impl NvramStorage {
     }
 
     pub fn inspect_container<P: AsRef<Path>>(path: P) -> Result<String, String> {
-        let mut file = File::open(&path)
-            .map_err(|e| format!("Failed to open NVRAM file '{}': {}", path.as_ref().display(), e))?;
+        let mut file = File::open(&path).map_err(|e| {
+            format!(
+                "Failed to open storage container file '{}': {}",
+                path.as_ref().display(),
+                e
+            )
+        })?;
 
         let mut buf = [0u8; 64];
         file.read_exact(&mut buf)
             .map_err(|e| format!("Failed to read superblock: {}", e))?;
 
-        let sb = CtmSuperblock::from_bytes(&buf)?;
+        let sb = EngineSuperblock::from_bytes(&buf)?;
 
         let mut report = String::new();
-        report.push_str("=== Continuum Single-Level Store (.nvram) Inspection ===\n");
-        report.push_str(&format!("Container Path:      {}\n", path.as_ref().display()));
-        report.push_str(&format!("Magic Signature:     {:?} ('CTM\\x01')\n", sb.magic));
-        report.push_str(&format!("Specification Ver:   0x{:04X} (v{}.{})\n", sb.spec_version, sb.spec_version >> 8, sb.spec_version & 0xFF));
-        report.push_str(&format!("System Flags:        0x{:04X} (DIRTY: {}, ENCRYPTED: {})\n",
+        report.push_str("=== Engine Lang Single-Level Store (.db) Inspection ===\n");
+        report.push_str(&format!(
+            "Container Path:      {}\n",
+            path.as_ref().display()
+        ));
+        report.push_str(&format!(
+            "Magic Signature:     {:?} ('ENG\\x01' Engine Lang Standard)\n",
+            sb.magic
+        ));
+        report.push_str(&format!(
+            "Specification Ver:   0x{:04X} (v{}.{})\n",
+            sb.spec_version,
+            sb.spec_version >> 8,
+            sb.spec_version & 0xFF
+        ));
+        report.push_str(&format!(
+            "System Flags:        0x{:04X} (DIRTY: {}, ENCRYPTED: {})\n",
             sb.flags,
             (sb.flags & FLAG_DIRTY) != 0,
             (sb.flags & FLAG_ENCRYPTED) != 0
         ));
-        report.push_str(&format!("Page Size:           {} bytes (4 KiB standard)\n", sb.page_size));
-        report.push_str(&format!("HugePage Size:       {} bytes (2 MiB)\n", sb.huge_page_size));
-        report.push_str(&format!("Global Epoch:        #{} (Monotonic Causal)\n", sb.global_epoch));
-        report.push_str(&format!("Total Pages:         {} pages (128 GiB addressable)\n", sb.total_pages));
+        report.push_str(&format!(
+            "Page Size:           {} bytes (4 KiB standard)\n",
+            sb.page_size
+        ));
+        report.push_str(&format!(
+            "HugePage Size:       {} bytes (2 MiB)\n",
+            sb.huge_page_size
+        ));
+        report.push_str(&format!(
+            "Global Epoch:        #{} (Monotonic Causal)\n",
+            sb.global_epoch
+        ));
+        report.push_str(&format!(
+            "Total Pages:         {} pages (128 GiB addressable)\n",
+            sb.total_pages
+        ));
         report.push_str(&format!("Node UUID:           {:02X?}\n", sb.node_uuid));
-        report.push_str(&format!("Root Table Offset:   0x{:08X}\n", sb.root_table_offset));
+        report.push_str(&format!(
+            "Root Table Offset:   0x{:08X}\n",
+            sb.root_table_offset
+        ));
         report.push_str(&format!("Root Entries Count:  {}\n", sb.root_entries_count));
-        report.push_str(&format!("Journal Start:       0x{:08X} (Region 2)\n", sb.journal_start));
-        report.push_str(&format!("Journal Size:        {} MiB\n", sb.journal_size / (1024 * 1024)));
-        report.push_str(&format!("CRC-64/NVME:         0x{:016X} [VALID]\n", sb.crc64));
+        report.push_str(&format!(
+            "Journal Start:       0x{:08X} (Region 2)\n",
+            sb.journal_start
+        ));
+        report.push_str(&format!(
+            "Journal Size:        {} MiB\n",
+            sb.journal_size / (1024 * 1024)
+        ));
+        report.push_str(&format!(
+            "CRC-64/NVME:         0x{:016X} [VALID]\n",
+            sb.crc64
+        ));
         report.push_str("Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)\n");
 
         Ok(report)
     }
 }
 
+pub type NvramStorage = EngineDbStorage;
+
+impl EngineDbStorage {
+    pub fn initialize_nvram<P: AsRef<Path>>(path: P, size_mib: u64) -> Result<(), String> {
+        Self::initialize_db(path, size_mib)
+    }
+}

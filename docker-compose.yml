@@ -1,36 +1,36 @@
 services:
-  continuum-genesis:
+  engine-genesis:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: continuum-genesis-node
+    container_name: engine-genesis-node
     restart: unless-stopped
     ports:
       - "8090:8090"  # HTTP / @boundary Web Gateway
-      - "5442:5432"  # PostgreSQL Wire Protocol Bridge (ctm-bridge)
+      - "5442:5432"  # PostgreSQL Wire Protocol Bridge (engine-bridge)
       - "9443:9443"  # Distributed Causal Mesh Wire Protocol (P2P)
     volumes:
       - ./data:/app/data
+      - ./examples:/app/examples
     environment:
-      - CONTINUUM_ENV=production
-      - CONTINUUM_NVRAM_PATH=/app/data/continuum.nvram
+      - ENGINE_ENV=production
+      - ENGINE_DB_PATH=/app/data/engine.db
     healthcheck:
-      test: ["CMD-SHELL", "ctmc inspect /app/data/continuum.nvram || exit 1"]
+      test: ["CMD-SHELL", "enginec inspect /app/data/engine.db || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 5s
 
-  continuum-test:
+  engine-test:
     build:
       context: .
       dockerfile: Dockerfile
       target: builder
-    container_name: continuum-genesis-test
+    container_name: engine-genesis-test
     profiles: ["test"]
     volumes:
       - ./compiler:/build/compiler
       - ./examples:/build/examples
       - ./data:/build/data
-    command: ["sh", "-c", "cd /build/compiler && cargo test && cargo run -- check /build/examples/01_hello_causal.ctm && cargo run -- check /build/examples/02_persistent_vehicle_fleet.ctm && cargo run -- check /build/examples/03_vector_ai_search.ctm && cargo run -- check /build/examples/04_causal_blog.ctm && cargo run -- run /build/examples/04_causal_blog.ctm"]
-
+    command: ["sh", "-c", "cd /build/compiler && cargo test && cargo run -- check /build/examples/01_hello_causal.eng && cargo run -- check /build/examples/02_persistent_vehicle_fleet.eng && cargo run -- check /build/examples/03_vector_ai_search.eng && cargo run -- check /build/examples/04_causal_blog.eng && cargo run -- run /build/examples/04_causal_blog.eng --db /build/data/engine.db && cargo run -- check /build/examples/05_polyglot_industrial_iot.eng && cargo run -- run /build/examples/05_polyglot_industrial_iot.eng --db /build/data/engine.db && cargo run -- check /build/examples/06_industrial_plc_mmio.eng && cargo run -- run /build/examples/06_industrial_plc_mmio.eng --db /build/data/engine.db && cargo run -- emit-ir /build/examples/06_industrial_plc_mmio.eng"]

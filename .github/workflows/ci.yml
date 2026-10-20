@@ -1,4 +1,4 @@
-name: Continuum Core CI
+name: Engine Lang Core CI
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Continuum Repository
+      - name: Checkout Engine Lang Repository
         uses: actions/checkout@v4
 
       - name: Setup Rust Toolchain
@@ -57,17 +57,21 @@ jobs:
           cd compiler
           cargo test --verbose
 
-      - name: Verify Canonical Language Examples via ctmc
+      - name: Verify CLI Version & Engineering Diagnostics
         run: |
           cd compiler
-          cargo run -- check ../examples/01_hello_causal.ctm
-          cargo run -- check ../examples/02_persistent_vehicle_fleet.ctm
-          cargo run -- check ../examples/03_vector_ai_search.ctm
+          cargo run -- version
 
-      - name: Run Simulation Engine on Examples
+      - name: Verify All Canonical Language Examples via enginec check
         run: |
           cd compiler
-          cargo run -- run ../examples/01_hello_causal.ctm
-          cargo run -- run ../examples/02_persistent_vehicle_fleet.ctm
-          cargo run -- run ../examples/03_vector_ai_search.ctm
+          for f in ../examples/*.eng; do
+            echo "Formal SMT verification for $f"
+            cargo run -- check "$f" || exit 1
+          done
 
+      - name: Verify Storage Engine Container Initialization & Inspection
+        run: |
+          cd compiler
+          cargo run -- init-db --path /tmp/ci_test.db --size-mib 16
+          cargo run -- inspect /tmp/ci_test.db

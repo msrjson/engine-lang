@@ -1,5 +1,5 @@
-# Architectural Domains & Killer Use Cases for Continuum
-**Document ID**: `CTM-DOC-03.1`
+# Architectural Domains & Killer Use Cases for Engine Lang
+**Document ID**: `ENG-DOC-03.1`
 **Status**: Official Architectural Guide
 **Target Audience**: Systems Architects, Chief Technology Officers, Compiler Researchers, Distributed Systems Engineers
 
@@ -7,13 +7,13 @@
 
 ## 1. Executive Summary
 
-Continuum is not simply a cosmetic syntax layer; it represents a **fundamental paradigm shift in systems engineering**. By unifying computation, non-volatile persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT), and peer-to-peer causal replication into a single compiled binary, Continuum eliminates the traditional multi-tier enterprise infrastructure stack.
+Engine Lang is not simply a cosmetic syntax layer; it represents a **fundamental paradigm shift in systems engineering**. By unifying computation, non-volatile persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT), and peer-to-peer causal replication into a single compiled binary, Engine Lang eliminates the traditional multi-tier enterprise infrastructure stack.
 
 ```
-LEGACY MULTI-TIER STACK                    CONTINUUM SOVEREIGN BINARY
+LEGACY MULTI-TIER STACK                    ENGINE LANG SOVEREIGN BINARY
 ┌─────────────────────────────────┐        ┌─────────────────────────────────┐
-│ Application Server (FastAPI/Go) │        │ CONTINUUM COMPILED EXECUTABLE   │
-├─────────────────────────────────┤        │ (`ctmc`)                        │
+│ Application Server (FastAPI/Go) │        │ ENGINE LANG COMPILED EXECUTABLE   │
+├─────────────────────────────────┤        │ (`enginec`)                        │
 │ Reverse Proxy / ALB (Nginx)     │        │                                 │
 ├─────────────────────────────────┤        │ ├─ HTTP & Postgres Wire Bridge  │
 │ Relational Database (PostgreSQL)│  ===>  │ ├─ Single-Level Store (NVRAM)   │
@@ -26,7 +26,7 @@ LEGACY MULTI-TIER STACK                    CONTINUUM SOVEREIGN BINARY
 └─────────────────────────────────┘           Raw Bare Metal / $5-$50 VPS
 ```
 
-This document details the primary industrial domains where Continuum provides 10x to 100x improvements in operational reliability, latency, and cost reduction.
+This document details the primary industrial domains where Engine Lang provides 10x to 100x improvements in operational reliability, latency, and cost reduction.
 
 ---
 
@@ -38,13 +38,13 @@ This document details the primary industrial domains where Continuum provides 10
 #### The Engineering Bottleneck in Traditional Stacks:
 In legacy architectures, financial ledgers run on relational databases prone to race conditions, deadlocks, and floating-point rounding errors. Concurrency bugs or uncoordinated two-phase commits (2PC) result in double-spending or negative balances.
 
-#### The Continuum Advantage:
-1. **Zero Negative Balances Guaranteed by SMT**: Refinement types are proven at compile-time by Z3. A transaction that can produce an invalid balance is rejected by `ctmc check` before binary generation:
-   ```continuum
+#### The Engine Lang Advantage:
+1. **Zero Negative Balances Guaranteed by SMT**: Refinement types are proven at compile-time by Z3. A transaction that can produce an invalid balance is rejected by `enginec check` before binary generation:
+   ```engine
    type LedgerBalance = Decimal(18, 4) where value >= 0.0000;
    ```
 2. **Silicon-Level Rollback (`?!`)**: If a fraud check or balance verification fails inside an `atomic` block, the `?!` operator discards the shadow page in NVRAM in single-digit nanoseconds without holding database locks:
-   ```continuum
+   ```engine
    atomic {
        source_account.balance -= transfer_amount;
        verify_anti_fraud_rules(source_account, destination_account)?!;
@@ -61,17 +61,17 @@ In legacy architectures, financial ledgers run on relational databases prone to 
 #### The Engineering Bottleneck in Traditional Stacks:
 Public sector databases face massive audit requirements. Traditional databases require separate audit trail tables, event sourcing pipelines, and complex cross-table joins that degrade under heavy query volumes.
 
-#### The Continuum Advantage:
+#### The Engine Lang Advantage:
 1. **Perpetual Causal Graph Lineage (`->`)**:
    Every state transition automatically embeds the immutable cryptographic commit hash of its predecessor:
-   ```continuum
+   ```engine
    vehicle_registry -> transfer_of_title -> tax_assessment -> payment_receipt;
    ```
    Auditors can mathematically trace any administrative decision back to its root epoch without extra audit logging middleware.
 2. **Multi-Tenant Cryptographic Isolation (`@TenantGuard`)**:
    Municipalities, state bureaus, or corporate subsidiaries share physical server hardware safely. The `@TenantGuard(strict: true)` directive cryptographically walls data access at the hardware memory offset layer.
 3. **Turnkey Analytics & Reporting via PostgreSQL Bridge**:
-   Government analysts query live fleet status using standard BI tools (Power BI, Tableau, DBeaver) connecting to Continuum's embedded port `5442` (`ctm-bridge`) without affecting transactional write throughput.
+   Government analysts query live fleet status using standard BI tools (Power BI, Tableau, DBeaver) connecting to Engine Lang's embedded port `5442` (`engine-bridge`) without affecting transactional write throughput.
 
 ---
 
@@ -81,10 +81,10 @@ Public sector databases face massive audit requirements. Traditional databases r
 #### The Engineering Bottleneck in Traditional Stacks:
 Engineers must maintain two disconnected databases: a primary database (PostgreSQL/MongoDB) for entity metadata and an external vector database (Pinecone, Qdrant, Milvus) for high-dimensional embeddings, connected via unreliable synchronization queues.
 
-#### The Continuum Advantage:
+#### The Engine Lang Advantage:
 1. **Unified State & Vector Storage**:
    Embeddings live in the exact same `@persistent entity` as the business metadata:
-   ```continuum
+   ```engine
    @persistent
    entity KnowledgeDocument {
        id: UUIDv7,
@@ -96,7 +96,7 @@ Engineers must maintain two disconnected databases: a primary database (PostgreS
    ```
 2. **SIMD Cosine Metric Operator (`<=>`)**:
    Vector ranking compiles directly to hardware Fused Multiply-Add (FMA) instructions across CPU vector lanes, bypassing external database network transit:
-   ```continuum
+   ```engine
    let similarity: Decimal(5, 4) = document.embedding <=> query_vector;
    ```
 
@@ -108,9 +108,9 @@ Engineers must maintain two disconnected databases: a primary database (PostgreS
 #### The Engineering Bottleneck in Traditional Stacks:
 Edge devices frequently lose internet connectivity. Relational databases lock up when disconnected from central servers, and syncing divergent branches upon reconnection often triggers data corruption or split-brain partitions.
 
-#### The Continuum Advantage:
-1. **Local Persistent Autonomy**: Nodes on ships, vehicles, or oil rigs continue executing atomic mutations in their local `.nvram` storage indefinitely while offline.
-2. **Split-Brain Auto-Healing via Delta-CRDTs**: When satellite or 5G connectivity is re-established, nodes exchange compact vector clock digests over QUIC (`ctm-wire`). Divergent causal branches converge deterministically in milliseconds without manual intervention.
+#### The Engine Lang Advantage:
+1. **Local Persistent Autonomy**: Nodes on ships, vehicles, or oil rigs continue executing atomic mutations in their local `.db` storage indefinitely while offline.
+2. **Split-Brain Auto-Healing via Delta-CRDTs**: When satellite or 5G connectivity is re-established, nodes exchange compact vector clock digests over QUIC (`engine-wire`). Divergent causal branches converge deterministically in milliseconds without manual intervention.
 
 ---
 
@@ -120,7 +120,7 @@ Edge devices frequently lose internet connectivity. Relational databases lock up
 #### The Engineering Bottleneck in Traditional Stacks:
 Game state runs in RAM for speed, but saving state to external databases causes periodic frame drops ("saving world...") or catastrophic data rollbacks if the server crashes unexpectedly.
 
-#### The Continuum Advantage:
+#### The Engine Lang Advantage:
 1. **Every Byte is Continuously Durable**:
    Player inventory updates, spatial coordinates, and in-game market trades execute via `clwb` + `sfence` into physical NVRAM.
 2. **Instant Crash Recovery (<3 ms)**:
@@ -133,7 +133,7 @@ Game state runs in RAM for speed, but saving state to external databases causes 
 
 #### Infrastructure Cost Comparison (Standard 10,000 Concurrent User Load)
 
-| Infrastructure Component | Traditional Cloud Architecture (AWS / GCP) | Continuum Sovereign Architecture |
+| Infrastructure Component | Traditional Cloud Architecture (AWS / GCP) | Engine Lang Sovereign Architecture |
 |---|---|---|
 | **Ingress / Load Balancer** | AWS ALB ($30/mo + LCU fees) | Standard Anycast DNS / Bare metal ($0) |
 | **Compute Application Nodes** | Managed EKS Cluster with 4x `c6i.xlarge` ($580/mo) | **2x High-Performance Hetzner/OVH VPS ($80/mo)** |
@@ -147,7 +147,7 @@ Game state runs in RAM for speed, but saving state to external databases causes 
 
 ---
 
-## 3. Decision Framework: When to Choose Continuum
+## 3. Decision Framework: When to Choose Engine Lang
 
 ```
                                   [ New Project Architecture ]
@@ -161,11 +161,11 @@ Game state runs in RAM for speed, but saving state to external databases causes 
                                ┌───────┴───────┐
                               YES              NO
                                │               │
-                     Choose CONTINUUM          Use standard microservices
+                     Choose ENGINE LANG          Use standard microservices
                      (Single-Level Store)      with cloud middleware
 ```
 
-Choose **Continuum** when:
+Choose **Engine Lang** when:
 1. **Data Integrity is Non-Negotiable**: You require mathematical compile-time proof (Z3 SMT) that business rules cannot be broken.
 2. **Infrastructure Independence is Mandatory**: You refuse to be held hostage by hyperscaler proprietary database services.
 3. **Predictable Tail Latency Matters**: You need deterministic $p_{99} < 1\text{ ms}$ response times without fragile cache invalidation routines.

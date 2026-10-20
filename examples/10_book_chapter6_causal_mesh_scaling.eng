@@ -1,0 +1,104 @@
+// Engine Lang Book - Chapter 06: Scaling: From Single Node to Global Causal Mesh
+// Canonical Example: Distributed Peer-to-Peer State Convergence via engine-wire (QUIC:9443)
+// Demonstrates how Engine Lang scales from a single machine to a planetary cluster
+// using Merkle-CRDTs, causal vector epochs, and leaderless synchronization.
+
+module Book::Chapter06::CausalScaling;
+
+// 1. Refinement Types for Distributed Causal Coordination
+type NodeIdentifier = Text where len(value) >= 4 && is_alphanumeric(value);
+type CausalEpoch = Int where value >= 1;
+type PeerLatencyMs = Int where value >= 0 && value <= 5000;
+type StateVectorHash = Text where len(value) == 64; // SHA-256 state tree digest
+
+// 2. Persistent Distributed Node Entity (Stored in Region 3 of engine.db)
+@persistent
+entity CausalNodePeer {
+    node_id: NodeIdentifier,
+    region: Text,
+    epoch: CausalEpoch,
+    state_hash: StateVectorHash,
+    active_peers: Int where value >= 0,
+
+    invariant {
+        self.epoch >= 1 &&
+        self.active_peers >= 0 &&
+        len(self.node_id) >= 4 &&
+        len(self.state_hash) == 64
+    }
+}
+
+// 3. Pure Action: Evaluate Merkle state divergence between two mesh peers
+action evaluate_divergence(
+    local_hash: StateVectorHash,
+    remote_hash: StateVectorHash
+) -> Bool {
+    return local_hash != remote_hash;
+}
+
+// 4. Atomic Peer Synchronization (Simulating engine-wire QUIC:9443 reconcile)
+action reconcile_peer_state(
+    local_node: &mut CausalNodePeer,
+    remote_node_id: NodeIdentifier,
+    remote_epoch: CausalEpoch,
+    merged_hash: StateVectorHash
+) -> Result<(), Text> {
+    if remote_epoch < local_node.epoch {
+        return Err("Stale remote epoch: Local node has higher causal horizon");
+    }
+
+    atomic {
+        // Advance causal epoch and swing root pointer to merged Merkle-CRDT DAG
+        local_node.epoch = remote_epoch + 1;
+        local_node.state_hash = merged_hash;
+        local_node.active_peers += 1;
+        // Hardware flush emitted: CLWB [local_node] + SFENCE
+    }
+
+    return Ok(());
+}
+
+// 5. Entry point demonstrating distributed scaling
+pub action main() -> Result<(), Text> {
+    io::println("=== Engine Lang: Chapter 06 Global Causal Mesh Scaling ===");
+
+    // Initialize Genesis Node in Europe Region
+    let genesis_hash: StateVectorHash = "a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0";
+    let mut genesis_node = CausalNodePeer {
+        node_id: "NODE-EU-01",
+        region: "Europe-Frankfurt",
+        epoch: 100,
+        state_hash: genesis_hash,
+        active_peers: 0
+    };
+
+    io::println("Genesis Node ID:        " + genesis_node.node_id);
+    io::println("Region:                 " + genesis_node.region);
+    io::println("Current Causal Epoch:   #" + string::from_int(genesis_node.epoch));
+    io::println("Active Mesh Peers:      " + string::from_int(genesis_node.active_peers));
+
+    // Simulate incoming replication packet from America Region via engine-wire (QUIC 9443)
+    let replica_node_id: NodeIdentifier = "NODE-US-02";
+    let incoming_epoch: CausalEpoch = 100;
+    let reconciled_hash: StateVectorHash = "b9f8e7d6c5b4a3928170efcdab8967452301fedcba9876543210fedcba987654";
+
+    let has_divergence = evaluate_divergence(genesis_node.state_hash, reconciled_hash);
+    io::println("Merkle Divergence Found: " + string::from_bool(has_divergence));
+
+    // Atomically merge causal state without distributed lock contention
+    reconcile_peer_state(
+        &mut genesis_node,
+        replica_node_id,
+        incoming_epoch,
+        reconciled_hash
+    )?;
+
+    io::println("--- After P2P engine-wire Convergence ---");
+    io::println("Converged Epoch:        #" + string::from_int(genesis_node.epoch));
+    io::println("Active Mesh Peers:      " + string::from_int(genesis_node.active_peers));
+    io::println("Updated State Hash:     " + genesis_node.state_hash);
+    io::println("Cluster Status:         HEALTHY (Leaderless Merkle-CRDT Synchronized)");
+
+    return Ok(());
+}
+

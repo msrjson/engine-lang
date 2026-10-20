@@ -1,4 +1,4 @@
-// Continuum Lexer Implementation
+// Engine Lang Lexer Implementation
 // Deterministic LL(1) Tokenization Engine
 
 use crate::ast::SourceLocation;
@@ -20,6 +20,8 @@ pub enum TokenKind {
     Action,
     Fn,
     Pub,
+    Datasource,
+    Register,
     Boundary,
     Route,
     Let,
@@ -42,19 +44,19 @@ pub enum TokenKind {
     StringLiteral(String),
 
     // Delimiters
-    LParen,    // (
-    RParen,    // )
-    LBracket,  // [
-    RBracket,  // ]
-    LBrace,    // {
-    RBrace,    // }
-    Comma,     // ,
-    Semicolon, // ;
-    Colon,     // :
+    LParen,      // (
+    RParen,      // )
+    LBracket,    // [
+    RBracket,    // ]
+    LBrace,      // {
+    RBrace,      // }
+    Comma,       // ,
+    Semicolon,   // ;
+    Colon,       // :
     DoubleColon, // ::
-    Dot,       // .
-    SafeDot,   // ?.
-    At,        // @
+    Dot,         // .
+    SafeDot,     // ?.
+    At,          // @
 
     // Custom & Compound Operators
     CosineMetric, // <=>
@@ -78,30 +80,30 @@ pub enum TokenKind {
     Greater,      // >
 
     // Shift Operators
-    Shl,          // <<
-    Shr,          // >>
+    Shl, // <<
+    Shr, // >>
 
     // Assignment & Compound Assignment
-    Assign,       // =
-    AddAssign,    // +=
-    SubAssign,    // -=
-    MulAssign,    // *=
-    DivAssign,    // /=
+    Assign,    // =
+    AddAssign, // +=
+    SubAssign, // -=
+    MulAssign, // *=
+    DivAssign, // /=
 
     // Arithmetic & Bitwise Operators
-    Exp,          // **
-    Plus,         // +
-    Minus,        // -
-    Star,         // *
-    Slash,        // /
-    Percent,      // %
-    Ampersand,    // &
-    PipeChar,     // |
-    Caret,        // ^
-    Tilde,        // ~
-    Bang,         // !
-    LogAnd,       // &&
-    LogOr,        // ||
+    Exp,       // **
+    Plus,      // +
+    Minus,     // -
+    Star,      // *
+    Slash,     // /
+    Percent,   // %
+    Ampersand, // &
+    PipeChar,  // |
+    Caret,     // ^
+    Tilde,     // ~
+    Bang,      // !
+    LogAnd,    // &&
+    LogOr,     // ||
 
     Eof,
 }
@@ -249,6 +251,8 @@ impl<'a> Lexer<'a> {
                 "action" => TokenKind::Action,
                 "fn" => TokenKind::Fn,
                 "pub" => TokenKind::Pub,
+                "datasource" => TokenKind::Datasource,
+                "register" => TokenKind::Register,
                 "boundary" => TokenKind::Boundary,
                 "route" => TokenKind::Route,
                 "let" => TokenKind::Let,
@@ -269,7 +273,33 @@ impl<'a> Lexer<'a> {
             return Ok(Token::new(kind, loc));
         }
 
-        // Numeric Literals
+        // Numeric Literals (Hexadecimal or Decimal)
+        if ch == '0' && (self.peek_char() == Some('x') || self.peek_char() == Some('X')) {
+            self.advance(); // consume '0'
+            self.advance(); // consume 'x' / 'X'
+            let mut hex_str = String::new();
+            while let Some(c) = self.current_char() {
+                if c.is_ascii_hexdigit() {
+                    hex_str.push(c);
+                    self.advance();
+                } else if c == '_' {
+                    self.advance(); // skip underscore in literals
+                } else {
+                    break;
+                }
+            }
+            if hex_str.is_empty() {
+                return Err(format!("Empty hexadecimal literal at {}", loc));
+            }
+            let val = i64::from_str_radix(&hex_str, 16).map_err(|e| {
+                format!(
+                    "Invalid hexadecimal literal '0x{}' at {}: {}",
+                    hex_str, loc, e
+                )
+            })?;
+            return Ok(Token::new(TokenKind::Integer(val), loc));
+        }
+
         if ch.is_ascii_digit() {
             let mut num_str = String::new();
             let mut is_float = false;
@@ -278,7 +308,9 @@ impl<'a> Lexer<'a> {
                 if c.is_ascii_digit() {
                     num_str.push(c);
                     self.advance();
-                } else if c == '.' && self.peek_char().map_or(false, |next| next.is_ascii_digit()) {
+                } else if c == '_' {
+                    self.advance(); // skip underscore separator
+                } else if c == '.' && self.peek_char().is_some_and(|next| next.is_ascii_digit()) {
                     is_float = true;
                     num_str.push(c);
                     self.advance();
@@ -288,10 +320,14 @@ impl<'a> Lexer<'a> {
             }
 
             if is_float {
-                let val: f64 = num_str.parse().map_err(|e| format!("Invalid float '{}' at {}: {}", num_str, loc, e))?;
+                let val: f64 = num_str
+                    .parse()
+                    .map_err(|e| format!("Invalid float '{}' at {}: {}", num_str, loc, e))?;
                 return Ok(Token::new(TokenKind::Float(val), loc));
             } else {
-                let val: i64 = num_str.parse().map_err(|e| format!("Invalid integer '{}' at {}: {}", num_str, loc, e))?;
+                let val: i64 = num_str
+                    .parse()
+                    .map_err(|e| format!("Invalid integer '{}' at {}: {}", num_str, loc, e))?;
                 return Ok(Token::new(TokenKind::Integer(val), loc));
             }
         }
@@ -607,4 +643,3 @@ impl<'a> Lexer<'a> {
         Ok(tokens)
     }
 }
-

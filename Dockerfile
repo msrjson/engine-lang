@@ -1,4 +1,4 @@
-# Continuum Genesis Reference Compiler & Runtime Container
+# Engine Lang Genesis Reference Compiler & Runtime Container
 # Multi-Stage Build: Rust Compiler Builder -> Minimal Runtime with Z3 SMT
 
 # Stage 1: Builder
@@ -25,9 +25,9 @@ RUN cargo build --release
 # Stage 2: Genesis Runtime Image
 FROM debian:bookworm-slim AS runtime
 
-LABEL maintainer="Continuum Core Working Group <architects@continuum-lang.org>"
-LABEL description="Continuum Systems Programming Language - Genesis Node"
-LABEL version="0.2.0-genesis"
+LABEL maintainer="Engine Lang Core Working Group <architects@engine-lang.org>"
+LABEL description="Engine Lang Systems Programming Language - Genesis Node"
+LABEL version="0.3.1"
 
 # Install runtime dependencies: Z3 SMT solver and CA certificates
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -39,28 +39,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy the compiled ctmc binary from the builder stage
-COPY --from=builder /build/compiler/target/release/ctmc /usr/local/bin/ctmc
+# Copy the compiled enginec binary from the builder stage
+COPY --from=builder /build/compiler/target/release/enginec /usr/local/bin/enginec
+RUN ln -s /usr/local/bin/enginec /usr/local/bin/engc
 
 # Copy project specification, configuration, and canonical examples
-COPY Continuum.toml ./
+COPY Engine.toml ./
 COPY docs/ ./docs/
 COPY examples/ ./examples/
 
-# Create persistent storage directory for Single-Level Store (.nvram)
+# Create persistent storage directory for Single-Level Store (.db)
 RUN mkdir -p /app/data && chmod 777 /app/data
 
 # Expose ports:
 # 8090: HTTP Boundary Web Gateway
-# 5432: Embedded PostgreSQL Wire Protocol Bridge (ctm-bridge)
-# 9443: Distributed Causal Mesh P2P Wire Transport (QUIC / ctm-wire)
+# 5432: Embedded PostgreSQL Wire Protocol Bridge (engine-bridge)
+# 9443: Distributed Causal Mesh P2P Wire Transport (QUIC / engine-wire)
 EXPOSE 8090 5432 9443
 
 # Environment settings
-ENV CONTINUUM_ENV=production
-ENV CONTINUUM_NVRAM_PATH=/app/data/continuum.nvram
+ENV ENGINE_ENV=production
+ENV ENGINE_DB_PATH=/app/data/engine.db
 ENV RUST_LOG=info
 
 # Default entrypoint: verify causal blog domain, initialize SLS and serve HTTP + Postgres bridge
-CMD ["sh", "-c", "ctmc init-nvram --path /app/data/continuum.nvram --size-mib 32 && ctmc check /app/examples/04_causal_blog.ctm && ctmc run /app/examples/04_causal_blog.ctm --nvram /app/data/continuum.nvram && ctmc serve --http-port 8090 --pg-port 5432 --host 0.0.0.0 --nvram /app/data/continuum.nvram"]
-
+CMD ["sh", "-c", "enginec init-db --path /app/data/engine.db --size-mib 32 && enginec check /app/examples/04_causal_blog.eng && enginec run /app/examples/04_causal_blog.eng --db /app/data/engine.db && enginec serve --http-port 8090 --pg-port 5432 --host 0.0.0.0 --db /app/data/engine.db"]

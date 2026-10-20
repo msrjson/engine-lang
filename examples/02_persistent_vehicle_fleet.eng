@@ -1,4 +1,4 @@
-// Continuum Language Example 02: Persistent Vehicle Fleet & IPVA Tax History
+// Engine Lang Example 02: Persistent Vehicle Fleet & IPVA Tax History
 // Demonstrates domain refinement types, SMT invariants, multi-tenancy, and atomic rollback (?!).
 
 module Examples::FleetManagement;
@@ -24,7 +24,7 @@ struct TaxAssessment {
     status: TaxPaymentStatus
 }
 
-// Persistent entity stored in NVRAM Single-Level Store
+// Persistent entity stored in Engine Lang Single-Level Store (.db)
 @persistent
 @TenantGuard(strict: true)
 entity Vehicle {
@@ -74,7 +74,7 @@ action process_yearly_tax(
 
         // Transactional collapse operator (?!):
         // If state payment authorization fails, the entire atomic block rolls back
-        // in NVRAM, discarding the pushed tax history entry and restoring original state.
+        // in storage (.db), discarding the pushed tax history entry and restoring original state.
         let confirmation_epoch = authorize_state_payment(vehicle.plate, calculated_tax)?!;
 
         vehicle.total_tax_paid += calculated_tax;
@@ -92,7 +92,7 @@ pub action main() -> Result<(), Text> {
     let mut car = Vehicle {
         id: uuid::v7_now(),
         plate: "ABC1D23",
-        model: "Continuum Electric Sedan GT",
+        model: "Engine Lang Electric Sedan GT",
         year: 2025,
         fipe_value: 150000.0000,
         tax_history: [],

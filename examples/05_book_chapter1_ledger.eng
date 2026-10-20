@@ -1,0 +1,77 @@
+// Engine Lang Book - Chapter 01: The End of Memory-Disk Duality
+// Canonical Example: Single-Node Crash-Resilient Financial Ledger
+// Demonstrates Single-Level Store (@persistent), SMT Refinement Types, and Atomic Mutation.
+
+module Book::Chapter01::Ledger;
+
+// Refinement Type: A positive financial amount verified statically by Z3
+type PositiveAmount = Decimal(18, 4) where value > 0.0000;
+
+// Refinement Type: Account identifier must have valid length
+type AccountId = Text where len(value) >= 3;
+
+// Persistent entity mapped directly to NVRAM/SLS (.db)
+@persistent
+entity LedgerAccount {
+    id: AccountId,
+    owner: Text,
+    balance: Decimal(18, 4) where value >= 0.0000,
+    tx_count: Int where value >= 0,
+
+    invariant {
+        self.balance >= 0.0000 &&
+        self.tx_count >= 0 &&
+        len(self.id) >= 3
+    }
+}
+
+// Pure business logic: credit funds with atomic hardware durability
+action deposit(account: &mut LedgerAccount, amount: PositiveAmount) -> Result<(), Text> {
+    atomic {
+        account.balance += amount;
+        account.tx_count += 1;
+        // Hardware flush instruction (CLWB + SFENCE) is emitted automatically by enginec
+    }
+
+    return Ok(());
+}
+
+// Pure business logic: debit funds ensuring balance invariant holds
+action withdraw(account: &mut LedgerAccount, amount: PositiveAmount) -> Result<(), Text> {
+    if account.balance < amount {
+        return Err("Insufficient balance for withdrawal");
+    }
+
+    atomic {
+        account.balance -= amount;
+        account.tx_count += 1;
+    }
+
+    return Ok(());
+}
+
+// Entry point demonstrating persistent mutation
+pub action main() -> Result<(), Text> {
+    let mut account = LedgerAccount {
+        id: "ACC-1001",
+        owner: "Lysander Vance",
+        balance: 1000.0000,
+        tx_count: 0
+    };
+
+    io::println("=== Engine Lang: Chapter 01 Financial Ledger ===");
+    io::println("Initial Balance: " + string::from_decimal(account.balance));
+
+    // Perform an atomic deposit
+    let deposit_amount: PositiveAmount = 250.5000;
+    deposit(&mut account, deposit_amount)?;
+    io::println("After Deposit (+250.50): " + string::from_decimal(account.balance));
+
+    // Perform an atomic withdrawal
+    let withdraw_amount: PositiveAmount = 100.2500;
+    withdraw(&mut account, withdraw_amount)?;
+    io::println("After Withdrawal (-100.25): " + string::from_decimal(account.balance));
+    io::println("Total Transactions: " + string::from_int(account.tx_count));
+
+    return Ok(());
+}

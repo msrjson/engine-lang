@@ -1,0 +1,108 @@
+// Engine Lang Book - Chapter 03: Causal Determinism and the Operator Pipeline
+// Canonical Example: Order Processing & Inventory Pipeline
+// Demonstrates how to develop an application in .eng, pure functional pipelines (|>),
+// compile-time SMT refinement types, atomic state transitions, and error handling.
+
+module Book::Chapter03::Pipeline;
+
+// 1. Refinement Types: Domain boundaries enforced by Z3 SMT
+type Quantity = Int where value >= 1 && value <= 1000;
+type PriceDecimal = Decimal(18, 4) where value > 0.0000;
+type SkuCode = Text where len(value) >= 4 && is_alphanumeric(value);
+type OrderId = Text where len(value) >= 6;
+
+// 2. Persistent Inventory Entity mapped to Single-Level Store (.db)
+@persistent
+entity InventoryItem {
+    sku: SkuCode,
+    stock: Int where value >= 0,
+    unit_price: PriceDecimal,
+
+    invariant {
+        self.stock >= 0 &&
+        len(self.sku) >= 4
+    }
+}
+
+// 3. Persistent Order Entity
+@persistent
+entity OrderRecord {
+    id: OrderId,
+    sku: SkuCode,
+    quantity: Quantity,
+    total_amount: PriceDecimal,
+
+    invariant {
+        self.quantity >= 1 &&
+        len(self.id) >= 6
+    }
+}
+
+// 4. Pure Functional Pipeline Actions: Deterministic data transformation
+action sanitize_sku(raw_sku: Text) -> Text {
+    return raw_sku
+        |> string::trim
+        |> string::to_uppercase;
+}
+
+action calculate_total(qty: Quantity, price: PriceDecimal) -> PriceDecimal {
+    let total: PriceDecimal = price * string::from_int(qty);
+    return total;
+}
+
+// 5. Atomic Order Execution: In-place hardware mutation without distributed locks
+action process_order(
+    item: &mut InventoryItem,
+    order_id: OrderId,
+    qty: Quantity
+) -> Result<OrderRecord, Text> {
+    // Business Precondition: Verify stock availability
+    if item.stock < qty {
+        return Err("Order processing halted: Insufficient stock for requested SKU");
+    }
+
+    let calculated_price = calculate_total(qty, item.unit_price);
+
+    // Hardware Atomic Block: Emits CLWB + SFENCE across both entity updates
+    atomic {
+        item.stock -= qty;
+    }
+
+    let order = OrderRecord {
+        id: order_id,
+        sku: item.sku,
+        quantity: qty,
+        total_amount: calculated_price
+    };
+
+    return Ok(order);
+}
+
+// 6. Application Entry Point: Developer workflow demonstration
+pub action main() -> Result<(), Text> {
+    io::println("=== Engine Lang: Chapter 03 Operator Pipeline ===");
+
+    // Initialize inventory item in persistent memory
+    let mut item = InventoryItem {
+        sku: sanitize_sku("eng-nvram-4096"),
+        stock: 50,
+        unit_price: 199.9900
+    };
+
+    io::println("Initial Inventory SKU:   " + item.sku);
+    io::println("Initial Stock Available: " + string::from_int(item.stock));
+    io::println("Unit Price:              " + string::from_decimal(item.unit_price));
+
+    // Execute atomic order processing through the functional pipeline
+    let order_qty: Quantity = 5;
+    let order = process_order(&mut item, "ORD-9901", order_qty)?;
+
+    io::println("--- Order Successfully Processed ---");
+    io::println("Order ID:                " + order.id);
+    io::println("Quantity Ordered:        " + string::from_int(order.quantity));
+    io::println("Order Total Amount:      " + string::from_decimal(order.total_amount));
+    io::println("Remaining Stock in .db:  " + string::from_int(item.stock));
+
+    return Ok(());
+}
+

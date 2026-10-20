@@ -1,6 +1,6 @@
-# Contributing to the Continuum Programming Language
+# Contributing to the Engine Lang Programming Language
 
-Thank you for your interest in contributing to the **Continuum Programming Language** (`ctm`) and its reference bootstrap compiler (`ctmc`). Continuum is an infrastructure-agnostic, statically typed systems programming language designed to unify persistent memory (SLS), distributed causal graphs, and SMT-verified refinement types into a single compilation unit.
+Thank you for your interest in contributing to the **Engine Lang Programming Language** (`engine` / `.eng`) and its reference bootstrap compiler (`enginec`). Engine Lang is an infrastructure-agnostic, statically typed systems programming language designed to unify persistent memory (SLS), distributed causal graphs, and SMT-verified refinement types into a single compilation unit.
 
 This document outlines the RFC (Request for Comments) process, compiler coding conventions, SMT formal verification guidelines, and core project governance.
 
@@ -8,7 +8,7 @@ This document outlines the RFC (Request for Comments) process, compiler coding c
 
 ## 1. Governance and Guiding Principles
 
-Continuum follows an open-specification model maintained by the Core Working Group. All architectural decisions prioritize:
+Engine Lang follows an open-specification model maintained by the Core Working Group. All architectural decisions prioritize:
 1. **Mathematical Soundness**: No feature enters the language without deterministic typing and formal verifiability.
 2. **Infrastructure Elimination**: If a capability can be solved natively by the compiler and modern hardware primitives (NVRAM, CXL, SIMD, RDMA), we reject adding external middleware dependencies.
 3. **Silicon-Direct Execution**: Language operators and directives must map directly to machine instructions (`clwb`, `sfence`, AVX-512, NEON) without runtime virtualization overhead.
@@ -18,13 +18,13 @@ Continuum follows an open-specification model maintained by the Core Working Gro
 
 ## 2. The RFC Process
 
-Substantial changes to the language grammar, compiler architecture, `.nvram` SLS layout, or causal mesh protocols must go through the Request for Comments (RFC) process.
+Substantial changes to the language grammar, compiler architecture, `.db` SLS layout, or causal mesh protocols must go through the Request for Comments (RFC) process.
 
 ### When to File an RFC
 - Proposing new keywords, semantic directives (e.g., `@decorator`), or standard library traits.
-- Modifying operator precedence, associativity, or SMT algebraic contracts (`CTM-SPEC-02.1`).
-- Altering the physical layout of the `.nvram` container (`CTM-SLS-01.1`).
-- Changing the lazy schema evolution protocol (LSE-CRC / `CTM-MIG-01`).
+- Modifying operator precedence, associativity, or SMT algebraic contracts (`ENG-SPEC-03.1`).
+- Altering the physical layout of the `.db` container (`ENG-SLS-01.1`).
+- Changing the lazy schema evolution protocol (LSE-CRC / `ENG-MIG-01`).
 
 ### RFC Lifecycle
 1. **Drafting**: Copy `.github/ISSUE_TEMPLATE/rfc_proposal.md` and complete all sections.
@@ -37,7 +37,7 @@ Substantial changes to the language grammar, compiler architecture, `.nvram` SLS
 
 ## 3. Formal SMT Proof Guidelines
 
-Continuum enforces semantic domain invariants at compile time via an integrated SMT solver interface (Z3). When authoring standard library components or language extensions:
+Engine Lang enforces semantic domain invariants at compile time via an integrated SMT solver interface (Z3). When authoring standard library components or language extensions:
 
 ### 3.1. Proof Termination and Timeouts
 - All refinement proofs (`where` predicates and `invariant { ... }` blocks) must terminate within **5000 milliseconds**.
@@ -46,7 +46,7 @@ Continuum enforces semantic domain invariants at compile time via an integrated 
 ### 3.2. Operator Law Verification
 When overloading arithmetic or relational operators via traits (`Add`, `Sub`, `Mul`), you must specify the formal algebraic contract. For example:
 
-```continuum
+```engine
 pub trait Add<Rhs = Self> {
     type Output;
     fn add(self, rhs: Rhs) -> Self::Output;
@@ -66,11 +66,11 @@ If the implementation allows side effects, non-associative edge cases, or divisi
 
 ## 4. Compiler (`compiler/`) Coding Standards
 
-The reference bootstrap compiler (`ctmc`) is written in standard, idiomatic Rust.
+The reference bootstrap compiler (`enginec`) is written in standard, idiomatic Rust.
 
 ### 4.1. Rust Code Quality Rules
 - **No Unsafe Code in Parser/AST**: `compiler/src/ast.rs`, `compiler/src/lexer.rs`, and `compiler/src/parser.rs` must not contain `unsafe` blocks.
-- **Strict Byte Alignment in Memory Layer**: Structures in `compiler/src/memory.rs` that map directly to the `.nvram` file layout must explicitly use `#[repr(C, align(64))]` or `#[repr(C, align(16))]`.
+- **Strict Byte Alignment in Memory Layer**: Structures in `compiler/src/memory.rs` that map directly to the `.db` file layout must explicitly use `#[repr(C, align(64))]` or `#[repr(C, align(16))]`.
 - **Exhaustive Pattern Matching**: Compiler passes must avoid wildcard `_` catches when handling language tokens or AST expression variants.
 - **Zero Panics in Compiler Passes**: Use `Result<T, CompilerError>` and propagate diagnostic errors gracefully with source line and column numbers.
 
@@ -82,9 +82,9 @@ cd compiler
 cargo fmt --check
 cargo clippy -- -D warnings
 cargo test
-cargo run -- check ../examples/01_hello_causal.ctm
-cargo run -- check ../examples/02_persistent_vehicle_fleet.ctm
-cargo run -- check ../examples/03_vector_ai_search.ctm
+cargo run -- check ../examples/01_hello_causal.eng
+cargo run -- check ../examples/02_persistent_vehicle_fleet.eng
+cargo run -- check ../examples/03_vector_ai_search.eng
 ```
 
 ---
@@ -103,5 +103,5 @@ cargo run -- check ../examples/03_vector_ai_search.ctm
 
 ## 6. Code of Conduct
 
-Continuum welcomes contributors from systems programming, distributed systems research, compiler design, and formal verification. We foster a meritocratic, respectful, and academically rigorous environment. Disagreements must be grounded in mathematical correctness, performance benchmarks, and architectural clarity.
+Engine Lang welcomes contributors from systems programming, distributed systems research, compiler design, and formal verification. We foster a meritocratic, respectful, and academically rigorous environment. Disagreements must be grounded in mathematical correctness, performance benchmarks, and architectural clarity.
 

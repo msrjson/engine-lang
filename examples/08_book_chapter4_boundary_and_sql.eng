@@ -1,0 +1,93 @@
+// Engine Lang Book - Chapter 04: The Unified Edge Boundary and the SQL Virtual Bridge
+// Canonical Example: Unified HTTP Boundary & Virtual PostgreSQL SQL Projection
+// Demonstrates how external clients connect via HTTP (@boundary) on port 8090
+// and via SQL (psql, DBeaver, Tableau) on port 5432 using engine-bridge without PostgreSQL installed.
+
+module Book::Chapter04::BoundaryAndSql;
+
+// 1. Refinement Types proven at compile-time by Z3
+type CustomerId = Text where len(value) >= 4;
+type EmailAddress = Text where len(value) >= 5 && is_alphanumeric(value);
+type AccountBalance = Decimal(18, 4) where value >= 0.0000;
+type DepositAmount = Decimal(18, 4) where value > 0.0000;
+
+// 2. Persistent Customer Entity mapped to Single-Level Store (.db)
+// This entity is simultaneously queryable via zero-copy memory traversal
+// and projectable as a virtual relational table 'customer_account' via engine-bridge
+@persistent
+entity CustomerAccount {
+    id: CustomerId,
+    email: EmailAddress,
+    tier: Text,
+    balance: AccountBalance,
+    total_deposits: Int where value >= 0,
+
+    invariant {
+        self.balance >= 0.0000 &&
+        self.total_deposits >= 0 &&
+        len(self.id) >= 4
+    }
+}
+
+// 3. Pure Action: Deposit funds with hardware durability
+action apply_deposit(
+    account: &mut CustomerAccount,
+    amount: DepositAmount
+) -> Result<AccountBalance, Text> {
+    atomic {
+        account.balance += amount;
+        account.total_deposits += 1;
+        // Hardware flush emitted: CLWB [account] + SFENCE
+    }
+
+    return Ok(account.balance);
+}
+
+// 4. HTTP Boundary Definition: Native web ingress on port 8090
+// Replaces Nginx, Express, Actix, and FastAPI
+boundary CustomerGateway {
+    @locality(public: true)
+    route GET "/api/v1/accounts/:id" -> get_account_status;
+
+    @locality(public: true)
+    route POST "/api/v1/accounts/deposit" -> handle_http_deposit;
+}
+
+action get_account_status(id: Text) -> Result<Text, Text> {
+    return Ok("ACCOUNT_ONLINE");
+}
+
+action handle_http_deposit(id: Text) -> Result<Text, Text> {
+    return Ok("DEPOSIT_SUCCESS");
+}
+
+// 5. Entry point simulating local execution before server startup
+pub action main() -> Result<(), Text> {
+    io::println("=== Engine Lang: Chapter 04 Boundary & SQL Bridge ===");
+
+    let mut account = CustomerAccount {
+        id: "CUST-8801",
+        email: "alice88@engine-lang.org",
+        tier: "Enterprise",
+        balance: 25000.0000,
+        total_deposits: 10
+    };
+
+    io::println("Customer ID:       " + account.id);
+    io::println("Customer Email:    " + account.email);
+    io::println("Account Tier:      " + account.tier);
+    io::println("Initial Balance:   " + string::from_decimal(account.balance));
+
+    // Execute atomic deposit
+    let deposit: DepositAmount = 5000.0000;
+    let new_balance = apply_deposit(&mut account, deposit)?;
+    io::println("Updated Balance:   " + string::from_decimal(new_balance));
+    io::println("Total Deposits:    " + string::from_int(account.total_deposits));
+
+    io::println("--- Connectivity Endpoints Ready ---");
+    io::println("HTTP Gateway Boundary: http://0.0.0.0:8090/api/v1/accounts");
+    io::println("PostgreSQL SQL Bridge: postgresql://engine:engine@0.0.0.0:5432/engine_db");
+
+    return Ok(());
+}
+

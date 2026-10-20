@@ -1,4 +1,4 @@
-// Continuum Language Example 03: Native Vector AI Search
+// Engine Lang Example 03: Native Vector AI Search
 // Demonstrates high-dimensional vector embeddings, cosine metric (<=>), and semantic search.
 
 module Examples::VectorSearch;
@@ -60,7 +60,7 @@ pub action main() -> Result<(), Text> {
 
     let doc = KnowledgeDocument {
         id: doc_id,
-        title: "Single-Level Store Architecture on CXL Memory",
+        title: "Single-Level Store Architecture on Engine DB Storage",
         category: "Systems Research",
         embedding: sample_embedding
     };

@@ -1,5 +1,5 @@
-# Continuum Language Specification
-**Document ID**: `CTM-SPEC-02.1`
+# Engine Lang Specification
+**Document ID**: `ENG-SPEC-03.1`
 **Status**: Official Normative Specification
 **Target Architectures**: x86-64 (Intel Optane, CXL 2.0/3.0), ARM64 (FEAT_DPB / FEAT_DPB2)
 **Encoding**: UTF-8
@@ -8,7 +8,7 @@
 
 ## 1. Overview and Core Semantics
 
-Continuum is an infrastructure-agnostic, statically typed systems programming language featuring a unified Single-Level Store (SLS) on non-volatile physical memory (NVRAM/CXL). Continuum replaces external database layers, caches, message brokers, and ORM serializations by treating persistent memory as a first-class citizen of the type system.
+Engine Lang is an infrastructure-agnostic, statically typed systems programming language featuring a unified Single-Level Store (SLS) on non-volatile physical memory (NVRAM/CXL). Engine Lang replaces external database layers, caches, message brokers, and ORM serializations by treating persistent memory as a first-class citizen of the type system.
 
 ### 1.1. Deterministic Execution Model
 - **No Volatile/Persistent Impedance Mismatch**: Memory allocation inside `@persistent entity` declarations maps to persistent virtual memory addresses backed by direct access (DAX).
@@ -30,13 +30,22 @@ IdentifierList    ::= Identifier ( "," Identifier )* ;
 
 TopLevelDeclList  ::= ( Directive* TopLevelDecl )* ;
 
-TopLevelDecl      ::= TypeAliasDecl
+TopLevelDecl      ::= DatasourceDecl
+                    | RegisterDecl
+                    | TypeAliasDecl
                     | EntityDecl
                     | EnumDecl
                     | TraitDecl
                     | ImplDecl
                     | ActionDecl
                     | BoundaryDecl ;
+
+DatasourceDecl    ::= "datasource" Identifier "{" DatasourcePropertyList "}" ;
+DatasourcePropertyList ::= ( Identifier ":" Expression ","? )* ;
+
+RegisterDecl      ::= Directive* "register" Identifier "{" RegisterFieldList "}" ;
+RegisterFieldList ::= ( Identifier ":" RegisterType ","? )* ;
+RegisterType      ::= "Bit" | "Byte" | "Word" | "DWord" | "QWord" ;
 
 Directive         ::= "@" Identifier ( "(" DirectiveArgs? ")" )? ;
 
@@ -172,13 +181,13 @@ Literal           ::= IntegerLiteral | FloatLiteral | DecimalLiteral | StringLit
 
 ## 3. Semantic Directives Reference
 
-Continuum uses structured compiler directives (`@name(args)`) to control storage layout, security enforcement, and lazy schema migration.
+Engine Lang uses structured compiler directives (`@name(args)`) to control storage layout, security enforcement, and lazy schema migration.
 
 ### 3.1. Persistence: `@persistent`
 - **Target**: `entity` declarations.
-- **Semantics**: Allocates instances in Region 3 of the `.nvram` Single-Level Store. All fields are crash-consistent. Modifying an instance requires an `atomic` block.
+- **Semantics**: Allocates instances in Region 3 of the `.db` Single-Level Store. All fields are crash-consistent. Modifying an instance requires an `atomic` block.
 
-```continuum
+```engine
 @persistent
 entity Customer {
     id: UUIDv7,
@@ -191,7 +200,7 @@ entity Customer {
 - **Target**: `entity` or module declarations.
 - **Semantics**: Constrains which physical mesh nodes are allowed to replicate or persist instances of this entity, ensuring GDPR, LGPD, and sovereign boundary compliance.
 
-```continuum
+```engine
 @persistent
 @locality(region: "sa-east-1", allowed_nodes: ["sp-node-01", "sp-node-02"])
 entity BrazilianTaxRecord {
@@ -204,7 +213,7 @@ entity BrazilianTaxRecord {
 - **Target**: `entity` or `action` declarations.
 - **Semantics**: Enforces cryptographically isolated tenant keys in the `EntityHeader` (Offset `0x10`). Queries without a valid tenant token automatically fail compilation or abort at runtime with an access trap.
 
-```continuum
+```engine
 @persistent
 @TenantGuard(strict: true)
 entity TenantInvoice {
@@ -219,7 +228,7 @@ entity TenantInvoice {
 
 Refinement types attach mathematical predicates to primitive or user-defined types using the `where` keyword. The integrated Z3 SMT solver validates these contracts at compile-time.
 
-```continuum
+```engine
 type Port = Int where value >= 1 && value <= 65535;
 type NormalizedScore = Float where value >= 0.0 && value <= 1.0;
 type NonEmptyText = Text where len(value) > 0;
@@ -229,7 +238,7 @@ When an instance of a refined type is constructed or mutated, the compiler gener
 
 ```
 [SMT-VERIFY-ERR] Invariant violation in module 'Billing::Engine'
-  Location: src/billing.ctm:42:15
+  Location: src/billing.eng:42:15
   Failed Refinement: 'value >= 0.0000'
   Counterexample Model:
     value = -0.0001
@@ -242,9 +251,9 @@ When an instance of a refined type is constructed or mutated, the compiler gener
 
 ## 5. Algebraic Data Types and Pattern Matching
 
-Continuum provides first-class sum types (`enum`) and product types (`struct`/`entity`).
+Engine Lang provides first-class sum types (`enum`) and product types (`struct`/`entity`).
 
-```continuum
+```engine
 enum TransactionStatus {
     Pending,
     Committed(EpochTimestamp),
@@ -270,12 +279,53 @@ action evaluate_status(status: TransactionStatus) -> Text {
 
 ## 6. The `boundary` Foreign Interface
 
-Continuum replaces external web server frameworks and reverse proxies with the built-in `boundary` block. A boundary exposes internal causal graph entities directly to external network clients (HTTP, gRPC, PostgreSQL Wire Protocol):
+Engine Lang replaces external web server frameworks and reverse proxies with the built-in `boundary` block. A boundary exposes internal causal graph entities directly to external network clients (HTTP, gRPC, PostgreSQL Wire Protocol):
 
-```continuum
+```engine
 boundary PublicGateway {
     @locality(public: true)
     route GET "/api/v1/vehicles/:id" -> fetch_vehicle_by_id;
+}
+```
+
+---
+
+## 7. Polyglot Datasources & External Persistence
+
+Engine Lang provides the embedded Single-Level Store (`engine.db`) as its zero-config default. However, developers maintain complete freedom to target existing corporate databases via declarative `datasource` definitions:
+
+```engine
+datasource WarehouseDb {
+    driver: postgres,  // postgres | mysql | sqlite | clickhouse
+    uri: env("DATABASE_URL"),
+    mode: write_through
+}
+
+@datasource(WarehouseDb, table: "plant_telemetry")
+@persistent
+entity SensorNode {
+    id: UUIDv7,
+    reading: Float where value >= 0.0,
+    invariant { self.reading <= 500.0 }
+}
+```
+
+---
+
+## 8. Industrial Hardware MMIO & Silicon Codegen
+
+For embedded microcontrollers, PLCs, and bare-metal environments, Engine Lang provides memory-mapped register declarations:
+
+```engine
+@mmio(address: 0x40001000, size: 32)
+register ActuatorCtrl {
+    enable: Bit,
+    trip_level: Byte,
+    flow_quota: Word,
+}
+```
+
+During ahead-of-time compilation via `enginec emit-ir`, the compiler emits target-native LLVM IR with direct cache-line writeback intrinsics (`@llvm.x86.clwb`, `@llvm.x86.sfence` on x86_64, `@llvm.aarch64.dmb` on ARM64) ensuring crash-proof durability on bare silicon.
 
     @TenantGuard(require_auth: true)
     route POST "/api/v1/vehicles" -> create_vehicle_handler;

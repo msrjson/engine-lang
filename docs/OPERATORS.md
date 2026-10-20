@@ -1,5 +1,5 @@
-# Official Operator Specification: Continuum
-**Document ID**: `CTM-SPEC-02.1`
+# Official Operator Specification: Engine Lang
+**Document ID**: `ENG-SPEC-03.1`
 **Status**: Official Normative Specification
 **Compiler Interface**: LL(1) Deterministic Operator Precedence Matrix
 **Formal Verification**: Integrated Z3 SMT Algebraic Law Enforcement
@@ -8,11 +8,11 @@
 
 ## 1. Architectural Design Principles
 
-The Continuum operator matrix is governed by four strict design laws:
+The Engine Lang operator matrix is governed by four strict design laws:
 
 1. **Deterministic LL(1) Parsing**: The grammar eliminates all backtracking, arbitrary lookahead, and contextual symbol ambiguity. Symbols have a single semantic meaning; the asterisk `*` denotes multiplication, while pointer dereference is syntactically distinct.
 2. **Silicon-Direct Translation**: SIMD vector math, tensor operations, and persistence primitives compile directly to machine instructions (`clwb`, `sfence`, AVX-512, ARM NEON/SVE, FMA).
-3. **Formal Algebraic Laws via SMT**: Operator overloading on custom types is permitted **only** when the implementation satisfies formal algebraic laws (e.g., associativity, commutativity, identity) proven by the Z3 SMT solver during `ctmc check`.
+3. **Formal Algebraic Laws via SMT**: Operator overloading on custom types is permitted **only** when the implementation satisfies formal algebraic laws (e.g., associativity, commutativity, identity) proven by the Z3 SMT solver during `enginec check`.
 4. **Unit-Return Mutations**: Assignment operators (`=`, `+=`, etc.) return the unit type `()`, preventing accidental assignment in conditional statements (`if x = y`).
 
 ---
@@ -43,7 +43,7 @@ The table below defines precedence from Level 1 (highest) to Level 14 (lowest).
 ## 3. In-Depth Operator Semantics
 
 ### 3.1. High-Dimensional Vector & SIMD Operators (`@*`, `@+`, `@-`, `<=>`)
-Continuum provides first-class support for `Vector(Dimension)` primitives:
+Engine Lang provides first-class support for `Vector(Dimension)` primitives:
 
 - **`v1 @+ v2` / `v1 @- v2`**: Element-wise addition and subtraction of vectors and tensors. Compiles to AVX-512 `_mm512_add_ps` or ARM SVE instructions.
 - **`m @* v`**: Matrix-vector product executed across SIMD vector lanes without memory allocation.
@@ -52,7 +52,7 @@ Continuum provides first-class support for `Vector(Dimension)` primitives:
   $$\text{sim}(u, v) = \frac{u \cdot v}{\|u\|_2 \, \|v\|_2}$$
   In hardware, this compiles to an unrolled FMA (Fused Multiply-Add) SIMD routine. It is used directly within persistent vector queries and HNSW index searches:
 
-```continuum
+```engine
 let query_embedding: Vector(1536) = ai::embed("heavy duty electric vehicle");
 let score: Decimal(5, 4) = vehicle.embedding <=> query_embedding;
 
@@ -64,17 +64,17 @@ if score >= 0.8200 {
 ### 3.2. Causal Graph & Pipeline Operators (`->`, `~>`, `|>`)
 - **`->` (Causal Graph Edge)**:
   Establishes a directed dependency in the persistent causal graph between two entities. When entity $A \to B$ is recorded, $B$ immutably retains the causal cryptographic commit hash of $A$.
-  ```continuum
+  ```engine
   purchase_order -> tax_invoice -> shipping_receipt;
   ```
 - **`~>` (Asynchronous Fiber Dispatch)**:
   Connects computation to an asynchronous worker fiber without blocking the current OS thread:
-  ```continuum
+  ```engine
   request ~> validate_payload() ~> persist_audit_log();
   ```
 - **`|>` (Functional Pipeline Composition)**:
   Passes the left-hand expression as the first argument of the right-hand function:
-  ```continuum
+  ```engine
   let final_price = raw_amount
       |> apply_corporate_discount
       |> calculate_municipal_tax
@@ -87,7 +87,7 @@ if score >= 0.8200 {
 - **`?!` (Atomic Transactional Collapse)**:
   Exclusively valid inside `atomic { ... }` blocks. When evaluating an `Err(e)`, `?!` not only unwinds the stack, but **aborts the active hardware transaction**, immediately discarding the allocated shadow pages in NVRAM and reverting mutated entities back to the prior causal epoch.
 
-```continuum
+```engine
 atomic {
     source_wallet.balance -= transfer_amount;
 
@@ -102,10 +102,10 @@ atomic {
 
 ## 4. Formal SMT Verification of Operator Overloading
 
-When implementing operator traits on custom structures, Continuum requires formal algebraic contracts within a `contract { ... }` block. During `ctmc check`, the compiler converts these methods into first-order logic formulas verified by Z3.
+When implementing operator traits on custom structures, Engine Lang requires formal algebraic contracts within a `contract { ... }` block. During `enginec check`, the compiler converts these methods into first-order logic formulas verified by Z3.
 
 ### 4.1. Formal `Add` Trait Contract Definition
-```continuum
+```engine
 module Core::Algebra;
 
 pub trait Add<Rhs = Self> {
@@ -123,7 +123,7 @@ pub trait Add<Rhs = Self> {
 ```
 
 ### 4.2. Example: Refined Monetary Balance Implementation
-```continuum
+```engine
 module Domain::Treasury;
 
 use Core::Algebra::Add;
@@ -147,7 +147,7 @@ impl Add for TreasuryLedger {
 }
 ```
 
-If an author attempts an implementation that violates associativity, introduces side effects, or panics on overflow, `ctmc check` refuses compilation and outputs the counterexample.
+If an author attempts an implementation that violates associativity, introduces side effects, or panics on overflow, `enginec check` refuses compilation and outputs the counterexample.
 
 ---
 
@@ -155,9 +155,9 @@ If an author attempts an implementation that violates associativity, introduces 
 
 | Error Code | Semantic Description | Mandatory Correction |
 |---|---|---|
-| `CTM-OP-001` | Chained relational operators (e.g., `a < b < c`). | Separate using explicit logical conjunction: `a < b && b < c`. |
-| `CTM-OP-014` | Mutation of `@persistent entity` field outside `atomic` block. | Confine all mutations inside an `atomic { ... }` block. |
-| `CTM-OP-032` | Use of atomic collapse operator `?!` outside `atomic` context. | Use `?` for standard return propagation or enclose within `atomic`. |
-| `CTM-OP-078` | SMT proof failure of formal algebraic contract during operator overload. | Eliminate non-associativity, unhandled edge cases, or side effects. |
-| `CTM-OP-099` | Attempt to define a custom or uncataloged operator symbol. | Use named functions; the Continuum operator set is closed. |
+| `ENG-OP-001` | Chained relational operators (e.g., `a < b < c`). | Separate using explicit logical conjunction: `a < b && b < c`. |
+| `ENG-OP-014` | Mutation of `@persistent entity` field outside `atomic` block. | Confine all mutations inside an `atomic { ... }` block. |
+| `ENG-OP-032` | Use of atomic collapse operator `?!` outside `atomic` context. | Use `?` for standard return propagation or enclose within `atomic`. |
+| `ENG-OP-078` | SMT proof failure of formal algebraic contract during operator overload. | Eliminate non-associativity, unhandled edge cases, or side effects. |
+| `ENG-OP-099` | Attempt to define a custom or uncataloged operator symbol. | Use named functions; the Engine Lang operator set is closed. |
 

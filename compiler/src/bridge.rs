@@ -1,6 +1,6 @@
-// Continuum PostgreSQL Wire Protocol Virtual Bridge (`ctm-bridge`)
-// Architecture: CTM-FFI-01.1 Embedded Port 5432 Server
-// Exposes the Single-Level Store (.nvram) as a virtual relational catalog for DBeaver, psql, Tableau, Metabase.
+// Engine Lang PostgreSQL Wire Protocol Virtual Bridge (`engine-bridge`)
+// Architecture: ENG-FFI-01.1 Embedded Port 5432 Server
+// Exposes the Single-Level Store (.db) as a virtual relational catalog for DBeaver, psql, Tableau, Metabase.
 
 use byteorder::{BigEndian, ByteOrder};
 use std::io::{Read, Write};
@@ -25,8 +25,13 @@ impl PostgresBridge {
         let listener = TcpListener::bind(&self.listen_addr)
             .map_err(|e| format!("Failed to bind to {}: {}", self.listen_addr, e))?;
 
-        println!("🐘 Continuum PostgreSQL Bridge (ctm-bridge) listening on: {}", self.listen_addr);
-        println!("   Clients (DBeaver, Tableau, Metabase) can query .nvram via standard Postgres drivers.");
+        println!(
+            "🐘 Engine Lang PostgreSQL Bridge (engine-bridge) listening on: {}",
+            self.listen_addr
+        );
+        println!(
+            "   Clients (DBeaver, Tableau, Metabase) can query .db via standard Postgres drivers."
+        );
 
         for stream in listener.incoming() {
             if !self.running.load(Ordering::SeqCst) {
@@ -38,7 +43,7 @@ impl PostgresBridge {
                     let running = Arc::clone(&self.running);
                     std::thread::spawn(move || {
                         if let Err(e) = handle_client(&mut socket, running) {
-                            eprintln!("   [ctm-bridge] Client session closed: {}", e);
+                            eprintln!("   [engine-bridge] Client session closed: {}", e);
                         }
                     });
 
@@ -47,7 +52,7 @@ impl PostgresBridge {
                     }
                 }
                 Err(e) => {
-                    eprintln!("   [ctm-bridge] Connection error: {}", e);
+                    eprintln!("   [engine-bridge] Connection error: {}", e);
                 }
             }
         }
@@ -78,7 +83,9 @@ fn handle_client(stream: &mut TcpStream, running: Arc<AtomicBool>) -> Result<(),
             stream.read_exact(&mut len_buf).map_err(|e| e.to_string())?;
             let next_len = BigEndian::read_u32(&len_buf) as usize;
             let mut startup_body = vec![0u8; next_len - 4];
-            stream.read_exact(&mut startup_body).map_err(|e| e.to_string())?;
+            stream
+                .read_exact(&mut startup_body)
+                .map_err(|e| e.to_string())?;
         }
     }
 
@@ -90,7 +97,11 @@ fn handle_client(stream: &mut TcpStream, running: Arc<AtomicBool>) -> Result<(),
     stream.write_all(&auth_ok).map_err(|e| e.to_string())?;
 
     // 2. Emit ParameterStatus messages required by modern clients (DBeaver, psql, JDBC)
-    send_parameter_status(stream, "server_version", "16.0 (Continuum SLS Genesis)")?;
+    send_parameter_status(
+        stream,
+        "server_version",
+        "16.0 (Engine Lang SLS Genesis v0.3.0)",
+    )?;
     send_parameter_status(stream, "client_encoding", "UTF8")?;
     send_parameter_status(stream, "server_encoding", "UTF8")?;
     send_parameter_status(stream, "standard_conforming_strings", "on")?;
@@ -101,7 +112,7 @@ fn handle_client(stream: &mut TcpStream, running: Arc<AtomicBool>) -> Result<(),
     send_ready_for_query(stream)?;
     stream.flush().map_err(|e| e.to_string())?;
 
-    println!("   [ctm-bridge] Handshake complete. Virtual Single-Level Store catalog attached.");
+    println!("   [engine-bridge] Handshake complete. Virtual Single-Level Store catalog attached.");
 
     // 4. Interactive Query Processing Loop
     loop {
@@ -166,23 +177,74 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
 
     if q_upper.is_empty() || q_upper == ";" {
         send_empty_query_response(stream)?;
-    } else if q_upper.starts_with("SET ") || q_upper.starts_with("BEGIN") || q_upper.starts_with("COMMIT") || q_upper.starts_with("ROLLBACK") || q_upper.starts_with("DISCARD") {
-        let tag = if q_upper.starts_with("SET ") { "SET" } else if q_upper.starts_with("BEGIN") { "BEGIN" } else if q_upper.starts_with("COMMIT") { "COMMIT" } else { "OK" };
+    } else if q_upper.starts_with("SET ")
+        || q_upper.starts_with("BEGIN")
+        || q_upper.starts_with("COMMIT")
+        || q_upper.starts_with("ROLLBACK")
+        || q_upper.starts_with("DISCARD")
+    {
+        let tag = if q_upper.starts_with("SET ") {
+            "SET"
+        } else if q_upper.starts_with("BEGIN") {
+            "BEGIN"
+        } else if q_upper.starts_with("COMMIT") {
+            "COMMIT"
+        } else {
+            "OK"
+        };
         send_command_complete(stream, tag)?;
     } else if q_upper.contains("VERSION()") || q_upper.starts_with("SHOW SERVER_VERSION") {
         send_row_description(stream, &[("version", 25)])?;
-        send_data_row(stream, &["Continuum SLS Genesis v0.2.0 (PostgreSQL 16.0 Virtual Bridge) - NVRAM Direct Access"])?;
+        send_data_row(stream, &["Engine Lang SLS Genesis v0.3.0 (PostgreSQL 16.0 Virtual Bridge) - Direct DB Access"])?;
         send_command_complete(stream, "SELECT 1")?;
     } else if q_upper.contains("CURRENT_SCHEMA") || q_upper.contains("CURRENT_DATABASE") {
         send_row_description(stream, &[("current_database", 25)])?;
-        send_data_row(stream, &["continuum"])?;
+        send_data_row(stream, &["engine"])?;
         send_command_complete(stream, "SELECT 1")?;
-    } else if q_upper.contains("INFORMATION_SCHEMA.TABLES") || q_upper.contains("PG_TABLES") || q_upper.contains("PG_CATALOG.PG_TABLES") {
-        send_row_description(stream, &[("table_name", 25), ("table_type", 25), ("storage_engine", 25)])?;
-        send_data_row(stream, &["posts", "PERSISTENT ENTITY", "Single-Level Store (NVRAM)"])?;
-        send_data_row(stream, &["categories", "PERSISTENT ENTITY", "Single-Level Store (NVRAM)"])?;
-        send_data_row(stream, &["users", "PERSISTENT ENTITY", "Single-Level Store (NVRAM)"])?;
-        send_data_row(stream, &["nvram_telemetry", "VIRTUAL SYSTEM VIEW", "Direct Hardware Registers"])?;
+    } else if q_upper.contains("INFORMATION_SCHEMA.TABLES")
+        || q_upper.contains("PG_TABLES")
+        || q_upper.contains("PG_CATALOG.PG_TABLES")
+    {
+        send_row_description(
+            stream,
+            &[
+                ("table_name", 25),
+                ("table_type", 25),
+                ("storage_engine", 25),
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "posts",
+                "PERSISTENT ENTITY",
+                "Single-Level Store (Engine DB)",
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "categories",
+                "PERSISTENT ENTITY",
+                "Single-Level Store (Engine DB)",
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "users",
+                "PERSISTENT ENTITY",
+                "Single-Level Store (Engine DB)",
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "engine_db_telemetry",
+                "VIRTUAL SYSTEM VIEW",
+                "Direct Hardware Storage Registers",
+            ],
+        )?;
         send_command_complete(stream, "SELECT 4")?;
     } else if q_upper.contains("FROM POST") {
         send_row_description(
@@ -203,7 +265,7 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
                 "doc_1",
                 "01. Especificação da Linguagem: Gramática Formal EBNF",
                 "Especificação & EBNF",
-                "Continuum Core Working Group",
+                "Engine Lang Core Working Group",
                 "124",
                 "1",
                 "CLWB + SFENCE Durable",
@@ -225,8 +287,8 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
             stream,
             &[
                 "doc_3",
-                "03. Layout Binário Físico da NVRAM (CTM-SLS-01.1)",
-                "Arquitetura NVRAM & SLS",
+                "03. Layout Binário Físico do Storage .db (ENG-SLS-01.1)",
+                "Arquitetura Engine DB & SLS",
                 "Systems & Storage Division",
                 "142",
                 "3",
@@ -249,18 +311,48 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
     } else if q_upper.contains("FROM CATEGOR") {
         send_row_description(
             stream,
+            &[("id", 25), ("name", 25), ("slug", 25), ("post_count", 20)],
+        )?;
+        send_data_row(
+            stream,
             &[
-                ("id", 25),
-                ("name", 25),
-                ("slug", 25),
-                ("post_count", 20),
+                "cat_spec",
+                "Especificação & EBNF",
+                "especificacao-ebnf",
+                "1",
             ],
         )?;
-        send_data_row(stream, &["cat_spec", "Especificação & EBNF", "especificacao-ebnf", "1"])?;
-        send_data_row(stream, &["cat_op", "Operadores & SIMD", "operadores-simd", "1"])?;
-        send_data_row(stream, &["cat_sls", "Arquitetura NVRAM & SLS", "nvram-sls", "1"])?;
-        send_data_row(stream, &["cat_evol", "Evolução de Esquema LSE-CRC", "evolucao-esquema", "1"])?;
-        send_data_row(stream, &["cat_smt", "Verificação Formal SMT & Z3", "verificacao-smt", "1"])?;
+        send_data_row(
+            stream,
+            &["cat_op", "Operadores & SIMD", "operadores-simd", "1"],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "cat_sls",
+                "Arquitetura Engine DB & SLS",
+                "engine-db-sls",
+                "1",
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "cat_evol",
+                "Evolução de Esquema LSE-CRC",
+                "evolucao-esquema",
+                "1",
+            ],
+        )?;
+        send_data_row(
+            stream,
+            &[
+                "cat_smt",
+                "Verificação Formal SMT & Z3",
+                "verificacao-smt",
+                "1",
+            ],
+        )?;
         send_command_complete(stream, "SELECT 5")?;
     } else if q_upper.contains("FROM USER") {
         send_row_description(
@@ -273,9 +365,21 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
                 ("tenant_guard", 25),
             ],
         )?;
-        send_data_row(stream, &["usr_1", "autor@continuum-lang.org", "Alan Kay", "Author", "Tenant #1 (Isolated)"])?;
+        send_data_row(
+            stream,
+            &[
+                "usr_1",
+                "autor@engine-lang.org",
+                "Alan Kay",
+                "Author",
+                "Tenant #1 (Isolated)",
+            ],
+        )?;
         send_command_complete(stream, "SELECT 1")?;
-    } else if q_upper.contains("FROM NVRAM") {
+    } else if q_upper.contains("FROM DB")
+        || q_upper.contains("FROM NVRAM")
+        || q_upper.contains("ENGINE_DB_TELEMETRY")
+    {
         send_row_description(
             stream,
             &[
@@ -287,7 +391,17 @@ fn handle_query(stream: &mut TcpStream, query: &str) -> Result<(), String> {
                 ("mode", 25),
             ],
         )?;
-        send_data_row(stream, &["/app/data/continuum.nvram", "32", "0xCBF29CE484222325 (VALID)", "11", "54", "Direct Access (DAX)"])?;
+        send_data_row(
+            stream,
+            &[
+                "/app/data/engine.db",
+                "32",
+                "0xCBF29CE484222325 (VALID)",
+                "11",
+                "54",
+                "Direct Access (DAX)",
+            ],
+        )?;
         send_command_complete(stream, "SELECT 1")?;
     } else {
         // Fallback for standard scalar probes (e.g. SELECT 1, SELECT TRUE)
@@ -410,5 +524,3 @@ fn send_ready_for_query(stream: &mut TcpStream) -> Result<(), String> {
     ready[5] = b'I';
     stream.write_all(&ready).map_err(|e| e.to_string())
 }
-
-

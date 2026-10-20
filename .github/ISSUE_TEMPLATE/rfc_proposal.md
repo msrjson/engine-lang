@@ -1,6 +1,6 @@
 ---
 name: RFC Proposal
-about: Propose a major architectural change or specification evolution for Continuum
+about: Propose a major architectural change or specification evolution for Engine Lang
 title: "[RFC] "
 labels: ["rfc", "discussion", "spec"]
 assignees: ""
@@ -8,7 +8,7 @@ assignees: ""
 
 # RFC: [Proposal Title]
 
-- **RFC Target**: [e.g., CTM-SPEC-02.x, CTM-SLS-01.x, CTM-MIG-01.x]
+- **RFC Target**: [e.g., ENG-SPEC-02.x, ENG-SLS-01.x, ENG-MIG-01.x]
 - **Authors**: [Your Name/Handle <email>]
 - **Status**: Draft
 - **Created Date**: YYYY-MM-DD
@@ -39,21 +39,21 @@ Detail silicon instructions (`clwb`, `sfence`, AVX-512, NEON) and any impact on 
 
 ### 3.3. SMT Formal Verification Contracts
 Specify the first-order logic translation and algebraic invariants required for solver verification:
-```continuum
+```engine
 contract {
     // Formal invariant formula
 }
 ```
 
-### 3.4. Impact on Binary NVRAM Layout (`.nvram`)
-Does this require modifications to `CtmSuperblock`, `JournalEntry`, or `EntityHeader`?
+### 3.4. Impact on Binary Storage Layout (`.db`)
+Does this require modifications to `EngineSuperblock`, `JournalEntry`, or `EntityHeader`?
 
 ## 4. Drawbacks and Trade-offs
 Why should we **not** do this? What additional complexity does it introduce into the compiler or memory runtime?
 
 ## 5. Prior Art and Alternatives
 - How do other systems (Rust, C++, PMDK, Dafny, Pony, Datomic) solve this problem?
-- Why is the Continuum approach superior for infrastructure elimination?
+- Why is the Engine Lang approach superior for infrastructure elimination?
 
 ## 6. Unresolved Questions
 List open design choices requiring consensus from the Core Working Group.

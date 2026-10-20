@@ -1,5 +1,5 @@
-// Continuum Embedded HTTP Web Gateway (`ctm-web`)
-// Architecture: CTM-SPEC-02.1 Boundary Gateway on Port 8090
+// Engine Lang Embedded HTTP Web Gateway (`engine-web`)
+// Architecture: ENG-SPEC-03.1 Boundary Gateway on Port 8090
 
 use std::collections::HashMap;
 use std::io::{Read, Write};
@@ -53,8 +53,8 @@ impl Default for BlogState {
                 },
                 BlogCategory {
                     id: "cat_sls".to_string(),
-                    name: "Arquitetura NVRAM & SLS".to_string(),
-                    slug: "nvram-sls".to_string(),
+                    name: "Arquitetura Engine DB & SLS".to_string(),
+                    slug: "engine-db-sls".to_string(),
                     post_count: 1,
                 },
                 BlogCategory {
@@ -112,8 +112,8 @@ impl Default for BlogState {
                     title: "01. Especificação da Linguagem: Gramática Formal EBNF, Diretivas e Pattern Matching".to_string(),
                     slug: "01-especificacao-formal-ebnf".to_string(),
                     category: "Especificação & EBNF".to_string(),
-                    author: "Continuum Core Working Group".to_string(),
-                    content: "O Continuum adota uma gramática estritamente determinística LL(1) sem backtracking, eliminando ambiguidade de parsing.\n\n• Diretivas Semânticas Principais:\n  - @persistent: aloca grafos de entidades diretamente em memória persistente (Single-Level Store) alinhados a 64 bytes.\n  - @locality(public: true): expõe ações para roteamento externo seguro sem expor memória interna.\n  - @TenantGuard(strict: true): injeta isolamento formal de multi-tenancy comprovado matematicamente.\n\n• Tipos de Dados:\n  Tipos Primitivos (Int, Float, Text, Bool, UUIDv7), Vetores nativos (Vector(N)), Tuplas, ADTs (Algebraic Data Types), e Pattern Matching exaustivo com checagem formal de cobertura.".to_string(),
+                    author: "Engine Lang Core Working Group".to_string(),
+                    content: "O Engine Lang adota uma gramática estritamente determinística LL(1) sem backtracking, eliminando ambiguidade de parsing.\n\n• Diretivas Semânticas Principais:\n  - @persistent: aloca grafos de entidades diretamente em memória persistente (Single-Level Store) alinhados a 64 bytes.\n  - @locality(public: true): expõe ações para roteamento externo seguro sem expor memória interna.\n  - @TenantGuard(strict: true): injeta isolamento formal de multi-tenancy comprovado matematicamente.\n\n• Tipos de Dados:\n  Tipos Primitivos (Int, Float, Text, Bool, UUIDv7), Vetores nativos (Vector(N)), Tuplas, ADTs (Algebraic Data Types), e Pattern Matching exaustivo com checagem formal de cobertura.".to_string(),
                     views: 124,
                     epoch: 1,
                 },
@@ -123,17 +123,17 @@ impl Default for BlogState {
                     slug: "02-matriz-operadores-simd-causal".to_string(),
                     category: "Operadores & SIMD".to_string(),
                     author: "Compiler Architecture Team".to_string(),
-                    content: "O Continuum define uma matriz fechada de operadores com 14 níveis estritos de precedência (CTM-SPEC-02.1), mapeando diretamente para instruções de CPU:\n\n• <=> (Precedência 9, Não-associativo): Similaridade de cosseno vetorial nativa compilada para AVX-512 VDPBF16PS / ARM NEON.\n• @*, @+, @- (Precedência 11-12): Aritmética vetorial de ponto flutuante elemento a elemento.\n• -> e ~> (Precedência 13, Associativo à direita): Dependência causal síncrona e assíncrona entre nós do grafo de persistência.\n• ?! (Precedência 14, Pós-fixado unário): Avaliação com rollback atômico automático em caso de violação de contrato.\n• |> (Precedência 2, Associativo à esquerda): Composição e pipeline funcional determinístico.".to_string(),
+                    content: "O Engine Lang define uma matriz fechada de operadores com 14 níveis estritos de precedência (ENG-SPEC-03.1), mapeando diretamente para instruções de CPU:\n\n• <=> (Precedência 9, Não-associativo): Similaridade de cosseno vetorial nativa compilada para AVX-512 VDPBF16PS / ARM NEON.\n• @*, @+, @- (Precedência 11-12): Aritmética vetorial de ponto flutuante elemento a elemento.\n• -> e ~> (Precedência 13, Associativo à direita): Dependência causal síncrona e assíncrona entre nós do grafo de persistência.\n• ?! (Precedência 14, Pós-fixado unário): Avaliação com rollback atômico automático em caso de violação de contrato.\n• |> (Precedência 2, Associativo à esquerda): Composição e pipeline funcional determinístico.".to_string(),
                     views: 98,
                     epoch: 2,
                 },
                 BlogPost {
                     id: "doc_3".to_string(),
-                    title: "03. Layout Binário Físico da NVRAM (CTM-SLS-01.1): O Fim do Banco de Dados Externo".to_string(),
-                    slug: "03-layout-binario-nvram-sls".to_string(),
-                    category: "Arquitetura NVRAM & SLS".to_string(),
+                    title: "03. Layout Binário Físico do Storage .db (ENG-SLS-01.1): O Fim do Banco de Dados Externo".to_string(),
+                    slug: "03-layout-binario-db-sls".to_string(),
+                    category: "Arquitetura Engine DB & SLS".to_string(),
                     author: "Systems & Storage Division".to_string(),
-                    content: "A Single-Level Store (SLS) mapeia o arquivo .nvram diretamente no espaço de endereçamento do processo via DAX (Direct Access):\n\n• Região 0 (0x0000 - 0x0FFF, 4 KiB): Superblock com Magic (CTM_NVRAM_V1), especificação, contador de época e Root Pointers Table com CRC-64/NVME.\n• Região 1 (0x1000 - 0x1FFFF): Bitmap de alocação livre de travas (lock-free) por blocos de 64 bytes (alinhamento de linha de cache).\n• Região 2 (0x20000 - 0x7FFFF, 384 KiB): Ring Buffer do Journal Causal para commits atômicos com geração de época monotônica.\n• Região 3 (0x80000 - Fim): Heap contínuo de entidades e vetores indexados por ponteiros causais de 128 bits (ctm_ptr_t).".to_string(),
+                    content: "A Single-Level Store (SLS) mapeia o arquivo .db (engine.db) diretamente no espaço de endereçamento do processo via DAX (Direct Access):\n\n• Região 0 (0x0000 - 0x0FFF, 4 KiB): Superblock com Magic (ENG_MAGIC (ENG\x01)), especificação, contador de época e Root Pointers Table com CRC-64/NVME.\n• Região 1 (0x1000 - 0x1FFFF): Bitmap de alocação livre de travas (lock-free) por blocos de 64 bytes (alinhamento de linha de cache).\n• Região 2 (0x20000 - 0x7FFFF, 384 KiB): Ring Buffer do Journal Causal para commits atômicos com geração de época monotônica.\n• Região 3 (0x80000 - Fim): Heap contínuo de entidades e vetores indexados por ponteiros causais de 128 bits (engine_ptr_t).".to_string(),
                     views: 142,
                     epoch: 3,
                 },
@@ -143,7 +143,7 @@ impl Default for BlogState {
                     slug: "04-evolucao-esquema-zero-downtime".to_string(),
                     category: "Evolução de Esquema LSE-CRC".to_string(),
                     author: "Database & Distributed Systems Group".to_string(),
-                    content: "Como o Continuum realiza upgrades de esquema sem perda de dados e sem travar a aplicação:\n\n• Hash Estrutural CRC-64: Cada versão da entidade carrega um hash determinístico de seus campos e tipos no cabeçalho EntityHeader.\n• Migração Preguiçosa (Lazy Structural Evolution): Quando o binário é atualizado, ele lê entidades antigas e sintetiza novos campos em tempo real usando diretivas:\n  - @default(expressão): valor padrão sintetizado durante leituras de versões anteriores.\n  - @alias(campo_antigo): mapeia renomeações de campos sem cópia física de memória.\n  - @deprecated(versão): preserva campos depreciados até a limpeza em background pelo Causal GC.\n• Durabilidade e Segurança: Nenhuma escrita em massa bloqueia a produção; a gravação do novo layout ocorre sob demanda no próximo ciclo de mutação com CLWB + SFENCE.".to_string(),
+                    content: "Como o Engine Lang realiza upgrades de esquema sem perda de dados e sem travar a aplicação:\n\n• Hash Estrutural CRC-64: Cada versão da entidade carrega um hash determinístico de seus campos e tipos no cabeçalho EntityHeader.\n• Migração Preguiçosa (Lazy Structural Evolution): Quando o binário é atualizado, ele lê entidades antigas e sintetiza novos campos em tempo real usando diretivas:\n  - @default(expressão): valor padrão sintetizado durante leituras de versões anteriores.\n  - @alias(campo_antigo): mapeia renomeações de campos sem cópia física de memória.\n  - @deprecated(versão): preserva campos depreciados até a limpeza em background pelo Causal GC.\n• Durabilidade e Segurança: Nenhuma escrita em massa bloqueia a produção; a gravação do novo layout ocorre sob demanda no próximo ciclo de mutação com CLWB + SFENCE.".to_string(),
                     views: 185,
                     epoch: 4,
                 },
@@ -153,7 +153,7 @@ impl Default for BlogState {
                     slug: "05-modelo-memoria-causal-hardware".to_string(),
                     category: "Modelo de Memória & Concorrência".to_string(),
                     author: "Hardware Interop Team".to_string(),
-                    content: "O modelo de concorrência do Continuum estabelece consistência causal sequencial sem locks pessimistas de banco de dados:\n\n• Garantias de Hardware: Blocos 'atomic' compilam para sequências de instruções de baixa latência da CPU:\n  - CLWB (Cache Line Write Back): força a linha de cache a descer até o controlador de memória não-volátil.\n  - SFENCE (Store Fence): garante que todas as gravações anteriores foram persistidas antes de liberar a transação.\n• Coleta de Lixo Causal (CGC): Garbage Collection baseada em épocas (Epoch-based Reclamation) que nunca pausa a execução do usuário e coleta nós órfãos de versões antigas sem fragmentação de heap.".to_string(),
+                    content: "O modelo de concorrência do Engine Lang estabelece consistência causal sequencial sem locks pessimistas de banco de dados:\n\n• Garantias de Hardware: Blocos 'atomic' compilam para sequências de instruções de baixa latência da CPU:\n  - CLWB (Cache Line Write Back): força a linha de cache a descer até o controlador de memória não-volátil.\n  - SFENCE (Store Fence): garante que todas as gravações anteriores foram persistidas antes de liberar a transação.\n• Coleta de Lixo Causal (CGC): Garbage Collection baseada em épocas (Epoch-based Reclamation) que nunca pausa a execução do usuário e coleta nós órfãos de versões antigas sem fragmentação de heap.".to_string(),
                     views: 87,
                     epoch: 5,
                 },
@@ -163,17 +163,17 @@ impl Default for BlogState {
                     slug: "06-malha-p2p-distribuida-crdts".to_string(),
                     category: "Malha P2P & Wire Protocol".to_string(),
                     author: "Distributed Mesh Working Group".to_string(),
-                    content: "A replicação entre nós do Continuum opera através de um protocolo ponto-a-ponto nativo de alto desempenho:\n\n• Transporte Base: Conexões criptografadas sobre QUIC (porta UDP 9443) com fallback para RDMA (Remote Direct Memory Access) em clusters de baixa latência.\n• Delta-CRDTs Nativos: Tipos de dados replicados sem conflito integrados diretamente na linguagem:\n  - LWW-Register (Last-Write-Wins baseado no relógio causal de Lamport).\n  - PN-Counter (Contador bidirecional de incremento e decremento distribuído).\n  - OR-Set (Observed-Removed Set para coleções com resolução causal determinística).\n• Zero Two-Phase Commit: Nenhuma transação global bloqueia nós remotos durante partições de rede.".to_string(),
+                    content: "A replicação entre nós do Engine Lang opera através de um protocolo ponto-a-ponto nativo de alto desempenho:\n\n• Transporte Base: Conexões criptografadas sobre QUIC (porta UDP 9443) com fallback para RDMA (Remote Direct Memory Access) em clusters de baixa latência.\n• Delta-CRDTs Nativos: Tipos de dados replicados sem conflito integrados diretamente na linguagem:\n  - LWW-Register (Last-Write-Wins baseado no relógio causal de Lamport).\n  - PN-Counter (Contador bidirecional de incremento e decremento distribuído).\n  - OR-Set (Observed-Removed Set para coleções com resolução causal determinística).\n• Zero Two-Phase Commit: Nenhuma transação global bloqueia nós remotos durante partições de rede.".to_string(),
                     views: 110,
                     epoch: 6,
                 },
                 BlogPost {
                     id: "doc_7".to_string(),
-                    title: "07. Módulos, Pacotes e os 4 Níveis de Visibilidade no Continuum".to_string(),
+                    title: "07. Módulos, Pacotes e os 4 Níveis de Visibilidade no Engine Lang".to_string(),
                     slug: "07-modulos-pacotes-visibilidade".to_string(),
                     category: "Módulos & Pacotes".to_string(),
                     author: "Language Design & Tooling".to_string(),
-                    content: "A arquitetura de código do Continuum promove encapsulamento estrito e modularidade composicional:\n\n• Manifesto Continuum.toml: Define o workspace, nós de bootstrap, quotas de memória NVRAM e módulos canônicos.\n• 4 Níveis de Visibilidade Estritos:\n  - private (padrão): acessível apenas dentro do arquivo/bloco de definição.\n  - pub(package): compartilhado entre módulos do mesmo pacote/biblioteca.\n  - pub(mesh): visível para o cluster distribuído e contratos causais remotos.\n  - pub: interface pública universal aberta a chamadas de clientes e boundaries.\n• Proteção de Domínio: Entidades marcadas com @TenantGuard não podem ser vazadas para boundaries sem autenticação validada.".to_string(),
+                    content: "A arquitetura de código do Engine Lang promove encapsulamento estrito e modularidade composicional:\n\n• Manifesto Engine.toml: Define o workspace, nós de bootstrap, quotas de storage (.db) e módulos canônicos.\n• 4 Níveis de Visibilidade Estritos:\n  - private (padrão): acessível apenas dentro do arquivo/bloco de definição.\n  - pub(package): compartilhado entre módulos do mesmo pacote/biblioteca.\n  - pub(mesh): visível para o cluster distribuído e contratos causais remotos.\n  - pub: interface pública universal aberta a chamadas de clientes e boundaries.\n• Proteção de Domínio: Entidades marcadas com @TenantGuard não podem ser vazadas para boundaries sem autenticação validada.".to_string(),
                     views: 74,
                     epoch: 7,
                 },
@@ -183,7 +183,7 @@ impl Default for BlogState {
                     slug: "08-tipos-refinados-verificacao-smt".to_string(),
                     category: "Verificação Formal SMT & Z3".to_string(),
                     author: "Formal Methods Laboratory".to_string(),
-                    content: "O Continuum substitui testes unitários frágeis por provas formais estáticas em tempo de compilação:\n\n• Cláusula 'where': Permite restringir o domínio de qualquer tipo:\n  - type Email = Text where len(value) >= 5 && is_alphanumeric(value);\n  - type Balance = Decimal(18, 4) where value >= 0.0;\n• Geração de Condições de Verificação (VCs): O compilador traduz contratos e invariantes para fórmulas SMT-LIB2.\n• Integração com Z3: O solver Z3 resolve as fórmulas em tempo de checagem ('ctmc check'). Se houver qualquer possibilidade de contra-exemplo (ex: saldo ficar negativo), a compilação é abortada com prova matemática da violação.".to_string(),
+                    content: "O Engine Lang substitui testes unitários frágeis por provas formais estáticas em tempo de compilação:\n\n• Cláusula 'where': Permite restringir o domínio de qualquer tipo:\n  - type Email = Text where len(value) >= 5 && is_alphanumeric(value);\n  - type Balance = Decimal(18, 4) where value >= 0.0;\n• Geração de Condições de Verificação (VCs): O compilador traduz contratos e invariantes para fórmulas SMT-LIB2.\n• Integração com Z3: O solver Z3 resolve as fórmulas em tempo de checagem ('enginec check'). Se houver qualquer possibilidade de contra-exemplo (ex: saldo ficar negativo), a compilação é abortada com prova matemática da violação.".to_string(),
                     views: 163,
                     epoch: 8,
                 },
@@ -193,7 +193,7 @@ impl Default for BlogState {
                     slug: "09-ffi-c-ponte-virtual-postgresql".to_string(),
                     category: "FFI C & Ponte PostgreSQL".to_string(),
                     author: "Ecosystem Integration Division".to_string(),
-                    content: "Como modernizar sistemas sem reescrever ferramentas de BI e análise corporativas:\n\n• FFI C de Zero Custo: Acesso a ponteiros nativos de sistema operacional através da sintaxe 'extern \"C\"'.\n• Ponte Virtual PostgreSQL (ctm-bridge): O nó Continuum escuta na porta 5432 (mapeada para 5442 no host) e responde ao protocolo binário PostgreSQL v3.\n• Compatibilidade Transparente: Ferramentas como DBeaver, Tableau, Metabase, PowerBI e clientes psql consultam diretamente as entidades persistidas no .nvram como se fossem tabelas SQL relacionais, com latência de microssegundos.".to_string(),
+                    content: "Como modernizar sistemas sem reescrever ferramentas de BI e análise corporativas:\n\n• FFI C de Zero Custo: Acesso a ponteiros nativos de sistema operacional através da sintaxe 'extern \"C\"'.\n• Ponte Virtual PostgreSQL (engine-bridge): O nó Engine Lang escuta na porta 5432 (mapeada para 5442 no host) e responde ao protocolo binário PostgreSQL v3.\n• Compatibilidade Transparente: Ferramentas como DBeaver, Tableau, Metabase, PowerBI e clientes psql consultam diretamente as entidades persistidas no .db (engine.db) como se fossem tabelas SQL relacionais, com latência de microssegundos.".to_string(),
                     views: 129,
                     epoch: 9,
                 },
@@ -203,22 +203,22 @@ impl Default for BlogState {
                     slug: "10-casos-de-uso-arquiteturais-tco".to_string(),
                     category: "Casos de Uso & Engenharia".to_string(),
                     author: "Solutions Architecture Team".to_string(),
-                    content: "O Continuum elimina o chamado 'Imposto da Fragmentação na Nuvem', unificando computação e estado em um único runtime:\n\n• FinTech Bancária: Saldo garantido por tipos refinados SMT, zero risco de overdraft e auditoria imutável por época causal.\n• Frotas de Veículos e Logística IoT: Rastreamento em tempo real com entidades @persistent, histórico fiscal multianual e latência P99 abaixo de 1 milissegundo.\n• Busca Semântica e IA Vetorial: Embeddings de 1536 dimensões nativos com ordenação por similaridade (<=>) acelerada por hardware, dispensando Pinecone, Milvus ou PgVector.\n• Economia de Custos: Redução comprovada de até 95% do custo de infraestrutura em nuvem (eliminando Redis, Kafka, RDS e pods ORM).".to_string(),
+                    content: "O Engine Lang elimina o chamado 'Imposto da Fragmentação na Nuvem', unificando computação e estado em um único runtime:\n\n• FinTech Bancária: Saldo garantido por tipos refinados SMT, zero risco de overdraft e auditoria imutável por época causal.\n• Frotas de Veículos e Logística IoT: Rastreamento em tempo real com entidades @persistent, histórico fiscal multianual e latência P99 abaixo de 1 milissegundo.\n• Busca Semântica e IA Vetorial: Embeddings de 1536 dimensões nativos com ordenação por similaridade (<=>) acelerada por hardware, dispensando Pinecone, Milvus ou PgVector.\n• Economia de Custos: Redução comprovada de até 95% do custo de infraestrutura em nuvem (eliminando Redis, Kafka, RDS e pods ORM).".to_string(),
                     views: 215,
                     epoch: 10,
                 },
                 BlogPost {
                     id: "doc_11".to_string(),
-                    title: "11. Roadmap Estratégico do Continuum: Do Nó Genesis v0.2.0 à Certificação ISO".to_string(),
+                    title: "11. Roadmap Estratégico do Engine Lang: Do Nó Genesis v0.3.0 à Certificação ISO".to_string(),
                     slug: "11-roadmap-estrategico-fases".to_string(),
                     category: "Roadmap Estratégico (Fases 1 a 5)".to_string(),
                     author: "Steering Committee".to_string(),
-                    content: "O plano de engenharia do ecossistema Continuum está estruturado em 5 fases de maturação industrial:\n\n• Fase 1 (Genesis - Atual): Compilador bootstrap ctmc em Rust, parser LL(1), integrador Z3 SMT, persistência SLS e ponte HTTP/Postgres.\n• Fase 2 (JIT & Engine): Compilação Just-in-Time com backend Cranelift e alocador de páginas de memória CXL.\n• Fase 3 (LLVM Native AOT): Emissão direta de binários ELF/Mach-O/PE otimizados via backend LLVM com vetorização AVX-512 e ARM SVE2.\n• Fase 4 (Malha Distribuída Global): Protocolo de roteamento anycast P2P com garantia de convergência causal delta-CRDT.\n• Fase 5 (Padrão Aberto & ISO): Especificação formal ratificada por consórcio aberto para hardware NVRAM corporativo.".to_string(),
+                    content: "O plano de engenharia do ecossistema Engine Lang está estruturado em 5 fases de maturação industrial:\n\n• Fase 1 (Genesis - Atual): Compilador bootstrap enginec em Rust, parser LL(1), integrador Z3 SMT, persistência SLS e ponte HTTP/Postgres.\n• Fase 2 (JIT & Engine): Compilação Just-in-Time com backend Cranelift e alocador de páginas de memória CXL.\n• Fase 3 (LLVM Native AOT): Emissão direta de binários ELF/Mach-O/PE otimizados via backend LLVM com vetorização AVX-512 e ARM SVE2.\n• Fase 4 (Malha Distribuída Global): Protocolo de roteamento anycast P2P com garantia de convergência causal delta-CRDT.\n• Fase 5 (Padrão Aberto & ISO): Especificação formal ratificada por consórcio aberto para hardware de memória persistente e CXL corporativo.".to_string(),
                     views: 95,
                     epoch: 11,
                 },
             ],
-            current_user: Some("autor@continuum-lang.org".to_string()),
+            current_user: Some("autor@engine-lang.org".to_string()),
             epoch_counter: 11,
             flushes_count: 54,
         }
@@ -242,7 +242,10 @@ impl WebServer {
         let listener = TcpListener::bind(&self.listen_addr)
             .map_err(|e| format!("Failed to bind HTTP server to {}: {}", self.listen_addr, e))?;
 
-        println!("🌐 Continuum Web Gateway (@boundary) listening on: http://{}", self.listen_addr);
+        println!(
+            "🌐 Engine Lang Web Gateway (@boundary) listening on: http://{}",
+            self.listen_addr
+        );
         println!("   Single-Level Store Web UI live for Posts, Login & Categories.");
 
         for stream in listener.incoming() {
@@ -250,10 +253,10 @@ impl WebServer {
                 Ok(mut socket) => {
                     let state = Arc::clone(&self.state);
                     if let Err(e) = handle_http_request(&mut socket, state) {
-                        eprintln!("   [ctm-web] HTTP request handling error: {}", e);
+                        eprintln!("   [engine-web] HTTP request handling error: {}", e);
                     }
                 }
-                Err(e) => eprintln!("   [ctm-web] Connection error: {}", e),
+                Err(e) => eprintln!("   [engine-web] Connection error: {}", e),
             }
         }
         Ok(())
@@ -286,7 +289,9 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
         let st = state.lock().unwrap();
         let mut json = String::from("[");
         for (i, c) in st.categories.iter().enumerate() {
-            if i > 0 { json.push(','); }
+            if i > 0 {
+                json.push(',');
+            }
             json.push_str(&format!(
                 r#"{{"id":"{}","name":"{}","slug":"{}","post_count":{}}}"#,
                 c.id, c.name, c.slug, c.post_count
@@ -298,7 +303,9 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
         let st = state.lock().unwrap();
         let mut json = String::from("[");
         for (i, p) in st.posts.iter().enumerate() {
-            if i > 0 { json.push(','); }
+            if i > 0 {
+                json.push(',');
+            }
             json.push_str(&format!(
                 r#"{{"id":"{}","title":"{}","slug":"{}","category":"{}","author":"{}","content":"{}","views":{},"epoch":{}}}"#,
                 p.id, p.title, p.slug, p.category, p.author, p.content, p.views, p.epoch
@@ -308,18 +315,30 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
         send_response(stream, "200 OK", "application/json", &json)?;
     } else if method == "POST" && path == "/api/v1/auth/login" {
         let mut st = state.lock().unwrap();
-        st.current_user = Some("autor@continuum-lang.org".to_string());
-        let res = r#"{"status":"success","message":"Autenticado com sucesso","user":"autor@continuum-lang.org","role":"Author"}"#;
+        st.current_user = Some("autor@engine-lang.org".to_string());
+        let res = r#"{"status":"success","message":"Autenticado com sucesso","user":"autor@engine-lang.org","role":"Author"}"#;
         send_response(stream, "200 OK", "application/json", res)?;
     } else if method == "POST" && path.starts_with("/api/v1/posts") {
         // Extract body
         let body = extract_body(&request_str);
         let params = parse_form_params(&body);
 
-        let title = params.get("title").cloned().unwrap_or_else(|| "Novo Artigo Causal".to_string());
-        let slug = params.get("slug").cloned().unwrap_or_else(|| "novo-artigo".to_string());
-        let category = params.get("category").cloned().unwrap_or_else(|| "Sistemas Distribuídos".to_string());
-        let content = params.get("content").cloned().unwrap_or_else(|| "Conteúdo persistido com garantia matemática.".to_string());
+        let title = params
+            .get("title")
+            .cloned()
+            .unwrap_or_else(|| "Novo Artigo Causal".to_string());
+        let slug = params
+            .get("slug")
+            .cloned()
+            .unwrap_or_else(|| "novo-artigo".to_string());
+        let category = params
+            .get("category")
+            .cloned()
+            .unwrap_or_else(|| "Sistemas Distribuídos".to_string());
+        let content = params
+            .get("content")
+            .cloned()
+            .unwrap_or_else(|| "Conteúdo persistido com garantia matemática.".to_string());
 
         let mut st = state.lock().unwrap();
         st.epoch_counter += 1;
@@ -330,7 +349,10 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
             title,
             slug,
             category: category.clone(),
-            author: st.current_user.clone().unwrap_or_else(|| "Alan Kay".to_string()),
+            author: st
+                .current_user
+                .clone()
+                .unwrap_or_else(|| "Alan Kay".to_string()),
             content,
             views: 1,
             epoch: st.epoch_counter,
@@ -344,13 +366,21 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
 
         // Redirect back to /
         let redirect = "HTTP/1.1 303 See Other\r\nLocation: /\r\nContent-Length: 0\r\n\r\n";
-        stream.write_all(redirect.as_bytes()).map_err(|e| e.to_string())?;
+        stream
+            .write_all(redirect.as_bytes())
+            .map_err(|e| e.to_string())?;
         stream.flush().map_err(|e| e.to_string())?;
     } else if method == "POST" && path.starts_with("/api/v1/categories") {
         let body = extract_body(&request_str);
         let params = parse_form_params(&body);
-        let name = params.get("name").cloned().unwrap_or_else(|| "Nova Categoria".to_string());
-        let slug = params.get("slug").cloned().unwrap_or_else(|| "nova-categoria".to_string());
+        let name = params
+            .get("name")
+            .cloned()
+            .unwrap_or_else(|| "Nova Categoria".to_string());
+        let slug = params
+            .get("slug")
+            .cloned()
+            .unwrap_or_else(|| "nova-categoria".to_string());
 
         let mut st = state.lock().unwrap();
         st.epoch_counter += 1;
@@ -365,7 +395,9 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
         });
 
         let redirect = "HTTP/1.1 303 See Other\r\nLocation: /\r\nContent-Length: 0\r\n\r\n";
-        stream.write_all(redirect.as_bytes()).map_err(|e| e.to_string())?;
+        stream
+            .write_all(redirect.as_bytes())
+            .map_err(|e| e.to_string())?;
         stream.flush().map_err(|e| e.to_string())?;
     } else {
         send_response(stream, "404 Not Found", "text/plain", "404 Not Found")?;
@@ -414,7 +446,12 @@ fn url_decode(input: &str) -> String {
     result
 }
 
-fn send_response(stream: &mut TcpStream, status: &str, content_type: &str, body: &str) -> Result<(), String> {
+fn send_response(
+    stream: &mut TcpStream,
+    status: &str,
+    content_type: &str,
+    body: &str,
+) -> Result<(), String> {
     let response = format!(
         "HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\n\r\n{}",
         status,
@@ -422,7 +459,9 @@ fn send_response(stream: &mut TcpStream, status: &str, content_type: &str, body:
         body.len(),
         body
     );
-    stream.write_all(response.as_bytes()).map_err(|e| e.to_string())?;
+    stream
+        .write_all(response.as_bytes())
+        .map_err(|e| e.to_string())?;
     stream.flush().map_err(|e| e.to_string())?;
     Ok(())
 }
@@ -432,7 +471,10 @@ fn render_html_dashboard(state: &BlogState) -> String {
     let mut categories_pills = String::new();
 
     for c in &state.categories {
-        categories_options.push_str(&format!(r#"<option value="{}">{}</option>"#, c.name, c.name));
+        categories_options.push_str(&format!(
+            r#"<option value="{}">{}</option>"#,
+            c.name, c.name
+        ));
         categories_pills.push_str(&format!(
             r#"<span class="badge badge-category">📁 {} <span class="badge-count">{}</span></span>"#,
             c.name, c.post_count
@@ -467,7 +509,7 @@ fn render_html_dashboard(state: &BlogState) -> String {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continuum Causal Blog — SLS Genesis Node</title>
+    <title>Engine Lang Causal Blog — SLS Genesis Node</title>
     <style>
         :root {{
             --bg-primary: #0a0e17;
@@ -614,8 +656,8 @@ fn render_html_dashboard(state: &BlogState) -> String {
     <div class="container">
         <header>
             <div class="brand">
-                <h1>Continuum SLS Causal Blog</h1>
-                <p>Nó Genesis v0.2.0 &bull; Persistência Contínua em NVRAM/CXL &bull; Zero Banco de Dados Externo</p>
+                <h1>Engine Lang SLS Causal Blog</h1>
+                <p>Nó Genesis v0.3.0 &bull; Persistência Contínua em Storage .db (engine.db) &bull; Zero Banco de Dados Externo</p>
             </div>
             <div class="node-status">
                 <div class="status-item"><div class="pulse"></div> <span>Nó Ativo #1</span></div>
@@ -636,7 +678,7 @@ fn render_html_dashboard(state: &BlogState) -> String {
                     <h2>👤 Sessão do Autor (Login)</h2>
                     <p style="font-size: 13px; margin-bottom: 10px;">Logado como: <strong>{}</strong></p>
                     <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; font-family: monospace;">
-                        Token: ctm_session_ed25519_auth<br>
+                        Token: engine_session_ed25519_auth<br>
                         Papel: Author (@TenantGuard Ativo)
                     </div>
                 </div>
@@ -656,10 +698,10 @@ fn render_html_dashboard(state: &BlogState) -> String {
                     </form>
                 </div>
 
-                <!-- Monitor Físico da NVRAM -->
+                <!-- Monitor Físico do Storage (.db) -->
                 <div class="card">
                     <h2>💾 Estado da Single-Level Store</h2>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Arquivo Físico: <code>./data/continuum.nvram</code></p>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Arquivo Físico: <code>./data/engine.db</code></p>
                     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Tamanho: 32 MiB (Alinhamento 64 bytes)</p>
                     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Superblock CRC-64: <strong style="color:var(--success);">VÁLIDO</strong></p>
                     <p style="font-size: 12px; color: var(--text-muted);">Ponte Postgres: <code>localhost:5442</code></p>
@@ -669,7 +711,7 @@ fn render_html_dashboard(state: &BlogState) -> String {
             <main>
                 <!-- Formulário de Publicação Atômica -->
                 <div class="card">
-                    <h2>✍️ Publicar Artigo Atômico (NVRAM Direct Commit)</h2>
+                    <h2>✍️ Publicar Artigo Atômico (Engine DB Direct Commit)</h2>
                     <form action="/api/v1/posts" method="POST">
                         <label>Título do Artigo:</label>
                         <input type="text" name="title" placeholder="Ex: Arquitetura sem Banco de Dados" required>

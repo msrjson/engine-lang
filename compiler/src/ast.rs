@@ -1,5 +1,5 @@
-// Continuum Abstract Syntax Tree (AST) Definition
-// Architecture: CTM-SPEC-02.1 Standard AST
+// Engine Lang Abstract Syntax Tree (AST) Definition
+// Architecture: ENG-SPEC-03.1 Standard AST
 
 use std::fmt;
 
@@ -51,14 +51,40 @@ pub struct Directive {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TopLevelDecl {
+    Datasource(DatasourceDecl),
     TypeAlias(TypeAliasDecl),
     Entity(EntityDecl),
     Struct(StructDecl),
+    Register(RegisterDecl),
     Enum(EnumDecl),
     Trait(TraitDecl),
     Impl(ImplDecl),
     Action(ActionDecl),
     Boundary(BoundaryDecl),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RegisterDecl {
+    pub directives: Vec<Directive>,
+    pub name: String,
+    pub fields: Vec<RegisterField>,
+    pub loc: SourceLocation,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RegisterField {
+    pub name: String,
+    pub bit_width: u32,
+    pub loc: SourceLocation,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DatasourceDecl {
+    pub name: String,
+    pub driver: String,
+    pub uri: Expr,
+    pub mode: Option<String>,
+    pub loc: SourceLocation,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -437,4 +463,3 @@ pub enum BinaryOperator {
     AsyncPipe,
     CausalEdge,
 }
-

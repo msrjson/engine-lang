@@ -1,5 +1,5 @@
-// Continuum Dynamic Execution & Simulation Engine
-// Architecture: CTM-SPEC-02.1 Runtime Evaluation
+// Engine Lang Dynamic Execution & Simulation Engine
+// Architecture: ENG-SPEC-03.1 Runtime Evaluation
 
 use crate::ast::*;
 use std::collections::HashMap;
@@ -122,7 +122,9 @@ impl<'a> Interpreter<'a> {
                 Statement::Atomic { body, .. } => {
                     // Simulate hardware shadow page reservation + commit
                     let res = self.execute_block(body)?;
-                    self.ctx.output_log.push("[HW-COMMIT] CLWB + SFENCE emitted for atomic block".to_string());
+                    self.ctx
+                        .output_log
+                        .push("[HW-COMMIT] CLWB + SFENCE emitted for atomic block".to_string());
                     if let RuntimeValue::Unit = res {
                         // continue
                     } else {
@@ -136,7 +138,12 @@ impl<'a> Interpreter<'a> {
                         return Ok(RuntimeValue::Unit);
                     }
                 }
-                Statement::If { condition, then_branch, else_branch, .. } => {
+                Statement::If {
+                    condition,
+                    then_branch,
+                    else_branch,
+                    ..
+                } => {
                     let cond_val = self.eval_expr(condition)?;
                     if let RuntimeValue::Boolean(true) = cond_val {
                         let res = self.execute_block(then_branch)?;
@@ -191,35 +198,65 @@ impl<'a> Interpreter<'a> {
 
                 match op {
                     BinaryOperator::Add => match (l, r) {
-                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => Ok(RuntimeValue::Integer(a + b)),
-                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => Ok(RuntimeValue::Float(a + b)),
-                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => Ok(RuntimeValue::Decimal(a + b)),
-                        (RuntimeValue::Text(a), RuntimeValue::Text(b)) => Ok(RuntimeValue::Text(format!("{}{}", a, b))),
+                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => {
+                            Ok(RuntimeValue::Integer(a + b))
+                        }
+                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => {
+                            Ok(RuntimeValue::Float(a + b))
+                        }
+                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => {
+                            Ok(RuntimeValue::Decimal(a + b))
+                        }
+                        (RuntimeValue::Text(a), RuntimeValue::Text(b)) => {
+                            Ok(RuntimeValue::Text(format!("{}{}", a, b)))
+                        }
                         (l, r) => Ok(RuntimeValue::Text(format!("{}{}", l, r))),
                     },
                     BinaryOperator::Sub => match (l, r) {
-                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => Ok(RuntimeValue::Integer(a - b)),
-                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => Ok(RuntimeValue::Float(a - b)),
-                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => Ok(RuntimeValue::Decimal(a - b)),
+                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => {
+                            Ok(RuntimeValue::Integer(a - b))
+                        }
+                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => {
+                            Ok(RuntimeValue::Float(a - b))
+                        }
+                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => {
+                            Ok(RuntimeValue::Decimal(a - b))
+                        }
                         _ => Err("Invalid operands for subtraction".to_string()),
                     },
                     BinaryOperator::Mul => match (l, r) {
-                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => Ok(RuntimeValue::Integer(a * b)),
-                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => Ok(RuntimeValue::Decimal(a * b)),
-                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => Ok(RuntimeValue::Float(a * b)),
+                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => {
+                            Ok(RuntimeValue::Integer(a * b))
+                        }
+                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => {
+                            Ok(RuntimeValue::Decimal(a * b))
+                        }
+                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => {
+                            Ok(RuntimeValue::Float(a * b))
+                        }
                         _ => Err("Invalid operands for multiplication".to_string()),
                     },
                     BinaryOperator::Equal => Ok(RuntimeValue::Boolean(l == r)),
                     BinaryOperator::NotEqual => Ok(RuntimeValue::Boolean(l != r)),
                     BinaryOperator::Less => match (l, r) {
-                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => Ok(RuntimeValue::Boolean(a < b)),
-                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => Ok(RuntimeValue::Boolean(a < b)),
+                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => {
+                            Ok(RuntimeValue::Boolean(a < b))
+                        }
+                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => {
+                            Ok(RuntimeValue::Boolean(a < b))
+                        }
                         _ => Ok(RuntimeValue::Boolean(false)),
                     },
                     BinaryOperator::GreaterEqual => match (l, r) {
-                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => Ok(RuntimeValue::Boolean(a >= b)),
-                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => Ok(RuntimeValue::Boolean(a >= b)),
-                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => Ok(RuntimeValue::Boolean(a >= b)),
+                        (RuntimeValue::Integer(a), RuntimeValue::Integer(b)) => {
+                            Ok(RuntimeValue::Boolean(a >= b))
+                        }
+                        (RuntimeValue::Decimal(a), RuntimeValue::Decimal(b)) => {
+                            Ok(RuntimeValue::Boolean(a >= b))
+                        }
+                        (RuntimeValue::Float(a), RuntimeValue::Float(b)) => {
+                            Ok(RuntimeValue::Boolean(a >= b))
+                        }
                         _ => Ok(RuntimeValue::Boolean(false)),
                     },
                     BinaryOperator::CosineMetric => {
@@ -247,7 +284,11 @@ impl<'a> Interpreter<'a> {
 
                 if let ExprKind::Identifier(fname) = &callee.kind {
                     if fname == "println" || fname.contains("println") {
-                        let msg = eval_args.iter().map(|a| a.to_string()).collect::<Vec<_>>().join(" ");
+                        let msg = eval_args
+                            .iter()
+                            .map(|a| a.to_string())
+                            .collect::<Vec<_>>()
+                            .join(" ");
                         self.ctx.output_log.push(msg);
                         return Ok(RuntimeValue::Unit);
                     }

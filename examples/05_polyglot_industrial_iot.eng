@@ -1,0 +1,69 @@
+// Engine Lang Canonical Example 05: Polyglot Industrial IoT Control & External Storage
+// Architecture: ENG-SPEC-03.1 & Phase 3 Polyglot Storage Standard
+// Verification: Proved at compile time via Z3 SMT solver
+// Persistence: Dual-Layer (Local SLS Cache + External PostgreSQL Synchronizer)
+
+module Industrial::TurbineTelemetry;
+
+// ============================================================================
+// 1. External Polyglot Datasource Declaration
+// Developers have full freedom to target any legacy enterprise database,
+// while enjoying native Single-Level Store nanosecond latency and zero ORM overhead.
+// ============================================================================
+
+datasource FactoryPostgres {
+    driver: postgres,
+    uri: "postgresql://scada_user:plant_secret@db.internal:5432/turbines_db",
+    mode: write_through
+}
+
+// ============================================================================
+// 2. Refinement Types with SMT Mathematical Constraints
+// Prevents out-of-bounds mechanical parameters in industrial plant loops.
+// ============================================================================
+
+type RPM = Float where value >= 0.0 && value <= 4000.0;
+type Celsius = Float where value >= -50.0 && value <= 250.0;
+type PressureBar = Float where value >= 0.0 && value <= 100.0;
+type ValvePercentage = Float where value >= 0.0 && value <= 100.0;
+
+// ============================================================================
+// 3. Persistent Industrial Entity Bound to External Datasource
+// ============================================================================
+
+@datasource(name: "FactoryPostgres", table: "active_turbines")
+@persistent
+entity TurbineController {
+    id: UUIDv7,
+    rotor_rpm: RPM,
+    casing_temp: Celsius,
+    coolant_pressure: PressureBar,
+    bypass_valve: ValvePercentage,
+    invariant { self.rotor_rpm <= 3600.0 && self.coolant_pressure >= 1.0 }
+}
+
+// ============================================================================
+// 4. Mission-Critical Industrial Actions
+// Protected by atomic hardware commit (CLWB + SFENCE durable writeback).
+// ============================================================================
+
+action emergency_cooldown(t: &mut TurbineController) -> Result<(), Text> {
+    atomic {
+        t.bypass_valve = 100.0;
+        t.rotor_rpm = 1200.0;
+    }
+    return Ok(());
+}
+
+action main() -> Result<(), Text> {
+    let mut turbine = TurbineController {
+        id: "018f6c44-3291-7f81-b552-87ad18f6c440",
+        rotor_rpm: 3200.0,
+        casing_temp: 85.5,
+        coolant_pressure: 14.2,
+        bypass_valve: 20.0,
+    };
+
+    emergency_cooldown(&mut turbine);
+    return Ok(());
+}

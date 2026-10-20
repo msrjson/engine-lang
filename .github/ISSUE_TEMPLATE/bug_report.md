@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a defect in the Continuum specification, runtime, or ctmc compiler
+about: Report a defect in the Engine Lang specification, runtime, or enginec compiler
 title: "[BUG] "
 labels: ["bug", "triage"]
 assignees: ""
@@ -11,15 +11,15 @@ A clear and concise description of the bug.
 
 ### Environment & Architecture
 - **OS & Kernel**: (e.g., Linux 6.8.0-40-generic x86_64)
-- **Continuum Spec Version**: (e.g., CTM-SPEC-02.1)
-- **Bootstrap Compiler Version (`ctmc --version`)**:
+- **Engine Lang Spec Version**: (e.g., ENG-SPEC-03.1)
+- **Bootstrap Compiler Version (`enginec --version`)**:
 - **Hardware / NVRAM Mode**: (e.g., Physical PMEM DAX, Emulated POSIX mmap, CXL.mem)
 - **Z3 Version**: (e.g., Z3 4.13.0)
 
 ### Minimal Reproducible Code Example
-Provide a minimal `.ctm` snippet that triggers the issue:
+Provide a minimal `.eng` snippet that triggers the issue:
 
-```continuum
+```engine
 module Test::Repro;
 
 @persistent
@@ -33,7 +33,7 @@ action trigger() {
 ```
 
 ### Steps to Reproduce
-1. Run `cargo run -- check repro.ctm`
+1. Run `cargo run -- check repro.eng`
 2. Observe error output...
 
 ### Expected Behavior
