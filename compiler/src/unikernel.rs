@@ -122,3 +122,4 @@ impl UnikernelImageBuilder {
         Ok(buffer.len())
     }
 }
+

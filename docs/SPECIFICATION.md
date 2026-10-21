@@ -325,13 +325,18 @@ register ActuatorCtrl {
 }
 ```
 
-During ahead-of-time compilation via `enginec emit-ir`, the compiler emits target-native LLVM IR with direct cache-line writeback intrinsics (`@llvm.x86.clwb`, `@llvm.x86.sfence` on x86_64, `@llvm.aarch64.dmb` on ARM64) ensuring crash-proof durability on bare silicon.
+During ahead-of-time compilation via `enginec emit-ir` and `enginec emit-asm`, the compiler emits target-native instructions with direct cache-line writeback intrinsics (`clwb` + `sfence` on x86_64, `dc cvac` + `dmb ishst` on ARM64) ensuring crash-proof durability on bare silicon.
 
-    @TenantGuard(require_auth: true)
-    route POST "/api/v1/vehicles" -> create_vehicle_handler;
-}
-```
+---
 
-### 6.1. Zero-Copy Serialization
-When a `boundary` route returns an `@persistent entity`, the HTTP/wire protocol encoder reads directly from the physical NVRAM address via zero-copy DMA, bypassing any intermediate JSON object allocation.
+## 9. Planetary Causal Mesh & Bare-Metal Sovereign OS
+
+### 9.1. Planetary Causal Mesh Protocol (`engine-wire`)
+Distributed multi-node deployments synchronize via Delta-CRDT vector clocks without central coordinators (`enginec mesh`). State updates propagate causally, resolving concurrent mutations through monotonic vector clocks.
+
+### 9.2. Sovereign Bare-Metal Unikernel (`engine-os`)
+The compiler synthesizes a freestanding UEFI 2.10 PE32+ image (`engine-boot.efi`) via `enginec boot-image`:
+- Boots directly from bare silicon firmware in **$< 15\text{ ms}$**.
+- Maps physical NVRAM / CXL into a flat 64-bit Single-Level Store (`0x0020_0000`).
+- Eliminates the traditional operating system kernel, page cache, and file system layers.
 

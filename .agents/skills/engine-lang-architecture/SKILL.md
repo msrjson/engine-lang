@@ -36,6 +36,30 @@ enginec run examples/04_causal_blog.eng --db ./data/engine.db
 
 # 5. Iniciar os servidores integrados (HTTP Boundary na 8090 e Postgres Bridge na 5432)
 enginec serve --http-port 8090 --pg-port 5432 --host 0.0.0.0 --db ./data/engine.db
+
+# 6. Emissão de LLVM IR com instruções de persistência (CLWB + SFENCE)
+enginec emit-ir examples/06_industrial_plc_mmio.eng --target x86_64
+
+# 7. Síntese de Assembly nativo com aceleração SIMD AVX2 (<=>)
+enginec emit-asm examples/01_hello_causal.eng --target x86_64
+
+# 8. Compilação AOT para binário executável nativo standalone
+enginec build examples/01_hello_causal.eng --output ./hello.bin
+
+# 9. Formatação canônica determinística de código-fonte (.eng)
+enginec fmt examples/01_hello_causal.eng --write
+
+# 10. Linting estático de tipos refinados e invariantes formais
+enginec lint examples/04_causal_blog.eng
+
+# 11. Servidor Language Server Protocol (LSP 3.17) via stdio
+enginec lsp
+
+# 12. Nó de Malha Causal Planetária P2P com relógios vetoriais Delta-CRDT
+enginec mesh --node-id node-alpha-genesis
+
+# 13. Síntese de imagem de boot UEFI soberana para Unikernel Bare-Metal
+enginec boot-image --target x86_64 --output ./engine-boot.efi
 ```
 
 ---

@@ -2,9 +2,11 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
-[![Version](https://img.shields.io/badge/version-v0.3.0--genesis-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.3.1--silicon-blue.svg)](CHANGELOG.md)
 [![Spec Version](https://img.shields.io/badge/spec-ENG--SPEC--03.1-orange.svg)](docs/SPECIFICATION.md)
 [![SLS Binary](https://img.shields.io/badge/db-ENG--SLS--01.1-purple.svg)](docs/ENGINE_DB_SLS_LAYOUT.md)
+[![Codegen Spec](https://img.shields.io/badge/codegen-ENG--CG--01.1-teal.svg)](docs/ENG_SILICON_CODEGEN_SPEC.md)
+[![Unikernel OS](https://img.shields.io/badge/unikernel-ENG--OS--01.1-red.svg)](docs/BARE_METAL_UNIKERNEL_SPEC.md)
 [![Backlog](https://img.shields.io/badge/backlog-active-informational.svg)](BACKLOG.md)
 [![Official Book](https://img.shields.io/badge/book-Lysander_Vance-success.svg)](book/SUMMARY.md)
 
@@ -170,36 +172,51 @@ engine-lang/
 │   │   ├── bug_report.md
 │   │   └── rfc_proposal.md
 │   └── workflows/
-│       └── ci.yml
+│       ├── ci.yml             # Automated compiler build and container verification
+│       └── release.yml        # Cross-compilation & artifact release pipeline
+├── book/                      # The Book of Engine Lang by Lysander Vance (12 Chapters)
+│   ├── SUMMARY.md             # Complete Table of Contents
+│   └── src/                   # 12 authoritative engineering chapters & appendices
 ├── docs/
 │   ├── SPECIFICATION.md       # EBNF grammar, directives, ADTs, boundary FFI
 │   ├── OPERATORS.md           # 14-level operator matrix & SMT algebraic contracts
-│   ├── ENGINE_DB_SLS_LAYOUT.md    # Binary specification of .db SLS containers
+│   ├── ENGINE_DB_SLS_LAYOUT.md# Binary specification of .db SLS containers (CRC64-NVME)
+│   ├── ENG_SILICON_CODEGEN_SPEC.md # Direct silicon codegen & Zero-UB ABI specification (ENG-CG-01.1)
+│   ├── BARE_METAL_UNIKERNEL_SPEC.md# Sovereign bare-metal OS & UEFI unikernel spec (ENG-OS-01.1)
 │   ├── SCHEMA_EVOLUTION.md    # Lazy structural evolution protocol (LSE-CRC)
 │   ├── MEMORY_MODEL.md        # Causal memory consistency model & hardware flushes
-│   ├── DISTRIBUTED_MESH_WIRE.md # P2P wire protocol (engine-wire) & Delta-CRDT sync
+│   ├── DISTRIBUTED_MESH_WIRE.md# P2P wire protocol (engine-wire) & Delta-CRDT sync
 │   ├── MODULES_AND_PACKAGES.md# Package manager (engine-pkg) & 4-tier visibility
 │   ├── REFINEMENT_TYPES_SMT.md# SMT refinement theory, VC generation & timeouts
-│   ├── FFI_AND_SYSTEM_BRIDGE.md # POSIX C FFI & embedded PostgreSQL wire bridge
+│   ├── FFI_AND_SYSTEM_BRIDGE.md# POSIX C FFI & embedded PostgreSQL wire bridge
+│   ├── ENGINE_VS_RUST_PARADIGM.md# Comprehensive architectural confrontation with Rust
 │   ├── USE_CASES.md           # Killer use cases, business domains & cost analysis
 │   ├── BRANDING_AND_IP.md     # Official branding, nomenclature and patent guidelines
-│   └── ROADMAP.md             # Complete roadmap from Phase 1 to Phase 5
+│   └── ROADMAP.md             # Full lifecycle engineering roadmap (Phases 1 through 7)
 ├── compiler/                  # Reference bootstrap compiler (enginec) in Rust
 │   ├── Cargo.toml
 │   └── src/
-│       ├── main.rs            # CLI entry point (check, run, inspect, bridge)
+│       ├── main.rs            # CLI entry point (check, run, inspect, build, fmt, mesh, etc.)
 │       ├── ast.rs             # Complete Abstract Syntax Tree definitions
 │       ├── lexer.rs           # Deterministic LL(1) tokenization engine
 │       ├── parser.rs          # Recursive-descent LL(1) parser
-│       ├── smt.rs             # Symbolic translation & SMT-LIB2 verification layer
+│       ├── smt.rs             # Symbolic translation & Z3 SMT-LIB2 verification layer
 │       ├── memory.rs          # Raw Engine DB superblock, journal, and entity layouts
 │       ├── interpreter.rs     # Runtime evaluation & causal simulation engine
-│       └── bridge.rs          # Embedded PostgreSQL v3.0 wire protocol responder
-├── examples/
+│       ├── bridge.rs          # Embedded PostgreSQL v3.0 wire protocol responder
+│       ├── web.rs             # Embedded HTTP boundary runtime & SLS visualizer
+│       ├── codegen.rs         # Target-native LLVM IR & silicon assembly emitter with SIMD
+│       ├── tooling.rs         # Developer tooling: formatter, static linter & LSP daemon
+│       ├── mesh.rs            # Planetary causal mesh & Delta-CRDT vector clocks
+│       └── unikernel.rs       # UEFI PE32+ bare-metal bootloader image builder
+├── examples/                  # Standard library of 13 canonical .eng examples
 │   ├── 01_hello_causal.eng    # Basic atomic mutation and causal logging
-│   ├── 02_persistent_vehicle_fleet.eng  # Canonical fleet domain with IPVA history
-│   ├── 03_vector_ai_search.eng# Native 1536-dim vector cosine search
-│   └── 04_causal_blog.eng     # Complete blog engine with auth, categories & posts
+│   ├── 02_persistent_vehicle_fleet.eng # Fleet management with SMT refinement invariants
+│   ├── 03_vector_ai_search.eng# Native 1536-dim vector cosine search (<=>)
+│   ├── 04_causal_blog.eng     # Complete transactional blog engine with auth
+│   ├── 05_polyglot_industrial_iot.eng # Dual-layer SLS write-through caching
+│   ├── 06_industrial_plc_mmio.eng # Hardware MMIO (@mmio) with hard real-time bounds
+│   └── 12_c_cpp_assembly_confrontation.eng # Zero-UB confrontation example
 ├── Engine.toml                # Workspace manifest & memory engine configuration
 ├── CHANGELOG.md               # Keep a Changelog 1.1.0 specification history
 ├── BACKLOG.md                 # Production readiness gates & defect registry
@@ -211,46 +228,25 @@ engine-lang/
 
 ---
 
-## 5. Quickstart Guide
+## 5. Complete CLI Reference (`enginec`)
 
-### Prerequisites
-- Rust 1.80+ (for building the `enginec` reference bootstrap compiler)
-- Linux Kernel 5.4+ with DAX support (or any POSIX environment for simulation)
-- Optional: Z3 Theorem Prover (`z3`) for formal verification backend
-
-### 1. Clone the Workspace
-```bash
-git clone https://github.com/engine-lang/engine-lang.git
-cd engine-lang
-```
-
-### 2. Build the Reference Bootstrap Compiler (`enginec`)
-```bash
-cd compiler
-cargo build --release
-```
-
-### 3. Formally Verify Language Examples
-```bash
-# Run formal type-checking, refinement invariant checks, and SMT proofs
-cargo run -- check ../examples/01_hello_causal.eng
-cargo run -- check ../examples/02_persistent_vehicle_fleet.eng
-cargo run -- check ../examples/03_vector_ai_search.eng
-```
-
-### 4. Execute Bootstrap Simulations
-```bash
-# Execute sample programs under the causal runtime
-cargo run -- run ../examples/01_hello_causal.eng
-cargo run -- run ../examples/02_persistent_vehicle_fleet.eng
-cargo run -- run ../examples/03_vector_ai_search.eng
-```
-
-### 5. Inspect Binary Storage Containers (.db)
-```bash
-# Inspect the raw physical binary layout of the Single-Level Store
-cargo run -- inspect ../data/engine.db
-```
+| Command | Purpose | Lifecycle Phase |
+|---|---|---|
+| `enginec version [--json]` | Displays comprehensive version, SMT prover, and specification diagnostics | Toolchain Standard |
+| `enginec check <file.eng>` | Deterministic LL(1) parse and compile-time **Z3 SMT formal verification** | Phase 2 (SMT) |
+| `enginec run <file.eng> [--db <path>]` | Executes application logic bound to persistent Single-Level Store | Phase 2 (Runtime) |
+| `enginec inspect <path.db>` | Validates physical binary layout, Superblock, and **CRC-64/NVME** checksum | Phase 1 (SLS) |
+| `enginec init-db [--path <path>]` | Formats a crash-consistent 64-byte aligned SLS container (`.db`) | Phase 1 (SLS) |
+| `enginec bridge [--port 5432]` | Starts embedded PostgreSQL v3.0 protocol responder for DBeaver/psql | Phase 2 (Bridge) |
+| `enginec serve [--http-port 8090]` | Concurrently launches Web visualizer gateway and PostgreSQL bridge | Phase 2 (Serve) |
+| `enginec emit-ir <file.eng>` | Emits target-independent LLVM IR with `clwb` and `sfence` intrinsics | Phase 4 (Codegen) |
+| `enginec emit-asm <file.eng>` | Synthesizes pure native assembly (`.s`) with AVX2 SIMD `<=>` acceleration | Phase 4 (Codegen) |
+| `enginec build <file.eng>` | Ahead-of-time (AOT) builds a native standalone silicon binary | Phase 4 (AOT) |
+| `enginec fmt <file.eng> [--write]` | Deterministically formats `.eng` source code into canonical styling | Phase 3 (DX) |
+| `enginec lint <file.eng>` | Static linter checking refinement bounds, durability, and style rules | Phase 3 (DX) |
+| `enginec lsp` | Runs Language Server Protocol (LSP 3.17) daemon over stdio | Phase 3 (DX) |
+| `enginec mesh [--node-id <id>]` | Connects to Planetary Causal Mesh node with Delta-CRDT vector clocks | Phase 6 (Mesh) |
+| `enginec boot-image [--output <efi>]` | Generates freestanding UEFI 2.10 PE32+ image (`engine-boot.efi`) | Phase 7 (Unikernel) |
 
 ---
 
