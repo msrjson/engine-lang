@@ -65,10 +65,16 @@ impl LlvmCodegen {
                 asm.push_str("    movq    %rsp, %rbp\n");
                 asm.push_str("    # System V AMD64 calling convention: args in %rdi, %rsi, %rdx\n");
 
-                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                let has_atomic = act
+                    .body
+                    .statements
+                    .iter()
+                    .any(|s| matches!(s, Statement::Atomic { .. }));
                 if has_atomic {
                     asm.push_str("    # Hardware Persistence Barrier: CLWB + SFENCE\n");
-                    asm.push_str("    clwb    (%rdi)         # Cache Line Write Back to CXL/NVRAM\n");
+                    asm.push_str(
+                        "    clwb    (%rdi)         # Cache Line Write Back to CXL/NVRAM\n",
+                    );
                     asm.push_str("    sfence                 # Store Fence: commit barrier\n");
                 }
 
@@ -102,11 +108,17 @@ impl LlvmCodegen {
                 asm.push_str("    stp     x29, x30, [sp, -16]!\n");
                 asm.push_str("    mov     x29, sp\n");
 
-                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                let has_atomic = act
+                    .body
+                    .statements
+                    .iter()
+                    .any(|s| matches!(s, Statement::Atomic { .. }));
                 if has_atomic {
                     asm.push_str("    # ARM64 Hardware Persistence: DC CVAC + DMB ISHST\n");
                     asm.push_str("    dc      cvac, x0       # Data Cache Clean by VA to PoC\n");
-                    asm.push_str("    dmb     ishst          # Inner Shareable Store Memory Barrier\n");
+                    asm.push_str(
+                        "    dmb     ishst          # Inner Shareable Store Memory Barrier\n",
+                    );
                 }
 
                 asm.push_str("    # ARM NEON Vector Cosine Similarity (<=>)\n");
@@ -130,7 +142,11 @@ impl LlvmCodegen {
                 asm.push_str("    addi    sp, sp, -16\n");
                 asm.push_str("    sd      ra, 8(sp)\n");
 
-                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                let has_atomic = act
+                    .body
+                    .statements
+                    .iter()
+                    .any(|s| matches!(s, Statement::Atomic { .. }));
                 if has_atomic {
                     asm.push_str("    # RISC-V Persistent Fence\n");
                     asm.push_str("    fence   rw, rw\n");
@@ -209,8 +225,12 @@ impl LlvmCodegen {
     }
 
     fn emit_register_mmio(&mut self, reg: &RegisterDecl) {
-        self.ir_buffer.push_str(&format!("; Hardware MMIO Register Block: %mmio.{}\n", reg.name));
-        self.ir_buffer.push_str(&format!("%mmio.{} = type <{{ ", reg.name));
+        self.ir_buffer.push_str(&format!(
+            "; Hardware MMIO Register Block: %mmio.{}\n",
+            reg.name
+        ));
+        self.ir_buffer
+            .push_str(&format!("%mmio.{} = type <{{ ", reg.name));
         let mut field_types = Vec::new();
         for f in &reg.fields {
             let t = match f.bit_width {

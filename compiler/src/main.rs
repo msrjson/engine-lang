@@ -24,7 +24,9 @@ use std::process::ExitCode;
 #[derive(ClapParser)]
 #[command(name = "enginec")]
 #[command(author = "Engine Lang Core Working Group <architects@engine-lang.org>")]
-#[command(version = "0.3.1 (v0.3.1-silicon, spec: ENG-SPEC-03.1, sls: ENG-SLS-01.1, codegen: ENG-CG-01.1)")]
+#[command(
+    version = "0.3.1 (v0.3.1-silicon, spec: ENG-SPEC-03.1, sls: ENG-SLS-01.1, codegen: ENG-CG-01.1)"
+)]
 #[command(about = "Reference Bootstrap Compiler and Formal SMT Verification Toolchain for Engine Lang", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -214,7 +216,9 @@ fn main() -> ExitCode {
                 println!("Release Milestone:   Sovereign Silicon / Systems Confrontation");
                 println!("Grammar Spec:        ENG-SPEC-03.1 (14-level operator precedence)");
                 println!("Single-Level Store:  ENG-SLS-01.1 (Magic: 0x454E474E, SpecVer: 0x0003)");
-                println!("Silicon Codegen:     ENG-CG-01.1 (Direct Machine Instructions & Zero-UB)");
+                println!(
+                    "Silicon Codegen:     ENG-CG-01.1 (Direct Machine Instructions & Zero-UB)"
+                );
                 println!("Formal SMT Prover:   Z3 SMT-LIB2 Engine v4.12+ (Automatic Proofs)");
                 println!("Memory Model:        ENG-MEM-01.1 (Monotonic Epoch Arenas, Causal DAG)");
                 println!("Wire & Replication:  ENG-WIRE-01.1 (Delta-CRDT P2P Mesh)");
@@ -595,7 +599,11 @@ fn main() -> ExitCode {
             }
         }
 
-        Commands::EmitAsm { file, target, output } => {
+        Commands::EmitAsm {
+            file,
+            target,
+            output,
+        } => {
             println!(
                 "⚙️  Engine Lang Codegen - Emitting Sovereign Silicon Assembly: {}",
                 file.display()
@@ -631,10 +639,17 @@ fn main() -> ExitCode {
                 Ok(asm) => {
                     if let Some(out_path) = output {
                         if let Err(e) = fs::write(&out_path, &asm) {
-                            eprintln!("❌ Failed to write assembly to '{}': {}", out_path.display(), e);
+                            eprintln!(
+                                "❌ Failed to write assembly to '{}': {}",
+                                out_path.display(),
+                                e
+                            );
                             return ExitCode::FAILURE;
                         }
-                        println!("✨ Assembly successfully emitted to: {}", out_path.display());
+                        println!(
+                            "✨ Assembly successfully emitted to: {}",
+                            out_path.display()
+                        );
                     } else {
                         println!("\n=== Silicon Assembly (Target: {}) ===\n", target);
                         println!("{}", asm);
@@ -648,10 +663,15 @@ fn main() -> ExitCode {
             }
         }
 
-        Commands::Build { file, output, target } => {
+        Commands::Build {
+            file,
+            output,
+            target,
+        } => {
             println!(
                 "🔨 Building Native Silicon Binary from: {} (Target: {})",
-                file.display(), target
+                file.display(),
+                target
             );
             let source = match fs::read_to_string(&file) {
                 Ok(content) => content,
@@ -715,7 +735,10 @@ fn main() -> ExitCode {
                 }
             }
             println!("⚡ Causal Vector Clock: {:?}", node.clock);
-            println!("🤖 Active Sovereign AI Swarm Agents: {}", node.active_swarm_agents);
+            println!(
+                "🤖 Active Sovereign AI Swarm Agents: {}",
+                node.active_swarm_agents
+            );
             println!("✨ Planetary Causal Mesh listening and synchronizing.");
             ExitCode::SUCCESS
         }
@@ -728,7 +751,11 @@ fn main() -> ExitCode {
             let builder = unikernel::UnikernelImageBuilder::new(&target);
             match builder.build_efi_binary(&output) {
                 Ok(bytes) => {
-                    println!("✨ UEFI Boot Image generated: {} ({} bytes)", output.display(), bytes);
+                    println!(
+                        "✨ UEFI Boot Image generated: {} ({} bytes)",
+                        output.display(),
+                        bytes
+                    );
                     println!("   Conformance: ENG-OS-01.1 (UEFI 2.10 PE32+ 64-bit)");
                     println!("   Instant warm boot guarantee: < 15ms directly into SLS Superblock");
                     ExitCode::SUCCESS
@@ -904,7 +931,10 @@ entity User {
         assert!(formatted.contains("entity User {"));
 
         let diags = tooling::Linter::lint_source(code);
-        assert!(diags.is_empty(), "Should have no lint warnings for valid persistent entity with invariant");
+        assert!(
+            diags.is_empty(),
+            "Should have no lint warnings for valid persistent entity with invariant"
+        );
     }
 
     #[test]

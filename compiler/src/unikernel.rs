@@ -33,7 +33,11 @@ impl UnikernelImageBuilder {
         buffer.extend_from_slice(b"PE\0\0");
 
         // 3. COFF File Header (20 bytes)
-        let machine: u16 = if self.target == "aarch64" { 0xAA64 } else { 0x8664 }; // AMD64 or ARM64
+        let machine: u16 = if self.target == "aarch64" {
+            0xAA64
+        } else {
+            0x8664
+        }; // AMD64 or ARM64
         buffer.extend_from_slice(&machine.to_le_bytes());
         buffer.extend_from_slice(&2u16.to_le_bytes()); // 2 Sections: .text, .sls
         buffer.extend_from_slice(&0u32.to_le_bytes()); // TimeDateStamp
@@ -122,4 +126,3 @@ impl UnikernelImageBuilder {
         Ok(buffer.len())
     }
 }
-

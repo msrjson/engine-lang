@@ -26,7 +26,9 @@ impl Formatter {
             let path_str = import.path.join("::");
             match &import.items {
                 ImportItems::All => out.push_str(&format!("use {}::*;\n", path_str)),
-                ImportItems::Single(item) => out.push_str(&format!("use {}::{};\n", path_str, item)),
+                ImportItems::Single(item) => {
+                    out.push_str(&format!("use {}::{};\n", path_str, item))
+                }
                 ImportItems::Specific(items) => {
                     out.push_str(&format!("use {}::{{{}}};\n", path_str, items.join(", ")))
                 }
@@ -66,7 +68,10 @@ impl Formatter {
                         out.push_str(",\n");
                     }
                     if let Some(ref inv) = e.invariant {
-                        out.push_str(&format!("    invariant {{\n        {}\n    }}\n", Self::format_expr(inv)));
+                        out.push_str(&format!(
+                            "    invariant {{\n        {}\n    }}\n",
+                            Self::format_expr(inv)
+                        ));
                     }
                     out.push_str("}\n\n");
                 }
@@ -115,7 +120,12 @@ impl Formatter {
             },
             ExprKind::Identifier(id) => id.clone(),
             ExprKind::Binary { op, left, right } => {
-                format!("{} {:?} {}", Self::format_expr(left), op, Self::format_expr(right))
+                format!(
+                    "{} {:?} {}",
+                    Self::format_expr(left),
+                    op,
+                    Self::format_expr(right)
+                )
             }
             ExprKind::Unary { op, expr } => {
                 format!("{:?}{}", op, Self::format_expr(expr))
@@ -125,7 +135,11 @@ impl Formatter {
             }
             ExprKind::Call { callee, args } => {
                 let formatted_args: Vec<String> = args.iter().map(Self::format_expr).collect();
-                format!("{}({})", Self::format_expr(callee), formatted_args.join(", "))
+                format!(
+                    "{}({})",
+                    Self::format_expr(callee),
+                    formatted_args.join(", ")
+                )
             }
             _ => "<expr>".to_string(),
         }
