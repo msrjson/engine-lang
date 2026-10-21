@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
 [![Version](https://img.shields.io/badge/version-v0.3.1--silicon-blue.svg)](CHANGELOG.md)
+[![MSR JSON Protocol](https://img.shields.io/badge/MSR--JSON-2.1.0-blue.svg)](msr.json)
 [![Spec Version](https://img.shields.io/badge/spec-ENG--SPEC--03.1-orange.svg)](docs/SPECIFICATION.md)
 [![SLS Binary](https://img.shields.io/badge/db-ENG--SLS--01.1-purple.svg)](docs/ENGINE_DB_SLS_LAYOUT.md)
 [![Codegen Spec](https://img.shields.io/badge/codegen-ENG--CG--01.1-teal.svg)](docs/ENG_SILICON_CODEGEN_SPEC.md)
@@ -219,17 +220,88 @@ engine-lang/
 │   ├── 06_industrial_plc_mmio.eng # Hardware MMIO (@mmio) with hard real-time bounds
 │   └── 12_c_cpp_assembly_confrontation.eng # Zero-UB confrontation example
 ├── Engine.toml                # Workspace manifest & memory engine configuration
+├── msr.json                   # MSR JSON 2.1 open protocol metadata manifest
 ├── CHANGELOG.md               # Keep a Changelog 1.1.0 specification history
 ├── BACKLOG.md                 # Production readiness gates & defect registry
 ├── RELEASING.md               # Systems-grade release engineering handbook
 ├── CONTRIBUTING.md            # RFC process, proof guidelines & coding standards
+├── CODE_OF_CONDUCT.md         # Contributor Covenant v2.1 code of conduct
+├── SECURITY.md                # Responsible security disclosure policy
 ├── LICENSE                    # Apache License 2.0
+├── docker-compose.yml         # Genesis multi-service cluster definition
+├── Dockerfile                 # Multi-stage release compiler & runtime container
 └── README.md                  # This engineering manifesto
 ```
 
+### The 5 Architectural Layers of Engine Lang
+
+For developers exploring or contributing to the codebase, Engine Lang is systematically partitioned into five distinct, decoupled layers:
+
+| Layer | System Domain | Key Source Components | Primary Specifications |
+|:---:|---|---|---|
+| **Layer 1** | **Deterministic Syntax & Formal SMT Invariants** | `compiler/src/lexer.rs`<br>`compiler/src/parser.rs`<br>`compiler/src/smt.rs`<br>`examples/*.eng` | [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md)<br>[`docs/OPERATORS.md`](docs/OPERATORS.md)<br>[`docs/REFINEMENT_TYPES_SMT.md`](docs/REFINEMENT_TYPES_SMT.md) |
+| **Layer 2** | **Single-Level Store (SLS) Memory Engine** | `compiler/src/memory.rs`<br>`data/engine.db` | [`docs/ENGINE_DB_SLS_LAYOUT.md`](docs/ENGINE_DB_SLS_LAYOUT.md)<br>[`docs/MEMORY_MODEL.md`](docs/MEMORY_MODEL.md)<br>[`docs/SCHEMA_EVOLUTION.md`](docs/SCHEMA_EVOLUTION.md) |
+| **Layer 3** | **Causal Wire Mesh & Polyglot Protocols** | `compiler/src/mesh.rs`<br>`compiler/src/bridge.rs`<br>`compiler/src/web.rs` | [`docs/DISTRIBUTED_MESH_WIRE.md`](docs/DISTRIBUTED_MESH_WIRE.md)<br>[`docs/FFI_AND_SYSTEM_BRIDGE.md`](docs/FFI_AND_SYSTEM_BRIDGE.md) |
+| **Layer 4** | **Direct Silicon Codegen & Sovereign Unikernel** | `compiler/src/codegen.rs`<br>`compiler/src/unikernel.rs` | [`docs/ENG_SILICON_CODEGEN_SPEC.md`](docs/ENG_SILICON_CODEGEN_SPEC.md)<br>[`docs/BARE_METAL_UNIKERNEL_SPEC.md`](docs/BARE_METAL_UNIKERNEL_SPEC.md) |
+| **Layer 5** | **Genesis Toolchain & Developer Experience** | `compiler/src/main.rs`<br>`compiler/src/tooling.rs`<br>`Dockerfile`<br>`docker-compose.yml` | [`CONTRIBUTING.md`](CONTRIBUTING.md)<br>[`RELEASING.md`](RELEASING.md)<br>[`msr.json`](msr.json) |
+
 ---
 
-## 5. Complete CLI Reference (`enginec`)
+## 5. Genesis Setup & Compilation Guide
+
+Developers can build and run Engine Lang immediately using either the **Host Rust Toolchain** or the **Docker Genesis Container**.
+
+### Option A: Genesis Docker Container (Zero-Setup, Recommended)
+
+The Genesis Node container encapsulates the reference compiler, Z3 theorem prover headers, persistent storage, and exposed network bridges.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/msrjson/engine-lang.git
+cd engine-lang
+
+# 2. Launch the genesis node service
+docker compose up -d
+
+# 3. Verify toolchain diagnostics & formal proof of canonical blog
+docker exec engine-genesis-node sh -lc 'enginec version && enginec check /app/examples/04_causal_blog.eng'
+
+# 4. Inspect the running Single-Level Store (.db)
+docker exec engine-genesis-node sh -lc 'enginec inspect /app/data/engine.db'
+
+# 5. Access the embedded services
+# - Web Gateway & SLS Visualizer: http://localhost:8090
+# - PostgreSQL Wire Bridge:       localhost:5442 (user: engine, db: engine_sls)
+# - Causal Mesh Wire Protocol:    localhost:9443
+```
+
+### Option B: Local Native Toolchain (`cargo`)
+
+Requires **Rust 1.80+** and **Z3 Theorem Prover 4.12+** (`z3`, `libz3-dev`).
+
+```bash
+# Debian / Ubuntu prerequisite installation:
+sudo apt-get update && sudo apt-get install -y z3 libz3-dev pkg-config build-essential
+
+# Build the release compiler binary:
+cd compiler
+cargo build --release
+
+# Symlink or install binary onto your PATH:
+sudo ln -sf $(pwd)/target/release/enginec /usr/local/bin/enginec
+
+# Verify compilation:
+enginec version
+enginec check ../examples/01_hello_causal.eng
+```
+
+### Option C: VS Code Remote Containers / GitHub Codespaces
+
+This repository includes a fully configured `.devcontainer/devcontainer.json`. Simply open this folder in **VS Code** with the *Remote - Containers* extension or launch a **GitHub Codespace** to receive a pre-configured environment with `rust-analyzer`, `z3`, and automated formatting on save.
+
+---
+
+## 6. Complete CLI Reference (`enginec`)
 
 | Command | Purpose | Lifecycle Phase |
 |---|---|---|
@@ -251,7 +323,7 @@ engine-lang/
 
 ---
 
-## 6. A Call to Systems Engineers, Compiler Architects, and Researchers
+## 7. A Call to Systems Engineers, Compiler Architects, and Researchers
 
 Engine Lang is not another framework; it is an open-specification movement to reclaim sovereign, hyper-efficient computing. We invite:
 
@@ -264,7 +336,7 @@ Review our [CONTRIBUTING.md](CONTRIBUTING.md) and submit your first RFC today.
 
 ---
 
-## 7. License
+## 8. License
 
 Licensed under the **Apache License, Version 2.0** ([LICENSE](LICENSE)). You may reproduce, distribute, and modify this work in compliance with the License.
 

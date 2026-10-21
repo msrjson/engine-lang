@@ -74,7 +74,12 @@ The reference bootstrap compiler (`enginec`) is written in standard, idiomatic R
 - **Exhaustive Pattern Matching**: Compiler passes must avoid wildcard `_` catches when handling language tokens or AST expression variants.
 - **Zero Panics in Compiler Passes**: Use `Result<T, CompilerError>` and propagate diagnostic errors gracefully with source line and column numbers.
 
-### 4.2. Local Validation
+### 4.2. Local Validation & Development Environments
+Contributors can develop locally using any of three environments:
+1. **Genesis Node Container (Zero-Setup)**: Run `docker compose up -d` and validate changes inside container `engine-genesis-node`.
+2. **VS Code Devcontainer**: Open workspace in VS Code with the Remote Containers extension (configured via `.devcontainer/devcontainer.json`).
+3. **Local Rust Toolchain**: Ensure `z3` and `libz3-dev` are installed locally.
+
 Before submitting any pull request, ensure the complete test suite passes:
 
 ```bash
@@ -89,7 +94,18 @@ cargo run -- check ../examples/03_vector_ai_search.eng
 
 ---
 
-## 5. Branching and Commit Policy
+## 5. Architectural Layers Guide
+
+When contributing, ensure modifications strictly respect the architectural boundaries:
+- **Layer 1 (Syntax & SMT)**: `compiler/src/lexer.rs`, `compiler/src/parser.rs`, `compiler/src/smt.rs`. Changes to tokens or grammar require corresponding updates to `docs/SPECIFICATION.md` and `docs/OPERATORS.md`.
+- **Layer 2 (SLS Storage)**: `compiler/src/memory.rs`. Changes to data structures must maintain 64-byte alignment and CRC-64/NVME checksum validation as specified in `docs/ENGINE_DB_SLS_LAYOUT.md`.
+- **Layer 3 (Mesh & Bridges)**: `compiler/src/mesh.rs`, `compiler/src/bridge.rs`, `compiler/src/web.rs`. Wire protocols must maintain backward-compatible framing as specified in `docs/DISTRIBUTED_MESH_WIRE.md`.
+- **Layer 4 (Codegen & OS)**: `compiler/src/codegen.rs`, `compiler/src/unikernel.rs`. Emitted machine code and UEFI boot structures must comply with `docs/ENG_SILICON_CODEGEN_SPEC.md` and `docs/BARE_METAL_UNIKERNEL_SPEC.md`.
+- **Layer 5 (Toolchain & MSR)**: `compiler/src/main.rs`, `compiler/src/tooling.rs`, `Dockerfile`, `docker-compose.yml`, `msr.json`.
+
+---
+
+## 6. Branching and Commit Policy
 
 - **Main Branch**: `main` represents the stable specification and working reference compiler.
 - **Feature Branches**: Use descriptive branch names: `feature/vector-simd`, `fix/parser-ll1-precedence`, `rfc/causal-crdt-wire`.
@@ -101,7 +117,8 @@ cargo run -- check ../examples/03_vector_ai_search.eng
 
 ---
 
-## 6. Code of Conduct
+## 7. Code of Conduct & Security Policy
 
-Engine Lang welcomes contributors from systems programming, distributed systems research, compiler design, and formal verification. We foster a meritocratic, respectful, and academically rigorous environment. Disagreements must be grounded in mathematical correctness, performance benchmarks, and architectural clarity.
+All contributors are expected to uphold the [Code of Conduct](CODE_OF_CONDUCT.md).
+For reporting security issues or vulnerabilities, please review our [Security Policy](SECURITY.md).
 

@@ -1,0 +1,25 @@
+{
+  "name": "Engine Lang Genesis Devcontainer",
+  "image": "rust:1-bookworm",
+  "features": {},
+  "updateContentCommand": "apt-get update && apt-get install -y z3 libz3-dev pkg-config build-essential curl git && cargo build --release --manifest-path compiler/Cargo.toml",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "rust-analyzer.linkedProjects": [
+          "compiler/Cargo.toml"
+        ],
+        "rust-analyzer.check.command": "clippy",
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates",
+        "vadimcn.vscode-lldb"
+      ]
+    }
+  },
+  "remoteUser": "root",
+  "forwardPorts": [8090, 5442, 9443]
+}

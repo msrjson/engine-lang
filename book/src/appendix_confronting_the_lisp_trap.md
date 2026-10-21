@@ -1,6 +1,6 @@
 # Appendix B: Breaking the Lisp Trap: From Theoretical Precursors to Sovereign Reality
 
-> *"The graveyard of computing is paved with languages that were right too soon, pure to a fault, and contemptuous of the world that sustained them. Smalltalk, Lisp, Erlang, and Ada were glimpses of the promised land; Engine Lang is the road that carries you there."*  
+> *"The graveyard of computing is paved with languages that were right too soon, pure to a fault, and contemptuous of the world that sustained them. Smalltalk, Lisp, Erlang, and Ada were glimpses of the promised land; Engine Lang is the road that carries you there."*
 > — **Lysander Vance**
 
 ---
@@ -94,8 +94,9 @@ To those who believe Engine Lang is merely a speculative whitepaper, the running
 
 ## 5. Conclusion: The Sovereign Verdict
 
-Engine Lang is both a **manifesto** and a **production engine**. 
+Engine Lang is both a **manifesto** and a **production engine**.
 
 As a manifesto, it reclaims computation from the historical accident of memory-disk duality and POSIX file descriptors. As a production engine, it meets the software industry where it lives today—offering PostgreSQL wire compatibility, slashing cloud infrastructure costs, and providing autonomous AI agents with an inviolable mathematical foundation.
 
 We did not build a museum piece for theoretical contemplation. We forged an unowned, mathematically proven, sovereign substrate for the next century of computing.
+

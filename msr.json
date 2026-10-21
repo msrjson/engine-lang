@@ -1,0 +1,93 @@
+{
+  "$schema": "https://msrjson.org/schemas/msr-2.1.json",
+  "protocol": {
+    "name": "MSR JSON",
+    "version": "2.1.0",
+    "specification_license": "CC-BY-4.0",
+    "reference_implementation_license": "Apache-2.0",
+    "canonical_url": "https://raw.githubusercontent.com/msrjson/engine-lang/main/msr.json"
+  },
+  "entity": {
+    "name": "Engine Lang Programming Language",
+    "slug": "engine-lang",
+    "domain": "engine-lang.org",
+    "type": "open-source",
+    "license": {
+      "type": "open-source",
+      "spdx_id": "Apache-2.0",
+      "commercial_terms": "free"
+    },
+    "vendor": {
+      "name": "Engine Lang Core Working Group",
+      "website": "https://github.com/msrjson/engine-lang",
+      "support_url": "https://github.com/msrjson/engine-lang/issues"
+    },
+    "descriptions": {
+      "en": {
+        "tagline": "Statically typed systems programming language unifying Single-Level Store (SLS), Z3 SMT verification, and causal mesh networks.",
+        "summary": "Engine Lang is an open, unowned systems programming language designed to abolish the memory-disk duality through hardware-direct Single-Level Store (SLS), mathematical proof of invariants via Z3 SMT solver, and native causal graph replication.",
+        "text": "Engine Lang (engine / .eng) eliminates the traditional fragmentation of enterprise infrastructure by collapsing the application layer, ORM, database, cache, message broker, and vector index into a single verifiable compilation unit. Built under the Apache 2.0 license as a sovereign public good."
+      }
+    }
+  },
+  "capabilities": {
+    "deployment": [
+      "bare-metal",
+      "container",
+      "unikernel",
+      "cloud",
+      "edge"
+    ],
+    "interfaces": {
+      "cli": {
+        "command": "enginec",
+        "description": "Engine Lang reference compiler and node runtime"
+      },
+      "postgresql_wire": {
+        "port": 5432,
+        "version": "3.0",
+        "description": "Native PostgreSQL wire protocol bridge"
+      },
+      "http_gateway": {
+        "port": 8090,
+        "description": "Embedded reactive HTTP web gateway"
+      },
+      "causal_mesh": {
+        "port": 9443,
+        "protocol": "quic",
+        "description": "Distributed causal DAG replication mesh"
+      }
+    },
+    "pricing": {
+      "model": "free",
+      "starting_price_cents": 0,
+      "currency": "USD"
+    },
+    "integrations": [
+      "docker",
+      "cargo",
+      "github-actions",
+      "postgresql",
+      "z3",
+      "nvram",
+      "uefi"
+    ]
+  },
+  "releases": {
+    "latest": {
+      "version": "0.3.1",
+      "published_at": "2026-10-21T00:00:00Z",
+      "release_type": "minor",
+      "changelog_url": "https://github.com/msrjson/engine-lang/blob/main/CHANGELOG.md"
+    }
+  },
+  "trust": {
+    "domain_verification": {
+      "method": "repository-standard",
+      "status": "verified"
+    }
+  },
+  "telemetry": {
+    "status_page": "https://github.com/msrjson/engine-lang"
+  }
+}

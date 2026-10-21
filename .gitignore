@@ -10,7 +10,18 @@ data/*.nvram
 *.nvram
 data/*.efi
 *.efi
+!data/.gitkeep
+
+# Secrets, API Keys, Tokens and Private Config
+.github/apikey
+*.apikey
+*.secret
+*.pem
+*.key
+.agents/do-app.json
+.agents/tokens*
 
 # Logs and environment
 *.log
 .env
+.env.*
