@@ -37,8 +37,8 @@ jobs:
       - name: Assemble GitHub Pages Distribution
         run: |
           mkdir -p dist
-          # Copy Landing Page
-          cp -r site/* dist/
+          # Copy Landing Page from website/
+          cp -r website/* dist/
           # Copy Rendered mdBook to /book/
           mkdir -p dist/book
           cp -r book/book/* dist/book/
@@ -63,3 +63,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engine Lang — Sovereign Systems Programming Language</title>
+  <meta name="description" content="An open, unowned systems programming language unifying Single-Level Store (SLS), Z3 SMT formal verification, and distributed causal mesh networks. Purposefully monochrome.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       MONOCHROME DESIGN SYSTEM (STRICT BLACK & WHITE)
+       Purposefully stripped of decorative color to emphasize mathematical 
+       soundness, brutalist precision, and architectural sovereign purity.
+       ========================================================================== */
+    :root {
+      --black: #000000;
+      --zinc-950: #09090b;
+      --zinc-900: #121214;
+      --zinc-850: #18181b;
+      --zinc-800: #27272a;
+      --zinc-700: #3f3f46;
+      --zinc-600: #52525b;
+      --zinc-500: #71717a;
+      --zinc-400: #a1a1aa;
+      --zinc-300: #d4d4d8;
+      --zinc-200: #e4e4e7;
+      --zinc-100: #f4f4f5;
+      --white: #ffffff;
+
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --border-subtle: 1px solid var(--zinc-800);
+      --border-strong: 1px solid var(--zinc-700);
+      --border-active: 1px solid var(--white);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--black);
+      color: var(--zinc-200);
+      font-family: var(--font-display);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Architectural Grid Background */
+    .grid-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Minimalist Monospaced Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: var(--border-subtle);
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--zinc-900);
+      border: var(--border-strong);
+      color: var(--zinc-300);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+    nav ul {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      gap: 1.75rem;
+    }
+    nav a {
+      color: var(--zinc-400);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    nav a:hover {
+      color: var(--white);
+    }
+
+    /* High-Contrast Inverted Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1.25rem;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+    }
+    .btn-solid {
+      background: var(--white);
+      color: var(--black);
+      border: 1px solid var(--white);
+    }
+    .btn-solid:hover {
+      background: var(--zinc-200);
+      border-color: var(--zinc-200);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: var(--border-strong);
+    }
+    .btn-outline:hover {
+      background: var(--zinc-900);
+      border-color: var(--white);
+      transform: translateY(-1px);
+    }
+    .btn-mono {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 6.5rem 0 4.5rem;
+      border-bottom: var(--border-subtle);
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--zinc-400);
+      margin-bottom: 2rem;
+    }
+    .hero-meta .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--white);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.8vw, 4.4rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 1.75rem;
+      max-width: 1050px;
+    }
+    .hero p.lead {
+      font-size: 1.25rem;
+      color: var(--zinc-400);
+      max-width: 860px;
+      line-height: 1.65;
+      margin-bottom: 2.75rem;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+
+    /* Key Spec Ticker Bar */
+    .ticker-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--zinc-800);
+      border: var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 3.5rem;
+    }
+    .ticker-item {
+      background: var(--zinc-950);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .ticker-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--zinc-500);
+    }
+    .ticker-val {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    /* Dual Showcase: Code vs Terminal */
+    .showcase-section {
+      padding: 5rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .window {
+      background: var(--zinc-950);
+      border: var(--border-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .window-header {
+      background: var(--zinc-900);
+      border-bottom: var(--border-subtle);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--zinc-400);
+    }
+    .window-body {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.6;
+      color: var(--zinc-300);
+      overflow-x: auto;
+      flex: 1;
+    }
+    .code-comment { color: var(--zinc-500); }
+    .code-keyword { color: var(--white); font-weight: 700; }
+    .code-directive { color: var(--zinc-400); font-style: italic; }
+    .code-type { color: var(--zinc-200); }
+    .code-highlight { background: rgba(255, 255, 255, 0.08); padding: 0.1rem 0.25rem; border-radius: 2px; }
+
+    /* The 5 Layers Grid */
+    .layers-section {
+      padding: 5.5rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .section-title-group {
+      margin-bottom: 3.5rem;
+    }
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--zinc-400);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .section-h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--zinc-400);
+      max-width: 720px;
+    }
+    .layers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .layer-row {
+      background: var(--zinc-950);
+      border: var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      display: grid;
+      grid-template-columns: 120px 240px 1fr 220px;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.2s ease;
+    }
+    .layer-row:hover {
+      background: var(--zinc-900);
+      border-color: var(--white);
+      transform: translateX(4px);
+    }
+    .layer-id {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--zinc-500);
+      font-weight: 600;
+    }
+    .layer-name {
+      font-weight: 700;
+      color: var(--white);
+      font-size: 1.05rem;
+    }
+    .layer-summary {
+      color: var(--zinc-400);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .layer-path {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--zinc-300);
+      background: var(--zinc-900);
+      border: var(--border-subtle);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      text-align: right;
+    }
+
+    /* The Official Book Showcase */
+    .book-section {
+      padding: 5.5rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .book-card {
+      background: var(--zinc-950);
+      border: var(--border-strong);
+      border-radius: 12px;
+      padding: 3.5rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+    .book-wireframe {
+      border: 2px solid var(--white);
+      border-radius: 8px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      background: var(--black);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+    .book-wireframe::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      bottom: -6px;
+      left: -6px;
+      border: 1px dashed var(--zinc-700);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    .book-title-main {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    .book-title-sub {
+      font-size: 0.85rem;
+      color: var(--zinc-400);
+      margin-bottom: 2rem;
+    }
+    .book-author {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--zinc-300);
+      border-top: var(--border-subtle);
+      padding-top: 1rem;
+    }
+    .book-info h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .book-info p {
+      color: var(--zinc-400);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .book-volumes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .vol-card {
+      background: var(--zinc-900);
+      border: var(--border-subtle);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .vol-card h5 {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--zinc-400);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+    .vol-card p {
+      font-size: 0.88rem;
+      color: var(--zinc-200);
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+
+    /* Specifications Matrix */
+    .specs-section {
+      padding: 5.5rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .spec-card {
+      background: var(--zinc-950);
+      border: var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .spec-card:hover {
+      background: var(--zinc-900);
+      border-color: var(--white);
+      transform: translateY(-2px);
+    }
+    .spec-id {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--zinc-400);
+      margin-bottom: 0.75rem;
+    }
+    .spec-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .spec-desc {
+      font-size: 0.88rem;
+      color: var(--zinc-400);
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+    .spec-action {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--white);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Minimalist Footer */
+    footer {
+      padding: 5rem 0 3rem;
+      background: var(--black);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+    .footer-col h4 {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--zinc-400);
+      margin-bottom: 1.25rem;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 0.65rem;
+    }
+    .footer-col a {
+      color: var(--zinc-400);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.15s ease;
+    }
+    .footer-col a:hover {
+      color: var(--white);
+    }
+    .footer-bottom {
+      border-top: var(--border-subtle);
+      padding-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--zinc-500);
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+    }
+
+    @media (max-width: 960px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+      .layer-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .layer-path {
+        text-align: left;
+      }
+      .book-card {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+      }
+      .book-volumes-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-background"></div>
+
+  <header>
+    <div class="container nav-bar">
+      <a href="./" class="brand">
+        <span>ENGINE LANG</span>
+        <span class="brand-tag">v0.3.1-silicon</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="./book/">The Book</a></li>
+          <li><a href="https://github.com/msrjson/engine-lang/tree/main/docs" target="_blank">Specs</a></li>
+          <li><a href="#layers">Architecture</a></li>
+          <li><a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank">MSR Protocol</a></li>
+          <li><a href="Engine_Lang_Whitepaper_EN.pdf" download class="btn btn-outline btn-mono">Whitepaper.pdf</a></li>
+          <li><a href="./book/" class="btn btn-solid btn-mono">Read Book →</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-meta">
+          <span class="status-dot"></span>
+          <span>SOVEREIGN PUBLIC GOOD · APACHE 2.0 · MSR PROTOCOL 2.1</span>
+        </div>
+        <h1>
+          ABOLISHING THE MEMORY-DISK DUALITY.
+        </h1>
+        <p class="lead">
+          Engine Lang is an open, unowned systems programming language designed to unify persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT), and distributed causal mesh replication into a single compilation unit.
+        </p>
+
+        <div class="hero-actions">
+          <a href="./book/" class="btn btn-solid">
+            Read The Official Book
+          </a>
+          <a href="Engine_Lang_Whitepaper_EN.pdf" download class="btn btn-outline">
+            Download Whitepaper (PDF)
+          </a>
+          <a href="https://github.com/msrjson/engine-lang" target="_blank" class="btn btn-outline">
+            View on GitHub
+          </a>
+        </div>
+
+        <!-- Metric Ticker -->
+        <div class="ticker-bar">
+          <div class="ticker-item">
+            <span class="ticker-label">Grammar Precedence</span>
+            <span class="ticker-val">14 Deterministic Levels</span>
+          </div>
+          <div class="ticker-item">
+            <span class="ticker-label">Formal SMT Prover</span>
+            <span class="ticker-val">Z3 SMT-LIB2 Engine</span>
+          </div>
+          <div class="ticker-item">
+            <span class="ticker-label">Single-Level Store</span>
+            <span class="ticker-val">64-byte CLWB / SFENCE</span>
+          </div>
+          <div class="ticker-item">
+            <span class="ticker-label">Network Transport</span>
+            <span class="ticker-val">Delta-CRDT P2P Mesh</span>
+          </div>
+          <div class="ticker-item">
+            <span class="ticker-label">Execution Target</span>
+            <span class="ticker-val">UEFI PE32+ Unikernel</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Code & Terminal Showcase -->
+      <section class="showcase-section">
+        <div class="showcase-grid">
+          <!-- Left: Engine Lang Source Code -->
+          <div class="window">
+            <div class="window-header">
+              <span>examples/04_causal_blog.eng</span>
+              <span>SYNTAX: ENGINE LANG</span>
+            </div>
+            <div class="window-body">
+              <span class="code-comment">// Inviolable Domain Invariants proven at Compile Time</span><br>
+              <span class="code-keyword">type</span> <span class="code-type">Slug</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> len(self) &gt;= 3 &amp;&amp; len(self) &lt;= 80;<br>
+              <span class="code-keyword">type</span> <span class="code-type">Email</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> contains(self, "@");<br>
+              <span class="code-keyword">type</span> <span class="code-type">ViewCount</span> = <span class="code-type">Int</span> <span class="code-keyword">where</span> self &gt;= 0;<br><br>
+
+              <span class="code-comment">// Single-Level Store: Hardware-Direct NVRAM Persistence</span><br>
+              <span class="code-directive">@persistent</span><br>
+              <span class="code-keyword">entity</span> <span class="code-type">Post</span> {<br>
+              &nbsp;&nbsp;id: <span class="code-type">UUID</span>,<br>
+              &nbsp;&nbsp;title: <span class="code-type">NonEmptyText</span>,<br>
+              &nbsp;&nbsp;slug: <span class="code-type">Slug</span>,<br>
+              &nbsp;&nbsp;views: <span class="code-type">ViewCount</span>,<br>
+              &nbsp;&nbsp;embedding: <span class="code-type">Vector</span>[1536],<br>
+              &nbsp;&nbsp;<span class="code-keyword">invariant</span> { len(title) &gt; 0 }<br>
+              }<br><br>
+
+              <span class="code-comment">// Native Causal Pipeline & Vector Cosine Match</span><br>
+              <span class="code-keyword">fn</span> <span class="code-type">recommend_posts</span>(query_vec: <span class="code-type">Vector</span>[1536]) {<br>
+              &nbsp;&nbsp;<span class="code-type">Post</span>::all()<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; filter(|p| p.views &gt; 100)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; sort_by(|p| p.embedding &lt;=&gt; query_vec)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; take(5);<br>
+              }
+            </div>
+          </div>
+
+          <!-- Right: Terminal Genesis Node -->
+          <div class="window">
+            <div class="window-header">
+              <span>genesis-node — bash</span>
+              <span>ENVIRONMENT: DOCKER / DAX</span>
+            </div>
+            <div class="window-body">
+              <span class="code-comment"># Spin up Genesis Node with embedded Z3 & SLS</span><br>
+              <span class="code-keyword">$</span> docker compose up -d<br>
+              [+] Running 2/2<br>
+              &nbsp;✔ Network engine-genesis-net  Created<br>
+              &nbsp;✔ Container engine-genesis-node  Started (healthy)<br><br>
+
+              <span class="code-comment"># Perform Compile-Time Z3 Formal Verification</span><br>
+              <span class="code-keyword">$</span> docker exec engine-genesis-node enginec check 04_causal_blog.eng<br>
+              <span class="code-highlight">✅ Grammar: Deterministic LL(1) parse succeeded</span><br>
+              <span class="code-highlight">[SMT-PROVEN] Refinement type 'Slug' verified</span><br>
+              <span class="code-highlight">[SMT-PROVEN] Refinement type 'Email' verified</span><br>
+              <span class="code-highlight">[SMT-PROVEN] Entity invariant for '@persistent Post' verified</span><br>
+              ✨ Formal Verification Succeeded: 0 runtime panics possible.<br><br>
+
+              <span class="code-comment"># Inspect Single-Level Store Superblock</span><br>
+              <span class="code-keyword">$</span> docker exec engine-genesis-node enginec inspect /app/data/engine.db<br>
+              Container Magic:     0x454E474E ('ENG\x01')<br>
+              Page Size:           4096 bytes (HugePage: 2 MiB)<br>
+              CRC-64/NVME:         0x0B3270B44B4A0AA6 [VALID]<br>
+              Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- The 5 Layers Overview -->
+      <section class="layers-section" id="layers">
+        <div class="section-title-group">
+          <div class="section-tag">// ARCHITECTURAL DECOMPOSITION</div>
+          <h2 class="section-h2">The 5 System Layers</h2>
+          <p class="section-desc">
+            Organized to give developers, systems engineers, and autonomous AI agents clear, verifiable boundaries from source syntax to raw bare metal.
+          </p>
+        </div>
+
+        <div class="layers-list">
+          <div class="layer-row">
+            <span class="layer-id">LAYER 01</span>
+            <span class="layer-name">Deterministic Syntax & SMT</span>
+            <span class="layer-summary">LL(1) recursive descent parser without backtracking; automated compile-time proof of type refinements via Z3 SMT-LIB2.</span>
+            <span class="layer-path">compiler/src/parser.rs</span>
+          </div>
+
+          <div class="layer-row">
+            <span class="layer-id">LAYER 02</span>
+            <span class="layer-name">Single-Level Store (SLS)</span>
+            <span class="layer-summary">Persistent memory engine bound to NVRAM / CXL. Eliminates external databases with cache-line flush primitives (CLWB + SFENCE).</span>
+            <span class="layer-path">compiler/src/memory.rs</span>
+          </div>
+
+          <div class="layer-row">
+            <span class="layer-id">LAYER 03</span>
+            <span class="layer-name">Causal Mesh & Bridges</span>
+            <span class="layer-summary">Planetary Delta-CRDT vector clocks without coordinators, embedded PostgreSQL v3.0 protocol responder, and reactive HTTP gateway.</span>
+            <span class="layer-path">compiler/src/bridge.rs</span>
+          </div>
+
+          <div class="layer-row">
+            <span class="layer-id">LAYER 04</span>
+            <span class="layer-name">Silicon Codegen & OS</span>
+            <span class="layer-summary">Zero-UB machine code emitter with AVX2/AVX-512 SIMD vector cosine distance, and freestanding UEFI 2.10 PE32+ unikernel builder.</span>
+            <span class="layer-path">compiler/src/codegen.rs</span>
+          </div>
+
+          <div class="layer-row">
+            <span class="layer-id">LAYER 05</span>
+            <span class="layer-name">Genesis Toolchain & MSR</span>
+            <span class="layer-summary">CLI toolchain (`enginec`), LSP 3.17 daemon, multi-stage Docker Genesis containers, and MSR JSON 2.1 open protocol compliance.</span>
+            <span class="layer-path">compiler/src/main.rs</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- The Official Book -->
+      <section class="book-section">
+        <div class="book-card">
+          <div class="book-wireframe">
+            <div class="book-title-main">FROM THE SILICON ISLAND TO THE CAUSAL COSMOS</div>
+            <div class="book-title-sub">The Engineering Book of Engine Lang</div>
+            <div class="book-author">Lysander Vance</div>
+          </div>
+          <div class="book-info">
+            <h3>Read The Official Book Online</h3>
+            <p>
+              An authoritative 14-chapter technical treatise exploring how to transition from legacy memory-storage duality to a sovereign causal computing fabric. Available in full via the built-in mdBook reader.
+            </p>
+
+            <div class="book-volumes-grid">
+              <div class="vol-card">
+                <h5>Volume I</h5>
+                <p>The Silicon Island (Single-Node Memory Ledger & SMT Refinement)</p>
+              </div>
+              <div class="vol-card">
+                <h5>Volume II</h5>
+                <p>The Bridge of Worlds (Causal Mesh & Distributed Delta-CRDT)</p>
+              </div>
+              <div class="vol-card">
+                <h5>Volume III</h5>
+                <p>The Causal Cosmos (Bare-Metal Unikernel & AI Agent Swarms)</p>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+              <a href="./book/" class="btn btn-solid">
+                Open Book in mdBook Reader →
+              </a>
+              <a href="https://github.com/msrjson/engine-lang/tree/main/book" target="_blank" class="btn btn-outline">
+                View Markdown Sources
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Normative Specifications Grid -->
+      <section class="specs-section">
+        <div class="section-title-group">
+          <div class="section-tag">// NORMATIVE SPECIFICATIONS</div>
+          <h2 class="section-h2">Formal Specifications & Standards</h2>
+          <p class="section-desc">
+            All engineering design criteria are documented in public, unowned technical specifications.
+          </p>
+        </div>
+
+        <div class="specs-grid">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">ENG-SPEC-03.1</div>
+              <div class="spec-name">Grammar & Type System</div>
+              <div class="spec-desc">Deterministic LL(1) EBNF grammar, 14 operator precedence levels, and refinement type semantics.</div>
+            </div>
+            <span class="spec-action">Read Specification ↗</span>
+          </a>
+
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">ENG-SLS-01.1</div>
+              <div class="spec-name">Single-Level Store Binary</div>
+              <div class="spec-desc">Binary physical layout of .db containers: 64-byte alignment, NVRAM Ring Buffer, and CRC-64/NVME.</div>
+            </div>
+            <span class="spec-action">Read Specification ↗</span>
+          </a>
+
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">ENG-CG-01.1</div>
+              <div class="spec-name">Silicon Codegen & Zero-UB</div>
+              <div class="spec-desc">Direct machine instruction synthesis, AVX-512 vector distance accelerator, and hardware memory barriers.</div>
+            </div>
+            <span class="spec-action">Read Specification ↗</span>
+          </a>
+
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/BARE_METAL_UNIKERNEL_SPEC.md" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">ENG-OS-01.1</div>
+              <div class="spec-name">Bare-Metal UEFI Unikernel</div>
+              <div class="spec-desc">Freestanding PE32+ binary format executing directly on bare-metal silicon without OS kernels.</div>
+            </div>
+            <span class="spec-action">Read Specification ↗</span>
+          </a>
+
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/CONFRONTING_THE_LISP_TRAP.md" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">ENG-TRAP-01.1</div>
+              <div class="spec-name">Confronting the Lisp Trap</div>
+              <div class="spec-desc">Rebuttal of the theoretical language trap through empirical codebase facts and PostgreSQL compatibility.</div>
+            </div>
+            <span class="spec-action">Read Specification ↗</span>
+          </a>
+
+          <a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank" class="spec-card">
+            <div>
+              <div class="spec-id">MSR-JSON-2.1</div>
+              <div class="spec-name">MSR Protocol Manifest</div>
+              <div class="spec-desc">Cryptographically verifiable software metadata for AI agent registries and decentralized discovery.</div>
+            </div>
+            <span class="spec-action">Inspect Manifest ↗</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Engine Lang</h4>
+          <p style="color: var(--zinc-400); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+            A decentralized, unowned systems programming language. Built as an open public good under Apache License 2.0.
+          </p>
+          <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--zinc-300);">
+            Part of the MSR JSON Standard Protocol Ecosystem
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="./book/">The Official Book</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank">Language Specification</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank">SLS Binary Layout</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank">Silicon Codegen Spec</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/DISTRIBUTED_MESH_WIRE.md" target="_blank">Causal Mesh Wire Protocol</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Community & RFCs</h4>
+          <ul>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/CONTRIBUTING.md" target="_blank">Contributing Guide</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/SECURITY.md" target="_blank">Security Policy</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/issues" target="_blank">Issue Tracker & RFCs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Artifacts</h4>
+          <ul>
+            <li><a href="Engine_Lang_Whitepaper_EN.pdf" download>Whitepaper (PDF)</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank">MSR Manifest (msr.json)</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/releases" target="_blank">Release v0.3.1-silicon</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang" target="_blank">GitHub Source Code</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 The Vance Protocol Group / Engine Lang Core Working Group. Apache License 2.0.</div>
+        <div>Purposely Monochrome · Sovereign Silicon Standard</div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
