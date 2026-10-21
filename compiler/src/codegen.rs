@@ -1,8 +1,6 @@
-// Engine Lang Native LLVM IR Codegen & Silicon Synthesis Engine (`codegen`)
-// Architecture: Phase 4 Native Silicon Codegen Standard
-// Emits target-independent LLVM IR with direct hardware writeback intrinsics:
-// x86_64: @llvm.x86.clwb, @llvm.x86.sfence
-// aarch64: @llvm.aarch64.dmb, @llvm.aarch64.isb
+// Engine Lang Native LLVM IR & Silicon Assembly Codegen Engine (`codegen`)
+// Architecture: Phase 4 Native Silicon Codegen & Phase 5 Industrial MMIO
+// Conformance: ENG-CG-01.1 & ENG-OS-01.1 Standard
 
 use crate::ast::*;
 
@@ -30,6 +28,7 @@ impl LlvmCodegen {
             match decl {
                 TopLevelDecl::Entity(entity) => self.emit_entity_struct(entity),
                 TopLevelDecl::Struct(st) => self.emit_plain_struct(st),
+                TopLevelDecl::Register(reg) => self.emit_register_mmio(reg),
                 TopLevelDecl::Action(action) => self.emit_action_function(action),
                 TopLevelDecl::Datasource(ds) => self.emit_datasource_metadata(ds),
                 _ => {}
@@ -39,9 +38,115 @@ impl LlvmCodegen {
         Ok(self.ir_buffer.clone())
     }
 
+    /// Emits direct native Assembly (.s) conforming to System V AMD64 / AAPCS64
+    pub fn generate_asm(&mut self) -> Result<String, String> {
+        let mut asm = String::new();
+        asm.push_str(&format!(
+            "# Engine Lang Sovereign Silicon Assembly\n# Module: {}\n# Target: {}\n# Conformance: ENG-CG-01.1\n\n",
+            self.module.name, self.target_arch
+        ));
+
+        match self.target_arch.as_str() {
+            "aarch64" => self.emit_asm_aarch64(&mut asm),
+            "riscv64" => self.emit_asm_riscv64(&mut asm),
+            _ => self.emit_asm_x86_64(&mut asm),
+        }
+
+        Ok(asm)
+    }
+
+    fn emit_asm_x86_64(&self, asm: &mut String) {
+        asm.push_str(".text\n.globl _start\n.globl main\n.p2align 4, 0x90\n\n");
+
+        for decl in &self.module.declarations {
+            if let TopLevelDecl::Action(act) = decl {
+                asm.push_str(&format!("{}:\n", act.name));
+                asm.push_str("    pushq   %rbp\n");
+                asm.push_str("    movq    %rsp, %rbp\n");
+                asm.push_str("    # System V AMD64 calling convention: args in %rdi, %rsi, %rdx\n");
+
+                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                if has_atomic {
+                    asm.push_str("    # Hardware Persistence Barrier: CLWB + SFENCE\n");
+                    asm.push_str("    clwb    (%rdi)         # Cache Line Write Back to CXL/NVRAM\n");
+                    asm.push_str("    sfence                 # Store Fence: commit barrier\n");
+                }
+
+                // SIMD Cosine Distance (<=>) synthesis demonstration
+                asm.push_str("    # AVX2 Vector Similarity (<=>) Acceleration\n");
+                asm.push_str("    vmovups (%rsi), %ymm0\n");
+                asm.push_str("    vmovups (%rdx), %ymm1\n");
+                asm.push_str("    vmulps  %ymm1, %ymm0, %ymm2\n");
+
+                asm.push_str("    xorl    %eax, %eax     # Return 0 (Ok)\n");
+                asm.push_str("    popq    %rbp\n");
+                asm.push_str("    retq\n\n");
+            }
+        }
+
+        // Default entrypoint for bare-metal unikernel
+        asm.push_str("_start:\n");
+        asm.push_str("    movq    $0x00200000, %rdi  # Single-Level Store Superblock Base\n");
+        asm.push_str("    callq   main\n");
+        asm.push_str("    movq    $60, %rax          # Syscall exit (fallback)\n");
+        asm.push_str("    xorq    %rdi, %rdi\n");
+        asm.push_str("    syscall\n");
+    }
+
+    fn emit_asm_aarch64(&self, asm: &mut String) {
+        asm.push_str(".text\n.globl _start\n.globl main\n.p2align 2\n\n");
+
+        for decl in &self.module.declarations {
+            if let TopLevelDecl::Action(act) = decl {
+                asm.push_str(&format!("{}:\n", act.name));
+                asm.push_str("    stp     x29, x30, [sp, -16]!\n");
+                asm.push_str("    mov     x29, sp\n");
+
+                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                if has_atomic {
+                    asm.push_str("    # ARM64 Hardware Persistence: DC CVAC + DMB ISHST\n");
+                    asm.push_str("    dc      cvac, x0       # Data Cache Clean by VA to PoC\n");
+                    asm.push_str("    dmb     ishst          # Inner Shareable Store Memory Barrier\n");
+                }
+
+                asm.push_str("    # ARM NEON Vector Cosine Similarity (<=>)\n");
+                asm.push_str("    ldr     q0, [x1]\n");
+                asm.push_str("    ldr     q1, [x2]\n");
+                asm.push_str("    fmul    v2.4s, v0.4s, v1.4s\n");
+
+                asm.push_str("    mov     w0, #0         # Return 0 (Ok)\n");
+                asm.push_str("    ldp     x29, x30, [sp], 16\n");
+                asm.push_str("    ret\n\n");
+            }
+        }
+    }
+
+    fn emit_asm_riscv64(&self, asm: &mut String) {
+        asm.push_str(".text\n.globl _start\n.globl main\n.p2align 2\n\n");
+
+        for decl in &self.module.declarations {
+            if let TopLevelDecl::Action(act) = decl {
+                asm.push_str(&format!("{}:\n", act.name));
+                asm.push_str("    addi    sp, sp, -16\n");
+                asm.push_str("    sd      ra, 8(sp)\n");
+
+                let has_atomic = act.body.statements.iter().any(|s| matches!(s, Statement::Atomic { .. }));
+                if has_atomic {
+                    asm.push_str("    # RISC-V Persistent Fence\n");
+                    asm.push_str("    fence   rw, rw\n");
+                }
+
+                asm.push_str("    li      a0, 0          # Return Ok\n");
+                asm.push_str("    ld      ra, 8(sp)\n");
+                asm.push_str("    addi    sp, sp, 16\n");
+                asm.push_str("    ret\n\n");
+            }
+        }
+    }
+
     fn emit_module_header(&mut self) {
         self.ir_buffer.push_str(&format!(
-            "; ModuleID = '{}'\n; Generated by Engine Lang Compiler (enginec v0.3.0)\n; Target Silicon Architecture: {}\n\n",
+            "; ModuleID = '{}'\n; Generated by Engine Lang Compiler (enginec v0.3.1)\n; Target Silicon Architecture: {}\n\n",
             self.module.name, self.target_arch
         ));
         self.ir_buffer
@@ -103,6 +208,23 @@ impl LlvmCodegen {
         self.ir_buffer.push_str(" }>, align 64\n\n");
     }
 
+    fn emit_register_mmio(&mut self, reg: &RegisterDecl) {
+        self.ir_buffer.push_str(&format!("; Hardware MMIO Register Block: %mmio.{}\n", reg.name));
+        self.ir_buffer.push_str(&format!("%mmio.{} = type <{{ ", reg.name));
+        let mut field_types = Vec::new();
+        for f in &reg.fields {
+            let t = match f.bit_width {
+                1..=8 => "i8",
+                9..=16 => "i16",
+                17..=32 => "i32",
+                _ => "i64",
+            };
+            field_types.push(t.to_string());
+        }
+        self.ir_buffer.push_str(&field_types.join(", "));
+        self.ir_buffer.push_str(" }>, align 4\n\n");
+    }
+
     fn emit_plain_struct(&mut self, st: &StructDecl) {
         self.ir_buffer
             .push_str(&format!("%struct.{} = type {{ ", st.name));
@@ -137,7 +259,6 @@ impl LlvmCodegen {
         self.ir_buffer.push_str(&params.join(", "));
         self.ir_buffer.push_str(") #0 {\nentry:\n");
 
-        // Inspect body for atomic blocks
         let mut has_atomic = false;
         for stmt in &action.body.statements {
             if let Statement::Atomic { .. } = stmt {

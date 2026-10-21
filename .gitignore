@@ -8,6 +8,8 @@ data/*.db
 *.db
 data/*.nvram
 *.nvram
+data/*.efi
+*.efi
 
 # Logs and environment
 *.log

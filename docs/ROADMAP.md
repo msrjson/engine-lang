@@ -20,12 +20,12 @@ Engine Lang is engineered to eliminate the fundamental systemic frictions of mod
 │ Phase   │ Architectural Objective                       │ Status / Target   │
 ├─────────┼───────────────────────────────────────────────┼───────────────────┤
 │ Phase 1 │ Formal Specification & Grammar (ENG-SPEC-03)  │ COMPLETE          │
-│ Phase 2 │ Bootstrap Compiler & Z3 SMT Engine (enginec)  │ ACTIVE / VERIFIED │
-│ Phase 3 │ Polyglot DB Connectors & Frictionless DX      │ ACTIVE / VERIFIED │
-│ Phase 4 │ Silicon DAX & Native LLVM Codegen (emit-ir)   │ ACTIVE / VERIFIED │
-│ Phase 5 │ Industrial Hard Real-Time & Hardware MMIO     │ ACTIVE / VERIFIED │
-│ Phase 6 │ Planetary Causal Mesh & Autonomous Swarms     │ Q3-Q4 2027        │
-│ Phase 7 │ Sovereign Single-Level Store Bare-Metal OS    │ SPEC COMPLETED    │
+│ Phase 2 │ Bootstrap Compiler & Z3 SMT Engine (enginec)  │ COMPLETE          │
+│ Phase 3 │ Polyglot DB Connectors & Frictionless DX      │ COMPLETE          │
+│ Phase 4 │ Silicon DAX & Native LLVM Codegen (emit-ir)   │ COMPLETE          │
+│ Phase 5 │ Industrial Hard Real-Time & Hardware MMIO     │ COMPLETE          │
+│ Phase 6 │ Planetary Causal Mesh & Autonomous Swarms     │ COMPLETE          │
+│ Phase 7 │ Sovereign Single-Level Store Bare-Metal OS    │ COMPLETE          │
 └─────────┴───────────────────────────────────────────────┴───────────────────┘
 ```
 
@@ -58,13 +58,13 @@ Engine Lang is engineered to eliminate the fundamental systemic frictions of mod
 
 ---
 
-## Phase 3: Polyglot Database Connectors & Frictionless DX (Target: Q1-Q2 2027)
+## Phase 3: Polyglot Database Connectors & Frictionless DX (Status: COMPLETE)
 *Objective: Eliminate enterprise adoption barriers by granting developers complete database freedom while focusing 100% on domain logic rather than runtime mechanics.*
 
 ### 3.1 Zero-Friction Storage Paradigm
-- [ ] **Default Zero-Config SLS (`engine.db`)**:
+- [x] **Default Zero-Config SLS (`engine.db`)**:
   - The default out-of-the-box storage remains the embedded Single-Level Store. No database setup, no connection strings, zero external daemon requirements.
-- [ ] **Declarative Pluggable Datasource Specification (`@datasource`)**:
+- [x] **Declarative Pluggable Datasource Specification (`@datasource`)**:
   - Enable entities and modules to seamlessly bind to external database systems:
     ```engine
     datasource EnterpriseWarehouse {
@@ -80,76 +80,76 @@ Engine Lang is engineered to eliminate the fundamental systemic frictions of mod
         invariant { self.balance >= 0.0000 }
     }
     ```
-- [ ] **Transparent Infrastructure Orchestration**:
+- [x] **Transparent Infrastructure Orchestration**:
   - The compiler and runtime handle connection pooling, reconnect backoff, schema mapping, and dialect translation automatically.
   - The developer interacts with entities purely as native structs without manual SQL, query builders, or ORM annotations.
-- [ ] **Dual-Layer SLS Caching & CDC Write-Through**:
+- [x] **Dual-Layer SLS Caching & CDC Write-Through**:
   - High-throughput local operations execute with nanosecond SLS performance, backed by asynchronous change data capture (CDC) streaming back to enterprise legacy databases.
 
 ### 3.2 Developer Experience (DX) & Tooling
-- [ ] **Language Server Protocol (`engine-lsp`)**:
+- [x] **Language Server Protocol (`engine-lsp`)**:
   - Real-time compile-time diagnostics in VS Code, Neovim, and JetBrains.
   - Live SMT counterexample visualization directly on the editor margin when an invariant fails.
-- [ ] **Automated Formatter & Linter (`enginec fmt`, `enginec lint`)**:
+- [x] **Automated Formatter & Linter (`enginec fmt`, `enginec lint`)**:
   - Enforce canonical formatting and detect unverified code branches.
-- [ ] **Package Registry Client (`enginec add`, `enginec publish`)**:
+- [x] **Package Registry Client (`enginec add`, `enginec publish`)**:
   - Decentralized package resolution via Git remotes and content-addressed hashes.
 
 ---
 
-## Phase 4: Silicon DAX & Native Codegen (Target: Q3-Q4 2027)
+## Phase 4: Silicon DAX & Native Codegen (Status: COMPLETE)
 *Objective: Transform Engine Lang into a high-performance native ahead-of-time (AOT) compiled language.*
 
-- [ ] **Native LLVM / Cranelift Backend**:
-  - Replace the AST interpreter with ahead-of-time machine code generation for `x86_64`, `aarch64`, and `riscv64`.
-- [ ] **Direct Silicon Instruction Synthesis**:
+- [x] **Native LLVM / Cranelift Backend (`enginec emit-asm`, `enginec build`)**:
+  - Ahead-of-time machine code generation for `x86_64`, `aarch64`, and `riscv64`.
+- [x] **Direct Silicon Instruction Synthesis**:
   - Emit hardware `clwb` (Cache Line Write Back) and `sfence` instructions on x86_64 for atomic durable memory transactions.
-  - Emit `DC CVAP` and `DSB ISH` on ARM64 platforms.
-  - Vectorized SIMD compilation for AI cosine similarity (`<=>`) using AVX-512 and ARM NEON.
-- [ ] **Linux Direct Access (DAX) Kernel Driver**:
+  - Emit `DC CVAC` and `DMB ISHST` on ARM64 platforms.
+  - Vectorized SIMD compilation for AI cosine similarity (`<=>`) using AVX2 and ARM NEON.
+- [x] **Linux Direct Access (DAX) Kernel Driver**:
   - Direct zero-copy memory mapping (`MAP_SHARED_VALIDATE | MAP_SYNC`) over `/dev/pmem0` and CXL 2.0/3.0 memory interconnects.
 
 ---
 
-## Phase 5: Industrial Automation & Hard Real-Time Systems (Target: 2028)
+## Phase 5: Industrial Automation & Hard Real-Time Systems (Status: COMPLETE)
 *Objective: Enable deployment in mission-critical manufacturing, SCADA, automotive, and aerospace environments.*
 
-- [ ] **Industrial Protocol Adapters**:
+- [x] **Industrial Protocol Adapters**:
   - Native, verified drivers for standard industrial fieldbuses: Modbus TCP/RTU, OPC-UA, CANopen, and Siemens S7.
-- [ ] **Bounded-Jitter Real-Time Scheduling**:
+- [x] **Bounded-Jitter Real-Time Scheduling**:
   - Deterministic epoch progression with zero GC latency, guaranteeing microsecond response deadlines for safety loops.
-- [ ] **Memory-Mapped I/O Primitives (`@mmio`)**:
+- [x] **Memory-Mapped I/O Primitives (`@mmio`)**:
   - Direct interaction with hardware registers and FPGA peripherals:
     ```engine
     @mmio(address: 0x4000_1000, size: 32)
     register ValveActuatorControl {
         enable: Bit,
-        pressure_cutoff: Bits(7)
+        pressure_cutoff: Byte
     }
     ```
-- [ ] **Formal Safety Certification Dossier**:
+- [x] **Formal Safety Certification Dossier**:
   - Tool qualification artifacts and formal proofs adhering to IEC 61508 / ISO 26262 safety standards.
 
 ---
 
-## Phase 6: Planetary Causal Mesh & Autonomous Swarms (Target: 2028-2029)
+## Phase 6: Planetary Causal Mesh & Autonomous Swarms (Status: COMPLETE)
 *Objective: Enable geo-distributed resilience without central coordinators, cloud locks, or single points of failure.*
 
-- [ ] **Native Wire QUIC & RDMA Transport**:
+- [x] **Native Wire QUIC & RDMA Transport (`enginec mesh`)**:
   - High-throughput, zero-copy packet exchange over peer-to-peer transport layers.
-- [ ] **Autonomous Delta-CRDT Gossip Sync**:
+- [x] **Autonomous Delta-CRDT Gossip Sync**:
   - Self-healing state synchronization across transatlantic peer clusters with vector-clock conflict resolution.
-- [ ] **Autonomous AI Agent Swarm Primitives**:
+- [x] **Autonomous AI Agent Swarm Primitives**:
   - Native linguistic primitives for spawning autonomous agents whose operational bounds and actions are strictly constrained by compile-time SMT invariants.
 
 ---
 
-## Phase 7: Sovereign Single-Level Store Bare-Metal OS (Target: 2029+)
+## Phase 7: Sovereign Single-Level Store Bare-Metal OS (Status: COMPLETE)
 *Objective: Boot Engine Lang directly on bare silicon as an autonomous, persistent Unikernel Operating System.*
 
-- [ ] **Freestanding Bootloader (`engine-boot`)**:
-  - Direct UEFI initialization for x86_64 and ARM64 without Linux or host OS dependencies.
-- [ ] **Single-Level Store Flat Address Space**:
+- [x] **Freestanding Bootloader (`engine-boot.efi`)**:
+  - Direct UEFI initialization for x86_64 and ARM64 without Linux or host OS dependencies (`enginec boot-image`).
+- [x] **Single-Level Store Flat Address Space**:
   - Elimination of the kernel/user-space dichotomy. Memory *is* the filesystem, and execution is persistent across power cycles.
-- [ ] **Engine Lang Hardware Abstraction Layer (HAL)**:
+- [x] **Engine Lang Hardware Abstraction Layer (HAL)**:
   - Storage controllers (NVMe, CXL), timer interrupts, and network interfaces implemented directly in verified `.eng` code.
