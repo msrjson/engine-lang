@@ -31,6 +31,8 @@
 * [10. The Legacy of Vance: Inviolable Computation](src/10_the_inviolable_computation.md)
 * [11. Industrial Hard Real-Time, Hardware MMIO, and the Bare-Metal OS](src/11_industrial_realtime_and_baremetal_os.md)
 * [12. Confronting C, C++, and Assembly: From Legacy Pain to Sovereign Silicon](src/12_confronting_c_cpp_assembly.md)
+* [13. The Sovereign Unikernel: Direct Silicon Execution Without Operating Systems](src/13_sovereign_baremetal_unikernel_os.md)
+* [14. Planetary Causal Mesh and Autonomous Swarms: The Post-Cloud Computing Paradigm](src/14_planetary_causal_mesh_and_swarms.md)
 
 ---
 
