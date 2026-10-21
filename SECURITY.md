@@ -34,3 +34,4 @@ If you discover a security vulnerability, soundess flaw in the SMT proof emitter
 
 ## Secrets and Key Management
 This repository strictly prohibits committing private keys, cloud access tokens, or sensitive environment secrets. Automated secret scanners run against all pull requests and branch pushes.
+

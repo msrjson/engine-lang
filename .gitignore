@@ -3,6 +3,10 @@ target/
 compiler/target/
 **/*.rs.bk
 
+# mdBook build artifacts
+book/book/
+dist/
+
 # Single-Level Store binary database files
 data/*.db
 *.db

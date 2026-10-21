@@ -1,0 +1,65 @@
+name: Deploy Engine Lang Book & Documentation to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install mdBook
+        run: |
+          MDBOOK_VERSION="0.4.40"
+          curl -sSL "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar -xz -C /usr/local/bin
+          mdbook --version
+
+      - name: Build mdBook
+        run: |
+          mdbook build book
+
+      - name: Assemble GitHub Pages Distribution
+        run: |
+          mkdir -p dist
+          # Copy Landing Page
+          cp -r site/* dist/
+          # Copy Rendered mdBook to /book/
+          mkdir -p dist/book
+          cp -r book/book/* dist/book/
+          # Copy Publication Whitepaper PDF
+          if [ -f "Engine_Lang_Whitepaper_EN.pdf" ]; then
+            cp Engine_Lang_Whitepaper_EN.pdf dist/
+          fi
+          # Copy Documentation Specs
+          mkdir -p dist/docs
+          cp -r docs/* dist/docs/
+          # Prevent Jekyll processing
+          touch dist/.nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./dist"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

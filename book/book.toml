@@ -1,0 +1,15 @@
+[book]
+authors = ["Lysander Vance", "The Vance Protocol Group / Engine Lang Core Working Group"]
+language = "en"
+multilingual = false
+src = "."
+title = "From the Silicon Island to the Causal Cosmos: The Book of Engine Lang"
+description = "Official Book of the Engine Lang Systems Programming Language"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+git-repository-url = "https://github.com/msrjson/engine-lang"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/msrjson/engine-lang/edit/main/book/{path}"
+site-url = "/engine-lang/book/"
