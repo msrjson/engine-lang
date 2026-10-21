@@ -1,6 +1,6 @@
 # Chapter 14: Planetary Causal Mesh and Autonomous Swarms: The Post-Cloud Computing Paradigm
 
-> *"The cloud was a centralized detour in the evolution of computing. When sovereign silicon nodes speak a common causal language, the network dissolves into a self-healing planetary fabric where truth is not decreed by a master, but woven by consensus."*  
+> *"The cloud was a centralized detour in the evolution of computing. When sovereign silicon nodes speak a common causal language, the network dissolves into a self-healing planetary fabric where truth is not decreed by a master, but woven by consensus."*
 > — **Lysander Vance**
 
 ---
@@ -126,3 +126,4 @@ With the completion of all architectural phases, the full promise of Engine Lang
 The era of software fragility, cloud fragmentation, and accidental complexity is concluded.
 
 Computation has returned to its sovereign origin: **mathematically proven, hardware-aligned, and universally free.**
+

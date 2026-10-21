@@ -1,6 +1,6 @@
 # Chapter 13: The Sovereign Unikernel: Direct Silicon Execution Without Operating Systems
 
-> *"The operating system was a magnificent scaffold built to manage the poverty of early hardware. Now that silicon can verify itself, the scaffold must be struck down so the temple of pure computation may stand sovereign."*  
+> *"The operating system was a magnificent scaffold built to manage the poverty of early hardware. Now that silicon can verify itself, the scaffold must be struck down so the temple of pure computation may stand sovereign."*
 > — **Lysander Vance**
 
 ---
@@ -138,3 +138,4 @@ By synthesizing the unikernel image directly from verified source code, Engine L
 - We do not run on a hypervisor.
 
 We run on **silicon**—pure, unmediated, mathematically proven, and perpetually durable.
+

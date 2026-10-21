@@ -174,15 +174,16 @@ engine-lang/
 │   └── workflows/
 │       ├── ci.yml             # Automated compiler build and container verification
 │       └── release.yml        # Cross-compilation & artifact release pipeline
-├── book/                      # The Book of Engine Lang by Lysander Vance (12 Chapters)
+├── book/                      # The Book of Engine Lang by Lysander Vance (14 Chapters & Appendices)
 │   ├── SUMMARY.md             # Complete Table of Contents
-│   └── src/                   # 12 authoritative engineering chapters & appendices
+│   └── src/                   # 14 authoritative engineering chapters & appendices
 ├── docs/
 │   ├── SPECIFICATION.md       # EBNF grammar, directives, ADTs, boundary FFI
 │   ├── OPERATORS.md           # 14-level operator matrix & SMT algebraic contracts
 │   ├── ENGINE_DB_SLS_LAYOUT.md# Binary specification of .db SLS containers (CRC64-NVME)
 │   ├── ENG_SILICON_CODEGEN_SPEC.md # Direct silicon codegen & Zero-UB ABI specification (ENG-CG-01.1)
 │   ├── BARE_METAL_UNIKERNEL_SPEC.md# Sovereign bare-metal OS & UEFI unikernel spec (ENG-OS-01.1)
+│   ├── CONFRONTING_THE_LISP_TRAP.md# Rebuttal of the Lisp Trap: empirical codebase confrontation (ENG-TRAP-01.1)
 │   ├── SCHEMA_EVOLUTION.md    # Lazy structural evolution protocol (LSE-CRC)
 │   ├── MEMORY_MODEL.md        # Causal memory consistency model & hardware flushes
 │   ├── DISTRIBUTED_MESH_WIRE.md# P2P wire protocol (engine-wire) & Delta-CRDT sync

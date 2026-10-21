@@ -38,4 +38,5 @@
 
 ## Appendices
 * [Appendix A: The Rust Developer's Guide to Engine Lang](src/appendix_rust_comparison.md)
+* [Appendix B: Breaking the Lisp Trap: From Theoretical Precursors to Sovereign Reality](src/appendix_confronting_the_lisp_trap.md)
 

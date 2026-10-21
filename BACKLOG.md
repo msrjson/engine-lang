@@ -31,7 +31,7 @@ Before any release is promoted from internal development to public tagging on Gi
 
 ### Milestone: `v0.3.1-silicon` (CURRENT RELEASE)
 - **Codename**: Sovereign Silicon
-- **Scope**: Core LL(1) compiler, Z3 SMT prover, SLS `engine.db` binary engine, PostgreSQL bridge, embedded Web gateway, 12-chapter book, Silicon Codegen specification (`ENG-CG-01.1`), Bare-Metal Unikernel specification (`ENG-OS-01.1`), and 13-example verification suite.
+- **Scope**: Core LL(1) compiler, Z3 SMT prover, SLS `engine.db` binary engine, PostgreSQL bridge, embedded Web gateway, 14-chapter book with appendices, Silicon Codegen specification (`ENG-CG-01.1`), Bare-Metal Unikernel specification (`ENG-OS-01.1`), Lisp Trap Rebuttal & Empirical Confrontation (`ENG-TRAP-01.1`), and 13-example verification suite.
 - **Production Status**: **RELEASED (v0.3.1 Tagged)**.
 
 ---
