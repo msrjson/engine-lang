@@ -4,37 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Engine Lang — Sovereign Systems Programming Language</title>
-  <meta name="description" content="An open, unowned systems programming language unifying Single-Level Store (SLS), Z3 SMT formal verification, and distributed causal mesh networks. Purposefully monochrome.">
+  <meta name="description" content="An open, unowned systems programming language unifying Single-Level Store (SLS), Z3 SMT formal verification, and distributed causal mesh networks. Windows 2000 Workstation Architecture.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     /* ==========================================================================
-       MONOCHROME DESIGN SYSTEM (STRICT BLACK & WHITE)
-       Purposefully stripped of decorative color to emphasize mathematical 
-       soundness, brutalist precision, and architectural sovereign purity.
+       AUTHENTIC WINDOWS 2000 / NT 5.0 WORKSTATION DESIGN SYSTEM
+       Iconic Windows 2000 System Gray (#d4d0c8), 3D Bevel Highlights,
+       Classic Navy Active Titlebars, Tabbed Properties, and Sunken Consoles.
        ========================================================================== */
     :root {
-      --black: #000000;
-      --zinc-950: #09090b;
-      --zinc-900: #121214;
-      --zinc-850: #18181b;
-      --zinc-800: #27272a;
-      --zinc-700: #3f3f46;
-      --zinc-600: #52525b;
-      --zinc-500: #71717a;
-      --zinc-400: #a1a1aa;
-      --zinc-300: #d4d4d8;
-      --zinc-200: #e4e4e7;
-      --zinc-100: #f4f4f5;
-      --white: #ffffff;
-
-      --font-display: 'Space Grotesk', -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-
-      --border-subtle: 1px solid var(--zinc-800);
-      --border-strong: 1px solid var(--zinc-700);
-      --border-active: 1px solid var(--white);
+      --win-gray: #d4d0c8;
+      --win-face: #d4d0c8;
+      --win-light: #ffffff;
+      --win-shadow: #808080;
+      --win-dark: #404040;
+      --win-blue-1: #000080;
+      --win-blue-2: #1084d0;
+      --win-desktop: #d4d0c8;
+      --win-text: #000000;
+      
+      --font-system: 'Segoe UI', Tahoma, -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', var(--font-system);
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
     }
 
     * {
@@ -44,639 +42,270 @@
     }
 
     body {
-      background-color: var(--black);
-      color: var(--zinc-200);
-      font-family: var(--font-display);
-      line-height: 1.6;
+      background-color: var(--win-gray);
+      color: var(--win-text);
+      font-family: var(--font-system);
+      line-height: 1.5;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-    }
-
-    /* Architectural Grid Background */
-    .grid-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
       background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 64px 64px;
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(#b8b4ac 1px, transparent 1px);
+      background-size: 16px 16px;
     }
 
     .container {
-      max-width: 1240px;
+      width: 90%;
+      max-width: 90%;
       margin: 0 auto;
-      padding: 0 1.5rem;
-      position: relative;
-      z-index: 1;
+      padding: 0 0.5rem;
     }
 
-    /* Minimalist Monospaced Navigation */
-    header {
+    /* Windows 2000 Top Navigation / Taskbar */
+    header.win-topbar {
+      background: var(--win-gray);
+      border-bottom: 2px solid var(--win-dark);
+      border-top: 1px solid var(--win-light);
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: var(--border-subtle);
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    .nav-bar {
+    .topbar-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 72px;
+      height: 48px;
     }
-    .brand {
+    .brand-group {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 8px;
       text-decoration: none;
-      color: var(--white);
+      color: #000000;
+    }
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      background: #000080;
+      color: #ffffff;
+      border: 1px solid #404040;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      box-shadow: inset 1px 1px 0 #ffffff;
+    }
+    .brand-title {
+      font-family: var(--font-display);
       font-weight: 700;
       font-size: 1.15rem;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
+      color: #000000;
     }
     .brand-tag {
       font-family: var(--font-mono);
       font-size: 0.72rem;
-      font-weight: 600;
-      background: var(--zinc-900);
-      border: var(--border-strong);
-      color: var(--zinc-300);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+      font-weight: 700;
+      background: #e4e0d8;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding: 2px 6px;
+      color: #000080;
     }
-    nav ul {
+
+    nav.win-nav ul {
       display: flex;
       list-style: none;
       align-items: center;
-      gap: 1.75rem;
+      gap: 6px;
     }
-    nav a {
-      color: var(--zinc-400);
+    .win-nav-link {
+      color: #000000;
       text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.15s ease;
-    }
-    nav a:hover {
-      color: var(--white);
-    }
-
-    /* High-Contrast Inverted Buttons */
-    .btn {
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-shadow);
+      border-bottom: 1px solid var(--win-shadow);
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      padding: 0.65rem 1.25rem;
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: all 0.18s ease;
-      cursor: pointer;
+      gap: 4px;
     }
-    .btn-solid {
-      background: var(--white);
-      color: var(--black);
-      border: 1px solid var(--white);
+    .win-nav-link:hover {
+      background: #e8e4dc;
     }
-    .btn-solid:hover {
-      background: var(--zinc-200);
-      border-color: var(--zinc-200);
-      transform: translateY(-1px);
+    .win-nav-link:active {
+      border-top: 1px solid var(--win-dark);
+      border-left: 1px solid var(--win-dark);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
     }
-    .btn-outline {
-      background: transparent;
-      color: var(--white);
-      border: var(--border-strong);
+    .win-nav-btn-primary {
+      background: #000080;
+      color: #ffffff;
+      border-top: 1px solid #4060ff;
+      border-left: 1px solid #4060ff;
+      border-right: 1px solid #000040;
+      border-bottom: 1px solid #000040;
     }
-    .btn-outline:hover {
-      background: var(--zinc-900);
-      border-color: var(--white);
-      transform: translateY(-1px);
-    }
-    .btn-mono {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
+    .win-nav-btn-primary:hover {
+      background: #1010a0;
+      color: #ffffff;
     }
 
-    /* Hero Section */
-    .hero {
-      padding: 6.5rem 0 4.5rem;
-      border-bottom: var(--border-subtle);
+    /* Windows 2000 Window Chrome & Bevels */
+    .win-window {
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-dark);
+      box-shadow: 3px 4px 0 rgba(0,0,0,0.4);
+      margin: 1.5rem 0 2rem;
     }
-    .hero-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      color: var(--zinc-400);
-      margin-bottom: 2rem;
-    }
-    .hero-meta .status-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--white);
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    }
-    .hero h1 {
-      font-size: clamp(2.4rem, 5.8vw, 4.4rem);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      color: var(--white);
-      margin-bottom: 1.75rem;
-      max-width: 1050px;
-    }
-    .hero p.lead {
-      font-size: 1.25rem;
-      color: var(--zinc-400);
-      max-width: 860px;
-      line-height: 1.65;
-      margin-bottom: 2.75rem;
-    }
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 3.5rem;
-    }
-
-    /* Key Spec Ticker Bar */
-    .ticker-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1px;
-      background: var(--zinc-800);
-      border: var(--border-subtle);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 3.5rem;
-    }
-    .ticker-item {
-      background: var(--zinc-950);
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-    .ticker-label {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--zinc-500);
-    }
-    .ticker-val {
-      font-family: var(--font-mono);
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--white);
-    }
-
-    /* Dual Showcase: Code vs Terminal */
-    .showcase-section {
-      padding: 5rem 0;
-      border-bottom: var(--border-subtle);
-    }
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-    .window {
-      background: var(--zinc-950);
-      border: var(--border-strong);
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .window-header {
-      background: var(--zinc-900);
-      border-bottom: var(--border-subtle);
-      padding: 0.65rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--zinc-400);
-    }
-    .window-body {
-      padding: 1.25rem;
-      font-family: var(--font-mono);
-      font-size: 0.84rem;
-      line-height: 1.6;
-      color: var(--zinc-300);
-      overflow-x: auto;
-      flex: 1;
-    }
-    .code-comment { color: var(--zinc-500); }
-    .code-keyword { color: var(--white); font-weight: 700; }
-    .code-directive { color: var(--zinc-400); font-style: italic; }
-    .code-type { color: var(--zinc-200); }
-    .code-highlight { background: rgba(255, 255, 255, 0.08); padding: 0.1rem 0.25rem; border-radius: 2px; }
-
-    /* The 5 Layers Grid */
-    .layers-section {
-      padding: 5.5rem 0;
-      border-bottom: var(--border-subtle);
-    }
-    .section-title-group {
-      margin-bottom: 3.5rem;
-    }
-    .section-tag {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--zinc-400);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-    .section-h2 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--white);
-      margin-bottom: 0.75rem;
-    }
-    .section-desc {
-      font-size: 1.1rem;
-      color: var(--zinc-400);
-      max-width: 720px;
-    }
-    .layers-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .layer-row {
-      background: var(--zinc-950);
-      border: var(--border-subtle);
-      border-radius: 8px;
-      padding: 1.5rem 2rem;
-      display: grid;
-      grid-template-columns: 120px 240px 1fr 220px;
-      align-items: center;
-      gap: 1.5rem;
-      transition: all 0.2s ease;
-    }
-    .layer-row:hover {
-      background: var(--zinc-900);
-      border-color: var(--white);
-      transform: translateX(4px);
-    }
-    .layer-id {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: var(--zinc-500);
-      font-weight: 600;
-    }
-    .layer-name {
-      font-weight: 700;
-      color: var(--white);
-      font-size: 1.05rem;
-    }
-    .layer-summary {
-      color: var(--zinc-400);
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-    .layer-path {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--zinc-300);
-      background: var(--zinc-900);
-      border: var(--border-subtle);
-      padding: 0.4rem 0.6rem;
-      border-radius: 4px;
-      text-align: right;
-    }
-
-    /* The Official Book Showcase */
-    .book-section {
-      padding: 5.5rem 0;
-      border-bottom: var(--border-subtle);
-    }
-    .book-card {
-      background: var(--zinc-950);
-      border: var(--border-strong);
-      border-radius: 12px;
-      padding: 3.5rem;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 3.5rem;
-      align-items: center;
-    }
-    .book-wireframe {
-      border: 2px solid var(--white);
-      border-radius: 8px;
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      background: var(--black);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
-      position: relative;
-    }
-    .book-wireframe::after {
-      content: '';
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      bottom: -6px;
-      left: -6px;
-      border: 1px dashed var(--zinc-700);
-      border-radius: 10px;
-      pointer-events: none;
-    }
-    .book-title-main {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.5rem;
-      line-height: 1.3;
-    }
-    .book-title-sub {
-      font-size: 0.85rem;
-      color: var(--zinc-400);
-      margin-bottom: 2rem;
-    }
-    .book-author {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--zinc-300);
-      border-top: var(--border-subtle);
-      padding-top: 1rem;
-    }
-    .book-info h3 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-    }
-    .book-info p {
-      color: var(--zinc-400);
-      font-size: 1.05rem;
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
-    .book-volumes-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-    }
-    .vol-card {
-      background: var(--zinc-900);
-      border: var(--border-subtle);
-      border-radius: 6px;
-      padding: 1rem;
-    }
-    .vol-card h5 {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--zinc-400);
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-    }
-    .vol-card p {
-      font-size: 0.88rem;
-      color: var(--zinc-200);
-      margin-bottom: 0;
-      line-height: 1.4;
-    }
-
-    /* Specifications Matrix */
-    .specs-section {
-      padding: 5.5rem 0;
-      border-bottom: var(--border-subtle);
-    }
-    .specs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-    }
-    .spec-card {
-      background: var(--zinc-950);
-      border: var(--border-subtle);
-      border-radius: 8px;
-      padding: 1.5rem;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.2s ease;
-    }
-    .spec-card:hover {
-      background: var(--zinc-900);
-      border-color: var(--white);
-      transform: translateY(-2px);
-    }
-    .spec-id {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--zinc-400);
-      margin-bottom: 0.75rem;
-    }
-    .spec-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.5rem;
-    }
-    .spec-desc {
-      font-size: 0.88rem;
-      color: var(--zinc-400);
-      line-height: 1.5;
-      margin-bottom: 1.25rem;
-    }
-    .spec-action {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--white);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    /* Minimalist Footer */
-    footer {
-      padding: 5rem 0 3rem;
-      background: var(--black);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 4rem;
-    }
-    .footer-col h4 {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--zinc-400);
-      margin-bottom: 1.25rem;
-    }
-    .footer-col ul {
-      list-style: none;
-    }
-    .footer-col li {
-      margin-bottom: 0.65rem;
-    }
-    .footer-col a {
-      color: var(--zinc-400);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.15s ease;
-    }
-    .footer-col a:hover {
-      color: var(--white);
-    }
-    .footer-bottom {
-      border-top: var(--border-subtle);
-      padding-top: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--zinc-500);
-      font-size: 0.85rem;
-      font-family: var(--font-mono);
-    }
-
-    /* ==========================================================================
-       WINDOWS 2000 ARCHITECTURAL MATRIX & EXPLORER (WIN2K RETRO-ENGINEERING)
-       Authentic Windows 2000 Workstation face-gray (#d4d0c8) styling,
-       3D bevel highlights, tabbed properties dialogue, and system monitors.
-       ========================================================================== */
-    .solutions-section {
-      padding: 5.5rem 0;
-      border-bottom: var(--border-subtle);
-    }
-    .win2k-window {
-      background: #d4d0c8;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-right: 2px solid #404040;
-      border-bottom: 2px solid #404040;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 2px 2px 0 #000000;
-      color: #000000;
-      font-family: 'Segoe UI', Tahoma, -apple-system, sans-serif;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 2rem;
-    }
-    .win2k-titlebar {
-      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-      padding: 4px 6px;
+    .win-titlebar {
+      background: linear-gradient(90deg, var(--win-blue-1) 0%, var(--win-blue-2) 100%);
+      padding: 3px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       color: #ffffff;
       font-weight: bold;
-      font-size: 0.84rem;
-      letter-spacing: 0.02em;
+      font-size: 0.85rem;
       user-select: none;
     }
-    .win2k-title-left {
+    .win-title-text {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .win2k-app-icon {
+    .win-window-icon {
       width: 16px;
       height: 16px;
       background: #ffffff;
       border: 1px solid #404040;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       font-size: 10px;
       font-weight: 900;
       color: #000080;
       font-family: var(--font-mono);
-      line-height: 1;
     }
-    .win2k-controls {
+    .win-controls {
       display: flex;
-      gap: 3px;
+      gap: 2px;
     }
-    .win2k-btn {
-      width: 17px;
-      height: 15px;
-      background: #d4d0c8;
-      border-top: 1px solid #ffffff;
-      border-left: 1px solid #ffffff;
-      border-right: 1px solid #404040;
-      border-bottom: 1px solid #404040;
+    .win-ctrl-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-dark);
+      border-bottom: 1px solid var(--win-dark);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 9px;
-      font-family: sans-serif;
       font-weight: bold;
       color: #000000;
       line-height: 1;
       cursor: default;
-      user-select: none;
     }
-    .win2k-btn:active {
-      border-top: 1px solid #404040;
-      border-left: 1px solid #404040;
-      border-right: 1px solid #ffffff;
-      border-bottom: 1px solid #ffffff;
+    .win-ctrl-btn:active {
+      border-top: 1px solid var(--win-dark);
+      border-left: 1px solid var(--win-dark);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
     }
-    .win2k-menubar {
-      background: #d4d0c8;
-      border-bottom: 1px solid #808080;
-      padding: 3px 8px;
+    .win-menubar {
+      background: var(--win-gray);
+      border-bottom: 1px solid var(--win-shadow);
+      padding: 2px 6px;
       display: flex;
-      gap: 16px;
+      gap: 14px;
       font-size: 0.78rem;
-      color: #000000;
       user-select: none;
     }
-    .win2k-menubar span u {
+    .win-menubar span u {
       text-decoration: underline;
     }
-    .win2k-body {
-      padding: 12px;
-      background: #d4d0c8;
+
+    /* Windows 2000 Push Buttons */
+    .win-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-dark);
+      color: #000000;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 600;
+      font-family: var(--font-system);
+      cursor: pointer;
+      user-select: none;
     }
-    .win2k-tabs-container {
+    .win-btn:hover {
+      background: #ded9d0;
+    }
+    .win-btn:active {
+      border-top: 2px solid var(--win-dark);
+      border-left: 2px solid var(--win-dark);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 7px 15px 5px 17px;
+    }
+    .win-btn-default {
+      border-color: #000000;
+      outline: 1px dotted #000000;
+      font-weight: 700;
+    }
+    .win-btn-primary {
+      background: #000080;
+      color: #ffffff;
+      border-top: 2px solid #5070ff;
+      border-left: 2px solid #5070ff;
+      border-right: 2px solid #000040;
+      border-bottom: 2px solid #000040;
+    }
+    .win-btn-primary:hover {
+      background: #1010a0;
+      color: #ffffff;
+    }
+
+    /* Tabbed Property Sheet */
+    .win-tabs-bar {
       display: flex;
       gap: 3px;
       overflow-x: auto;
-      padding-bottom: 0;
+      padding: 10px 10px 0;
       margin-bottom: -2px;
       position: relative;
       z-index: 2;
     }
-    .win-tab-btn {
-      background: #d4d0c8;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-right: 2px solid #808080;
-      border-bottom: 2px solid #808080;
-      padding: 7px 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+    .win-tab {
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-shadow);
+      border-bottom: 2px solid var(--win-shadow);
+      padding: 6px 13px;
+      font-size: 0.82rem;
+      font-weight: 600;
       color: #222222;
       cursor: pointer;
       white-space: nowrap;
@@ -687,149 +316,236 @@
       gap: 6px;
       user-select: none;
     }
-    .win-tab-btn:hover {
-      background: #e2ded5;
+    .win-tab:hover {
+      background: #e0dcd4;
     }
-    .win-tab-btn.active {
-      background: #d4d0c8;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-right: 2px solid #404040;
-      border-bottom: 2px solid #d4d0c8;
+    .win-tab.active {
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-gray);
       margin-top: 0;
-      padding-top: 9px;
+      padding-top: 8px;
       font-weight: 700;
       color: #000080;
       position: relative;
       z-index: 3;
     }
-    .win-tab-content-box {
-      background: #d4d0c8;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-right: 2px solid #404040;
-      border-bottom: 2px solid #404040;
-      padding: 18px;
+    .win-tab-panel {
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-left: 2px solid var(--win-light);
+      border-right: 2px solid var(--win-dark);
+      border-bottom: 2px solid var(--win-dark);
+      padding: 20px;
       position: relative;
       z-index: 1;
-      min-height: 480px;
+      margin: 0 10px 10px;
+      min-height: 520px;
     }
-    .win-tab-pane {
+    .win-tab-content {
       display: none;
     }
-    .win-tab-pane.active {
+    .win-tab-content.active {
       display: block;
-      animation: winFadeIn 0.15s ease-out;
+      animation: winFade 0.15s ease-out;
     }
-    @keyframes winFadeIn {
-      from { opacity: 0.85; }
+    @keyframes winFade {
+      from { opacity: 0.9; }
       to { opacity: 1; }
     }
-    .win2k-groupbox {
-      border: 1px solid #808080;
-      border-radius: 2px;
-      padding: 14px 16px;
-      margin-bottom: 14px;
-      background: #d4d0c8;
+
+    /* Group Boxes & Sunken Panels */
+    .win-groupbox {
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding: 16px;
+      margin-bottom: 16px;
+      background: var(--win-gray);
       position: relative;
     }
-    .win2k-groupbox legend {
-      font-size: 0.82rem;
+    .win-groupbox legend {
+      font-size: 0.84rem;
       font-weight: bold;
       color: #000080;
       padding: 0 6px;
       margin-left: 8px;
     }
-    .win2k-layout-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 16px;
-      align-items: start;
+    .win-inset {
+      background: #ffffff;
+      border-top: 2px solid var(--win-shadow);
+      border-left: 2px solid var(--win-shadow);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 12px;
+      color: #000000;
     }
-    .win2k-h3 {
+    .win-inset-dark {
+      background: #0f0f13;
+      border-top: 2px solid var(--win-shadow);
+      border-left: 2px solid var(--win-shadow);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: #f4f4f5;
+      overflow-x: auto;
+    }
+
+    /* Hero inside Core Architecture Tab */
+    .hero-meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: #000080;
+      color: #ffffff;
+      padding: 3px 8px;
+      margin-bottom: 1rem;
+    }
+    .hero-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: #000000;
+      margin-bottom: 1rem;
+    }
+    .hero-lead {
       font-size: 1.05rem;
+      color: #222222;
+      line-height: 1.6;
+      max-width: 960px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+
+    /* 4 Core Pillars Grid */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .pillar-card {
+      background: #ece8df;
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-shadow);
+      border-bottom: 1px solid var(--win-shadow);
+      padding: 12px;
+    }
+    .pillar-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #000080;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pillar-stat {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
       font-weight: 700;
       color: #000000;
+      margin-bottom: 6px;
+    }
+    .pillar-desc {
+      font-size: 0.79rem;
+      color: #333333;
+      line-height: 1.45;
+    }
+
+    /* Inset Metric Ticker */
+    .win-ticker-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--win-shadow);
+      border-top: 2px solid var(--win-shadow);
+      border-left: 2px solid var(--win-shadow);
+      border-right: 2px solid var(--win-light);
+      border-bottom: 2px solid var(--win-light);
+    }
+    .win-ticker-item {
+      background: #f7f5f0;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .win-ticker-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: #555555;
+      font-weight: 600;
+    }
+    .win-ticker-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #000080;
+    }
+
+    /* Sub-tab 2-col Layout */
+    .tab-2col {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .tab-h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000080;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .win2k-subtitle {
-      font-size: 0.82rem;
+    .tab-sub {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: #333333;
       margin-bottom: 12px;
-      font-weight: 500;
     }
-    .win2k-text {
-      font-size: 0.86rem;
-      color: #111111;
-      line-height: 1.55;
-      margin-bottom: 12px;
-    }
-    .win2k-callout {
+    .tab-callout {
       background: #ffffff;
-      border-top: 1px solid #808080;
-      border-left: 1px solid #808080;
-      border-right: 1px solid #ffffff;
-      border-bottom: 1px solid #ffffff;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
       padding: 10px 12px;
       font-size: 0.82rem;
       line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .tab-text {
+      font-size: 0.86rem;
+      line-height: 1.55;
       color: #111111;
       margin-bottom: 12px;
     }
-    .win2k-callout strong {
-      color: #000080;
-    }
-    .win2k-inset-code {
-      background: #0c0c0e;
-      border-top: 2px solid #808080;
-      border-left: 2px solid #808080;
-      border-right: 2px solid #ffffff;
-      border-bottom: 2px solid #ffffff;
-      padding: 12px 14px;
-      font-family: var(--font-mono);
-      font-size: 0.79rem;
-      line-height: 1.55;
-      color: #e4e4e7;
-      overflow-x: auto;
-      border-radius: 1px;
-    }
-    .win2k-kpi-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .win2k-kpi-cell {
-      background: #ded9cf;
-      border-top: 1px solid #808080;
-      border-left: 1px solid #808080;
-      border-right: 1px solid #ffffff;
-      border-bottom: 1px solid #ffffff;
-      padding: 6px 8px;
-      text-align: center;
-    }
-    .win2k-kpi-val {
-      font-family: var(--font-mono);
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: #000080;
-      display: block;
-    }
-    .win2k-kpi-lbl {
-      font-size: 0.68rem;
-      color: #444444;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .win2k-features-list {
+    .tab-checklist {
       list-style: none;
-      padding: 0;
-      margin: 8px 0;
+      margin-bottom: 12px;
     }
-    .win2k-features-list li {
+    .tab-checklist li {
       position: relative;
       padding-left: 16px;
       margin-bottom: 6px;
@@ -837,7 +553,7 @@
       color: #111111;
       line-height: 1.45;
     }
-    .win2k-features-list li::before {
+    .tab-checklist li::before {
       content: '■';
       position: absolute;
       left: 0;
@@ -845,337 +561,431 @@
       color: #000080;
       top: 3px;
     }
-    .win2k-badge {
-      display: inline-block;
-      background: #000080;
-      color: #ffffff;
+
+    /* KPI Bar in Tab */
+    .tab-kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .tab-kpi-cell {
+      background: #e8e4dc;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding: 6px 8px;
+      text-align: center;
+    }
+    .tab-kpi-val {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 2px 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000080;
+      display: block;
+    }
+    .tab-kpi-lbl {
+      font-size: 0.68rem;
+      color: #444444;
+      text-transform: uppercase;
       font-weight: 600;
-      border-radius: 2px;
-      margin-right: 6px;
     }
-    .win2k-badge-subtle {
-      display: inline-block;
-      background: #404040;
-      color: #ffffff;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 2px;
-    }
-    .win2k-statusbar {
-      background: #d4d0c8;
-      border-top: 1px solid #ffffff;
+
+    /* Syntax Highlighting inside dark console */
+    .code-comment { color: #888899; }
+    .code-keyword { color: #ffffff; font-weight: 700; }
+    .code-directive { color: #a5b4fc; font-style: italic; }
+    .code-type { color: #93c5fd; }
+    .code-string { color: #86efac; }
+    .code-hl { background: rgba(255,255,255,0.12); padding: 1px 4px; }
+
+    /* Windows 2000 Status Bar */
+    .win-statusbar {
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-light);
       display: grid;
       grid-template-columns: 2fr 1.6fr 1.6fr 1.2fr 1fr;
       gap: 2px;
       padding: 2px;
-      font-size: 0.73rem;
-      color: #222222;
+      font-size: 0.74rem;
       user-select: none;
     }
-    .win2k-status-pane {
-      background: #d4d0c8;
-      border-top: 1px solid #808080;
-      border-left: 1px solid #808080;
-      border-right: 1px solid #ffffff;
-      border-bottom: 1px solid #ffffff;
-      padding: 3px 6px;
+    .win-status-pane {
+      background: var(--win-gray);
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding: 2px 6px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* 5 Layers List */
+    .layer-item-win {
+      background: #ece8df;
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-shadow);
+      border-bottom: 1px solid var(--win-shadow);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 110px 240px 1fr 200px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .layer-tag-win {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #000080;
+    }
+    .layer-name-win {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #000000;
+    }
+    .layer-desc-win {
+      font-size: 0.84rem;
+      color: #333333;
+    }
+    .layer-file-win {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      background: #ffffff;
+      border-top: 1px solid var(--win-shadow);
+      border-left: 1px solid var(--win-shadow);
+      border-right: 1px solid var(--win-light);
+      border-bottom: 1px solid var(--win-light);
+      padding: 3px 6px;
+      text-align: right;
+    }
+
+    /* Specs Grid */
+    .specs-grid-win {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .spec-card-win {
+      background: #ece8df;
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-shadow);
+      border-bottom: 1px solid var(--win-shadow);
+      padding: 14px;
+      text-decoration: none;
+      color: #000000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .spec-card-win:hover {
+      background: #f4f0e8;
+    }
+    .spec-code-win {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #000080;
+      margin-bottom: 4px;
+    }
+    .spec-title-win {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+    .spec-desc-win {
+      font-size: 0.82rem;
+      color: #444444;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .spec-link-win {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #000080;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Bottom Taskbar */
+    footer.win-footer-taskbar {
+      background: var(--win-gray);
+      border-top: 2px solid var(--win-light);
+      border-bottom: 1px solid var(--win-dark);
+      padding: 16px 0 24px;
+      margin-top: 2rem;
+    }
+    .footer-cols-win {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .footer-col-win h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #000080;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--win-shadow);
+      padding-bottom: 4px;
+    }
+    .footer-col-win ul {
+      list-style: none;
+    }
+    .footer-col-win li {
+      margin-bottom: 6px;
+    }
+    .footer-col-win a {
+      color: #222222;
+      text-decoration: none;
+      font-size: 0.82rem;
+    }
+    .footer-col-win a:hover {
+      color: #000080;
+      text-decoration: underline;
+    }
+    .footer-bottom-win {
+      border-top: 1px solid var(--win-shadow);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #444444;
+      font-family: var(--font-system);
     }
 
     @media (max-width: 960px) {
-      .win2k-layout-grid {
+      .tab-2col {
         grid-template-columns: 1fr;
       }
-      .win2k-kpi-bar {
+      .pillars-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .win2k-statusbar {
+      .win-ticker-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .layer-item-win {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .footer-cols-win {
         grid-template-columns: 1fr;
       }
-      .showcase-grid {
+      .win-statusbar {
         grid-template-columns: 1fr;
-      }
-      .layer-row {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-      .layer-path {
-        text-align: left;
-      }
-      .book-card {
-        grid-template-columns: 1fr;
-        padding: 2rem;
-      }
-      .book-volumes-grid {
-        grid-template-columns: 1fr;
-      }
-      .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="grid-background"></div>
 
-  <header>
-    <div class="container nav-bar">
-      <a href="./" class="brand">
-        <span>ENGINE LANG</span>
+  <!-- Windows 2000 System Topbar -->
+  <header class="win-topbar">
+    <div class="container topbar-content">
+      <a href="./" class="brand-group">
+        <span class="brand-icon">&#9881;</span>
+        <span class="brand-title">ENGINE LANG</span>
         <span class="brand-tag">v0.3.1-silicon</span>
       </a>
-      <nav>
+
+      <nav class="win-nav">
         <ul>
-          <li><a href="./book/">The Book</a></li>
-          <li><a href="#solutions">Solutions</a></li>
-          <li><a href="#layers">Architecture</a></li>
-          <li><a href="https://github.com/msrjson/engine-lang/tree/main/docs" target="_blank">Specs</a></li>
-          <li><a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank">MSR Protocol</a></li>
-          <li><a href="Engine_Lang_Whitepaper_EN.pdf" download class="btn btn-outline btn-mono">Whitepaper.pdf</a></li>
-          <li><a href="./book/" class="btn btn-solid btn-mono">Read Book →</a></li>
+          <li><a href="#architectural-matrix" class="win-nav-link" onclick="openWinTab('tab-pillars')"><span>&#9881;</span> Solutions</a></li>
+          <li><a href="./book/" class="win-nav-link"><span>&#128214;</span> The Book</a></li>
+          <li><a href="https://github.com/msrjson/engine-lang/tree/main/docs" target="_blank" class="win-nav-link"><span>&#128196;</span> Specs</a></li>
+          <li><a href="#layers-win" class="win-nav-link"><span>&#128397;</span> Layers</a></li>
+          <li><a href="Engine_Lang_Whitepaper_EN.pdf" download class="win-nav-link"><span>&#128229;</span> Whitepaper.pdf</a></li>
+          <li><a href="https://github.com/msrjson/engine-lang" target="_blank" class="win-nav-link win-nav-btn-primary"><span>&#128279;</span> GitHub &#8599;</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container">
-      <!-- Hero Section -->
-      <section class="hero">
-        <div class="hero-meta">
-          <span class="status-dot"></span>
-          <span>SOVEREIGN PUBLIC GOOD · APACHE 2.0 · MSR PROTOCOL 2.1</span>
-        </div>
-        <h1>
-          ABOLISHING THE MEMORY-DISK DUALITY.
-        </h1>
-        <p class="lead">
-          Engine Lang is an open, unowned systems programming language designed to unify persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT), and distributed causal mesh replication into a single compilation unit.
-        </p>
+  <main class="container">
 
-        <div class="hero-actions">
-          <a href="./book/" class="btn btn-solid">
-            Read The Official Book
-          </a>
-          <a href="Engine_Lang_Whitepaper_EN.pdf" download class="btn btn-outline">
-            Download Whitepaper (PDF)
-          </a>
-          <a href="https://github.com/msrjson/engine-lang" target="_blank" class="btn btn-outline">
-            View on GitHub
-          </a>
+    <!-- PRIMARY WINDOW: Windows 2000 Architectural Explorer & Solutions Matrix -->
+    <section class="win-window" id="architectural-matrix">
+      <!-- Title Bar -->
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#9881;</span>
+          <span>Engine Lang Architectural Matrix &amp; Future Solutions &mdash; [enginec.msc / Win2k Properties]</span>
         </div>
-
-        <!-- Metric Ticker -->
-        <div class="ticker-bar">
-          <div class="ticker-item">
-            <span class="ticker-label">Grammar Precedence</span>
-            <span class="ticker-val">14 Deterministic Levels</span>
-          </div>
-          <div class="ticker-item">
-            <span class="ticker-label">Formal SMT Prover</span>
-            <span class="ticker-val">Z3 SMT-LIB2 Engine</span>
-          </div>
-          <div class="ticker-item">
-            <span class="ticker-label">Single-Level Store</span>
-            <span class="ticker-val">64-byte CLWB / SFENCE</span>
-          </div>
-          <div class="ticker-item">
-            <span class="ticker-label">Network Transport</span>
-            <span class="ticker-val">Delta-CRDT P2P Mesh</span>
-          </div>
-          <div class="ticker-item">
-            <span class="ticker-label">Execution Target</span>
-            <span class="ticker-val">UEFI PE32+ Unikernel</span>
-          </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
         </div>
-      </section>
+      </div>
 
-      <!-- Windows 2000 Architectural Horizons & Solutions Matrix -->
-      <section class="solutions-section" id="solutions">
-        <div class="section-title-group">
-          <div class="section-tag">// ARCHITECTURAL HORIZONS &amp; FUTURE SOLUTIONS</div>
-          <h2 class="section-h2">Frontier Industrial Domains &amp; Real-World Capabilities</h2>
-          <p class="section-desc">
-            Explore how abolishing the memory-disk duality and enforcing compile-time mathematical proofs eliminates multi-tier cloud complexity across critical industries.
+      <!-- Menu Bar -->
+      <div class="win-menubar">
+        <span><u>F</u>ile</span>
+        <span><u>E</u>dit</span>
+        <span><u>V</u>iew</span>
+        <span><u>S</u>olvers</span>
+        <span><u>D</u>iagnostics</span>
+        <span><u>M</u>SR Protocol</span>
+        <span><u>H</u>elp</span>
+      </div>
+
+      <!-- Tab Strip (All Requested Domains Included) -->
+      <div class="win-tabs-bar">
+        <button type="button" class="win-tab active" data-tab="tab-pillars" onclick="openWinTab('tab-pillars')">
+          <span>&#9881; Core Architecture &amp; Pillars</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-ha" onclick="openWinTab('tab-ha')">
+          <span>&#127760; HA &amp; Causal Mesh</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-ai" onclick="openWinTab('tab-ai')">
+          <span>&#129504; AI &amp; Agent Swarms</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-web" onclick="openWinTab('tab-web')">
+          <span>&#9889; Web, ERP &amp; Media</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-data" onclick="openWinTab('tab-data')">
+          <span>&#128208; Data Science &amp; Physics</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-os" onclick="openWinTab('tab-os')">
+          <span>&#128187; Bare-Metal OS &amp; Unikernel</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-robotics" onclick="openWinTab('tab-robotics')">
+          <span>&#129302; Robotics &amp; Embedded IoT</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-aero" onclick="openWinTab('tab-aero')">
+          <span>&#128640; Aviation &amp; Aerospace</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-blockchain" onclick="openWinTab('tab-blockchain')">
+          <span>&#128279; Sovereign Causal Ledger</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Frame -->
+      <div class="win-tab-panel">
+
+        <!-- TAB 1: CORE ARCHITECTURE & PILLARS (THE HERO) -->
+        <div class="win-tab-content active" id="tab-pillars">
+          <div class="hero-meta-badge">
+            SOVEREIGN PUBLIC GOOD &bull; APACHE 2.0 &bull; MSR PROTOCOL 2.1
+          </div>
+
+          <h1 class="hero-h1">
+            ABOLISHING THE MEMORY-DISK DUALITY.
+          </h1>
+
+          <p class="hero-lead">
+            Engine Lang is an open, unowned systems programming language designed to unify persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT), and distributed causal mesh replication into a single compilation unit.
           </p>
+
+          <div class="hero-btn-row">
+            <a href="./book/" class="win-btn win-btn-default win-btn-primary">
+              <span>&#128214;</span> Read The Official Book
+            </a>
+            <a href="Engine_Lang_Whitepaper_EN.pdf" download class="win-btn">
+              <span>&#128229;</span> Download Whitepaper (PDF)
+            </a>
+            <a href="https://github.com/msrjson/engine-lang" target="_blank" class="win-btn">
+              <span>&#128279;</span> View on GitHub
+            </a>
+          </div>
+
+          <!-- 4 Core Pillars of Engine Lang -->
+          <div class="pillars-grid">
+            <div class="pillar-card">
+              <div class="pillar-title">&#9889; Energy Conservation</div>
+              <div class="pillar-stat">-85% Watts/tx</div>
+              <div class="pillar-desc">
+                Abolishing serialization/deserialization (serde tax) and garbage collection reduces datacenter CPU electrical consumption by up to 85%.
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-title">&#128640; Extreme Throughput</div>
+              <div class="pillar-stat">1,000,000+ RPS</div>
+              <div class="pillar-desc">
+                Direct NVRAM pointer access eliminates database socket hops, unlocking over 1M RPS per node with sub-microsecond tail latencies (<em>p99 &lt; 1 &micro;s</em>).
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-title">&#128272; Mathematical Security</div>
+              <div class="pillar-stat">0 Panics Possible</div>
+              <div class="pillar-desc">
+                Compile-time formal proofs via Z3 SMT-LIB2 guarantee zero buffer overflows, zero SQL injections, and zero negative ledger balances.
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-title">&#128737; Sovereign Privacy</div>
+              <div class="pillar-stat">Zero Telemetry</div>
+              <div class="pillar-desc">
+                Unowned Apache 2.0 public good. Hardware-level memory isolation (<code>@TenantGuard</code>) ensures complete data sovereignty and zero vendor lock-in.
+              </div>
+            </div>
+          </div>
+
+          <!-- Inset Key Metric Ticker Bar -->
+          <div class="win-ticker-bar">
+            <div class="win-ticker-item">
+              <span class="win-ticker-lbl">Grammar Precedence</span>
+              <span class="win-ticker-val">14 Deterministic Levels</span>
+            </div>
+            <div class="win-ticker-item">
+              <span class="win-ticker-lbl">Formal SMT Prover</span>
+              <span class="win-ticker-val">Z3 SMT-LIB2 Engine</span>
+            </div>
+            <div class="win-ticker-item">
+              <span class="win-ticker-lbl">Single-Level Store</span>
+              <span class="win-ticker-val">64-byte CLWB / SFENCE</span>
+            </div>
+            <div class="win-ticker-item">
+              <span class="win-ticker-lbl">Network Transport</span>
+              <span class="win-ticker-val">Delta-CRDT P2P Mesh</span>
+            </div>
+            <div class="win-ticker-item">
+              <span class="win-ticker-lbl">Execution Target</span>
+              <span class="win-ticker-val">UEFI PE32+ Unikernel</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Authentic Windows 2000 Workstation Window -->
-        <div class="win2k-window">
-          <!-- Title Bar -->
-          <div class="win2k-titlebar">
-            <div class="win2k-title-left">
-              <span class="win2k-app-icon">&#9881;</span>
-              <span>Engine Lang Architectural Matrix &amp; Horizons &mdash; [enginec.msc / Win2k Properties]</span>
-            </div>
-            <div class="win2k-controls">
-              <span class="win2k-btn">&#9472;</span>
-              <span class="win2k-btn">&#9633;</span>
-              <span class="win2k-btn">&#10005;</span>
-            </div>
-          </div>
-
-          <!-- Menu Bar -->
-          <div class="win2k-menubar">
-            <span><u>F</u>ile</span>
-            <span><u>E</u>dit</span>
-            <span><u>V</u>iew</span>
-            <span><u>S</u>olvers</span>
-            <span><u>D</u>iagnostics</span>
-            <span><u>H</u>elp</span>
-          </div>
-
-          <!-- Window Body -->
-          <div class="win2k-body">
-            <!-- Tabs Strip -->
-            <div class="win2k-tabs-container">
-              <button type="button" class="win-tab-btn active" data-tab="tab-pillars" onclick="openWinTab('tab-pillars')">
-                <span>&#9881; Core Purpose &amp; Pillars</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-ha" onclick="openWinTab('tab-ha')">
-                <span>&#127760; HA &amp; Causal Mesh</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-ai" onclick="openWinTab('tab-ai')">
-                <span>&#129504; AI &amp; Agent Swarms</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-web" onclick="openWinTab('tab-web')">
-                <span>&#9889; Web, ERP &amp; Media</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-data" onclick="openWinTab('tab-data')">
-                <span>&#128208; Data Science &amp; Physics</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-os" onclick="openWinTab('tab-os')">
-                <span>&#128187; Bare-Metal OS &amp; Unikernel</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-robotics" onclick="openWinTab('tab-robotics')">
-                <span>&#129302; Robotics &amp; Embedded IoT</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-aero" onclick="openWinTab('tab-aero')">
-                <span>&#128640; Aviation &amp; Aerospace</span>
-              </button>
-              <button type="button" class="win-tab-btn" data-tab="tab-blockchain" onclick="openWinTab('tab-blockchain')">
-                <span>&#128279; Sovereign Causal Ledger</span>
-              </button>
-            </div>
-
-            <!-- Tab Content Frame -->
-            <div class="win-tab-content-box">
-
-              <!-- TAB 1: Core Purpose & Pillars -->
-              <div class="win-tab-pane active" id="tab-pillars">
-                <fieldset class="win2k-groupbox">
-                  <legend>Architectural Mission: Why Engine Lang Exists</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">FOUNDATIONAL IMPERATIVE</span>
-                        The Real Purpose of Engine Lang
-                      </h3>
-                      <div class="win2k-subtitle">Eliminating artificial multi-tier layers to restore computing sovereignty, speed, and safety.</div>
-                      <p class="win2k-text">
-                        For fifty years, computer science has accepted an artificial split between volatile memory (RAM) and non-volatile persistence (Disk). This split created the &ldquo;Software Bloat Tax&rdquo;: ORMs, connection pools, serialization routines (JSON, Protobuf, Serde), distributed caches (Redis), and external message brokers (Kafka) that consume over 80% of datacenter energy.
-                      </p>
-                      <div class="win2k-callout">
-                        <strong>The Engine Lang Breakthrough:</strong> Computation, hardware persistence (NVRAM Single-Level Store), compile-time mathematical proofs (Z3 SMT), and planetary replication merge into a single static compilation unit.
-                      </div>
-                      <ul class="win2k-features-list">
-                        <li><strong>Energy Conservation (Green Silicon):</strong> Abolishing serde overhead and garbage collection cycles cuts server electrical draw by up to <strong>85% watt-hours per transaction</strong>.</li>
-                        <li><strong>1,000,000+ RPS Throughput:</strong> Direct hardware memory addressing eliminates database network transit. Sub-microsecond tail latencies (<em>p99 &lt; 1 &micro;s</em>).</li>
-                        <li><strong>Inviolable Mathematical Security:</strong> Formal Z3 SMT prover verifies refinement contracts at compile time. Zero runtime panics, zero null pointers, zero buffer overflows.</li>
-                        <li><strong>Sovereign Privacy &amp; Local-First:</strong> Open, unowned Apache 2.0 public good. Hardware-level memory isolation (<code>@TenantGuard</code>) with zero vendor lock-in or telemetry.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; INVIOLABLE PROTOCOL SOURCE (Engine Lang Syntax)
-                      </div>
-                      <div class="win2k-inset-code">
-<span class="code-comment">// Inviolable Domain Contracts proven at compile time by Z3 SMT</span>
-<span class="code-keyword">type</span> <span class="code-type">PositiveBalance</span> = <span class="code-type">Decimal</span>(18, 4) <span class="code-keyword">where</span> self &gt;= 0.0000;
-<span class="code-keyword">type</span> <span class="code-type">SecureTenantId</span> = <span class="code-type">UUID</span> <span class="code-keyword">where</span> len(self) == 16;
-
-<span class="code-comment">// Hardware-Direct Single-Level Store with Cryptographic Tenant Guard</span>
-<span class="code-directive">@TenantGuard</span>(strict: <span class="code-keyword">true</span>)
-<span class="code-directive">@persistent</span>
-<span class="code-keyword">entity</span> <span class="code-type">SovereignLedger</span> {
-  tenant: <span class="code-type">SecureTenantId</span>,
-  account_id: <span class="code-type">UUID</span>,
-  cleared_funds: <span class="code-type">PositiveBalance</span>,
-  power_efficiency_score: <span class="code-type">Float</span>,
-
-  <span class="code-comment">// Invariant mathematically verified before compilation</span>
-  <span class="code-keyword">invariant</span> { self.cleared_funds &gt;= 0.0000 }
-}
-
-<span class="code-comment">// Atomic Hardware Mutation via NVRAM CLWB + SFENCE</span>
-<span class="code-keyword">fn</span> <span class="code-type">execute_settlement</span>(ledger: &amp;<span class="code-keyword">mut</span> <span class="code-type">SovereignLedger</span>, amt: <span class="code-type">PositiveBalance</span>) {
-  <span class="code-keyword">atomic</span> {
-    ledger.cleared_funds -= amt; <span class="code-comment">// Z3 proves underflow is impossible</span>
-  }
-}
-                      </div>
-
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">-85%</span>
-                          <span class="win2k-kpi-lbl">Power Draw (W)</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">1.2M+</span>
-                          <span class="win2k-kpi-lbl">RPS per Node</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">100%</span>
-                          <span class="win2k-kpi-lbl">SMT Verified</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 bytes</span>
-                          <span class="win2k-kpi-lbl">Telemetry Sent</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </fieldset>
+        <!-- TAB 2: HIGH AVAILABILITY & CAUSAL MESH -->
+        <div class="win-tab-content" id="tab-ha">
+          <fieldset class="win-groupbox">
+            <legend>High Availability, Consensus &amp; Planetary Mesh</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#127760;</span>
+                  Coordinator-Less High Availability
+                </h3>
+                <div class="tab-sub">Peer-to-peer Delta-CRDT vector clocks without Raft or Paxos leader election bottlenecks.</div>
+                <div class="tab-callout">
+                  <strong>The Traditional Dilemma:</strong> Multi-region clusters rely on centralized consensus (Raft, ZooKeeper, etcd). When cross-continental links flap or submarine cables are severed, leader elections stall writes and risk split-brain partitions.
+                </div>
+                <p class="tab-text">
+                  Engine Lang nodes form an autonomous peer-to-peer mesh running over QUIC and raw RDMA (<code>engine-wire</code>). Every state mutation is tracked as a causal vector clock delta. When a node is partitioned, it continues accepting local atomic transactions; upon network restoration, state converges deterministically in under 5 milliseconds.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>Offline Resilient:</strong> Ships, oil rigs, satellites, and edge factories continue full operations while disconnected.</li>
+                  <li><strong>Automatic Conflict Resolution:</strong> Deterministic causal join semi-lattices guarantee identical global state.</li>
+                  <li><strong>Multi-Region Active-Active:</strong> No read-only replicas; every node processes verified local writes without global locks.</li>
+                </ul>
               </div>
 
-              <!-- TAB 2: HA & Causal Mesh -->
-              <div class="win-tab-pane" id="tab-ha">
-                <fieldset class="win2k-groupbox">
-                  <legend>High Availability, Consensus &amp; Planetary Mesh</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">COORDINATOR-LESS HA</span>
-                        Zero Split-Brain Planetary Mesh
-                      </h3>
-                      <div class="win2k-subtitle">Peer-to-peer Delta-CRDT vector clocks without Raft or Paxos leader election bottlenecks.</div>
-                      <div class="win2k-callout">
-                        <strong>The Legacy Dilemma:</strong> Traditional multi-datacenter clusters rely on centralized consensus engines (Raft, etcd, ZooKeeper). When cross-continental links flap or submarine cables are severed, leader elections stall write traffic and risk catastrophic split-brain partitions.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang nodes form an autonomous peer-to-peer mesh running over QUIC and raw RDMA (<code>engine-wire</code>). Every state mutation is tracked as a causal vector clock delta. When a node is partitioned, it continues accepting local atomic transactions; upon network restoration, state converges deterministically in under 5 milliseconds.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>Offline Resilient:</strong> Ships, oil rigs, satellites, and edge factories continue full operations while completely disconnected.</li>
-                        <li><strong>Automatic Conflict Resolution:</strong> Deterministic causal join semi-lattices guarantee identical global state across all nodes.</li>
-                        <li><strong>Multi-Region Active-Active:</strong> No read-only replicas; every node processes verified local writes without global lock contention.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; DISTRIBUTED CAUSAL MESH CONFIGURATION
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; DISTRIBUTED CAUSAL MESH CONFIGURATION (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Declare Planetary Causal Cluster Configuration</span>
 <span class="code-directive">@mesh</span>(cluster: <span class="code-string">"planetary-us-eu-asia"</span>, protocol: <span class="code-type">QUIC</span>)
 <span class="code-keyword">node</span> <span class="code-type">GenesisPeerNode</span> {
@@ -1197,60 +1007,60 @@
     |&gt; verify_causal_order()
     |&gt; apply_direct_to_nvram();
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">&lt; 5 ms</span>
-                          <span class="win2k-kpi-lbl">Partition Heal</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0</span>
-                          <span class="win2k-kpi-lbl">Master Nodes</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">QUIC / RDMA</span>
-                          <span class="win2k-kpi-lbl">Transport Wire</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Zero</span>
-                          <span class="win2k-kpi-lbl">Split-Brain Risk</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">&lt; 5 ms</span>
+                    <span class="tab-kpi-lbl">Partition Heal</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0</span>
+                    <span class="tab-kpi-lbl">Master Nodes</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">QUIC / RDMA</span>
+                    <span class="tab-kpi-lbl">Transport Wire</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Zero</span>
+                    <span class="tab-kpi-lbl">Split-Brain Risk</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 3: AI & AGENT SWARMS -->
+        <div class="win-tab-content" id="tab-ai">
+          <fieldset class="win-groupbox">
+            <legend>Native Machine Learning, Vector Spaces &amp; Autonomous Agent Swarms</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#129504;</span>
+                  In-Memory Vector Search &amp; Swarm Memory
+                </h3>
+                <div class="tab-sub">Eliminating external vector databases with hardware SIMD cosine metric operators.</div>
+                <div class="tab-callout">
+                  <strong>The Modern AI Infrastructure Trap:</strong> Building RAG or LLM agent memory currently forces teams to run PostgreSQL for text, Pinecone/Milvus for embeddings, Redis for caching, and RabbitMQ for agent coordination&mdash;creating massive cloud bills and synchronization drift.
+                </div>
+                <p class="tab-text">
+                  Engine Lang treats high-dimensional embeddings as first-class hardware vector primitives (<code>Vector[D]</code>). Vector cosine distances (<code>&lt;=&gt;</code>) compile directly to CPU AVX-512 and ARM Neon Fused Multiply-Add instructions. Embeddings reside in the exact same durable page as the document text.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>Persistent Agent Swarm Memory:</strong> AI agents share synchronized non-volatile working memory without external database lag.</li>
+                  <li><strong>Sub-Millisecond RAG:</strong> Rank and retrieve top-<em>k</em> context windows in nanoseconds without network hops.</li>
+                  <li><strong>Zero External Vector DB Costs:</strong> Saves up to $5,000&ndash;$50,000/month on managed hyperscaler vector services.</li>
+                </ul>
               </div>
 
-              <!-- TAB 3: AI & Agent Swarms -->
-              <div class="win-tab-pane" id="tab-ai">
-                <fieldset class="win2k-groupbox">
-                  <legend>Native Machine Learning, Vector Spaces &amp; Autonomous Agent Swarms</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">NATIVE AI KNOWLEDGE</span>
-                        In-Memory Vector Search &amp; Swarm Memory
-                      </h3>
-                      <div class="win2k-subtitle">Eliminating external vector databases with hardware SIMD cosine metric operators.</div>
-                      <div class="win2k-callout">
-                        <strong>The Modern AI Infrastructure Trap:</strong> Building RAG (Retrieval-Augmented Generation) or LLM agent memory currently forces teams to run PostgreSQL for text, Pinecone/Milvus for embeddings, Redis for caching, and RabbitMQ for agent coordination&mdash;creating massive cloud costs and synchronization drift.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang treats high-dimensional embeddings as first-class hardware vector primitives (<code>Vector[D]</code>). Vector cosine distances (<code>&lt;=&gt;</code>) compile directly to CPU AVX-512 and ARM Neon Fused Multiply-Add instructions. Embeddings reside in the exact same durable page as the document text.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>Persistent Agent Swarm Memory:</strong> AI agents share synchronized non-volatile working memory without external database lag.</li>
-                        <li><strong>Sub-Millisecond RAG:</strong> Rank and retrieve top-<em>k</em> context windows in nanoseconds without network hops.</li>
-                        <li><strong>Zero External Vector DB Costs:</strong> Saves up to $5,000&ndash;$50,000/month on managed hyperscaler vector services.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; IN-MEMORY SIMD VECTOR PIPELINE
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; IN-MEMORY SIMD VECTOR PIPELINE (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Unified Entity: Text Metadata + 1536-dim Embedding</span>
 <span class="code-directive">@persistent</span>
 <span class="code-keyword">entity</span> <span class="code-type">AgentMemoryRecord</span> {
@@ -1268,60 +1078,60 @@
     |&gt; sort_by(|rec| rec.embedding &lt;=&gt; prompt_vec) <span class="code-comment">// AVX-512 FMA</span>
     |&gt; take(5);
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 ns</span>
-                          <span class="win2k-kpi-lbl">Vector Sync Lag</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">AVX-512</span>
-                          <span class="win2k-kpi-lbl">SIMD Operator</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">450k+</span>
-                          <span class="win2k-kpi-lbl">Vectors / sec</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">$0 / mo</span>
-                          <span class="win2k-kpi-lbl">External DB Cost</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 ns</span>
+                    <span class="tab-kpi-lbl">Vector Sync Lag</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">AVX-512</span>
+                    <span class="tab-kpi-lbl">SIMD Operator</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">450k+</span>
+                    <span class="tab-kpi-lbl">Vectors / sec</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">$0 / mo</span>
+                    <span class="tab-kpi-lbl">External DB Cost</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 4: WEB, ERP & MEDIA -->
+        <div class="win-tab-content" id="tab-web">
+          <fieldset class="win-groupbox">
+            <legend>Web Frameworks, High-Scale Publishing &amp; Enterprise ERP Systems</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#9889;</span>
+                  Abolishing the ORM &amp; Ledger Imbalances
+                </h3>
+                <div class="tab-sub">Serving high-concurrency web apps, global blogs, and accounting ledgers from one binary.</div>
+                <div class="tab-callout">
+                  <strong>The Enterprise Bottleneck:</strong> Web frameworks (Django, Rails, Spring Boot, Next.js) suffer severe ORM impedance mismatch. Meanwhile, financial ERP systems spend millions debugging balance inconsistencies, rounding errors, and distributed deadlocks.
+                </div>
+                <p class="tab-text">
+                  Engine Lang unifies web routing and storage into the binary. It speaks HTTP/REST natively and exposes a built-in PostgreSQL v3.0 protocol responder (port 5442) so legacy reporting tools (Tableau, PowerBI) connect seamlessly. Financial balances use refinement constraints proven by Z3, guaranteeing that balance sheets never drift negative.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>High-Scale Publishing &amp; Blogs:</strong> Serve billions of dynamic pageviews with sub-millisecond latency directly from persistent memory.</li>
+                  <li><strong>Instant Financial Settlement:</strong> Native <code>?!</code> hardware rollback aborts invalid transfers in single-digit nanoseconds.</li>
+                  <li><strong>Zero Schema Migrations:</strong> Schema evolution handles physical page reinterpretation automatically without downtime.</li>
+                </ul>
               </div>
 
-              <!-- TAB 4: Web, ERP & Media -->
-              <div class="win-tab-pane" id="tab-web">
-                <fieldset class="win2k-groupbox">
-                  <legend>Web Frameworks, High-Scale Publishing &amp; Enterprise ERP Systems</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">ENTERPRISE CORE</span>
-                        Abolishing the ORM &amp; Ledger Imbalances
-                      </h3>
-                      <div class="win2k-subtitle">Serving high-concurrency web apps, global blogs, and accounting ledgers from one binary.</div>
-                      <div class="win2k-callout">
-                        <strong>The Enterprise Bottleneck:</strong> Web frameworks (Django, Rails, Spring Boot, Next.js) suffer severe ORM impedance mismatch. Meanwhile, financial ERP systems spend millions debugging balance inconsistencies, rounding errors, and distributed deadlocks.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang unifies web routing and storage into the binary. It speaks HTTP/REST natively and exposes a built-in PostgreSQL v3.0 protocol responder (port 5442) so legacy reporting tools (Tableau, PowerBI) connect seamlessly. Financial balances use refinement constraints proven by Z3, guaranteeing that balance sheets never drift negative.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>High-Scale Publishing &amp; Blogs:</strong> Serve billions of dynamic pageviews with sub-millisecond latency directly from persistent memory.</li>
-                        <li><strong>Instant Financial Settlement:</strong> Native <code>?!</code> hardware rollback aborts invalid transfers in single-digit nanoseconds.</li>
-                        <li><strong>Zero Schema Migrations:</strong> Schema evolution handles physical page reinterpretation automatically without offline maintenance windows.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; INVIOLABLE BANKING SETTLEMENT &amp; POSTGRES WIRE BRIDGE
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; INVIOLABLE BANKING SETTLEMENT &amp; POSTGRES WIRE BRIDGE (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Inviolable Balance: mathematically proven &gt;= 0</span>
 <span class="code-keyword">type</span> <span class="code-type">EuroCents</span> = <span class="code-type">Int</span> <span class="code-keyword">where</span> self &gt;= 0;
 
@@ -1341,60 +1151,60 @@
     dst.balance += amt;
   }
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">1.1M</span>
-                          <span class="win2k-kpi-lbl">HTTP RPS</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Port 5442</span>
-                          <span class="win2k-kpi-lbl">Postgres Wire</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Zero ORM</span>
-                          <span class="win2k-kpi-lbl">Direct NVRAM</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 Deadlocks</span>
-                          <span class="win2k-kpi-lbl">Lock-Free SLS</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">1.1M</span>
+                    <span class="tab-kpi-lbl">HTTP RPS</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Port 5442</span>
+                    <span class="tab-kpi-lbl">Postgres Wire</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Zero ORM</span>
+                    <span class="tab-kpi-lbl">Direct NVRAM</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 Deadlocks</span>
+                    <span class="tab-kpi-lbl">Lock-Free SLS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 5: DATA SCIENCE & PHYSICS -->
+        <div class="win-tab-content" id="tab-data">
+          <fieldset class="win-groupbox">
+            <legend>Data Science, Mathematical Invariants &amp; Computational Physics</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#128208;</span>
+                  Mathematically Proven Physical Constants
+                </h3>
+                <div class="tab-sub">Eliminating silent floating-point drift and invalid thermodynamic boundary states.</div>
+                <div class="tab-callout">
+                  <strong>The Scientific Computing Dilemma:</strong> In complex scientific simulations (Python/NumPy, C++, Julia), edge-case boundary errors (e.g. negative Kelvin temperatures, division by zero, probability &gt; 1.0) propagate silently, corrupting terabytes of computation.
+                </div>
+                <p class="tab-text">
+                  Engine Lang enables computational scientists to declare formal mathematical invariants as compile-time refinement types. The Z3 SMT solver validates that simulation states conform strictly to physical laws before execution begins. Functional causal pipelines (<code>|&gt;</code>) execute with zero temporary memory allocations.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>Arbitrary Precision Decimals:</strong> Guaranteed exact accounting and numerical proofs without IEEE-754 precision loss.</li>
+                  <li><strong>Physical Boundary Invariants:</strong> Enforce laws of thermodynamics, speed of light bounds, and fluid dynamics conservation.</li>
+                  <li><strong>Vectorized Data Pipelines:</strong> Functional streaming pipelines compile down to AVX2/AVX-512 vector instructions.</li>
+                </ul>
               </div>
 
-              <!-- TAB 5: Data Science & Physics -->
-              <div class="win-tab-pane" id="tab-data">
-                <fieldset class="win2k-groupbox">
-                  <legend>Data Science, Mathematical Invariants &amp; Computational Physics</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">NUMERICAL INTEGRITY</span>
-                        Mathematically Proven Physical Constants
-                      </h3>
-                      <div class="win2k-subtitle">Eliminating silent floating-point drift and invalid thermodynamic boundary states.</div>
-                      <div class="win2k-callout">
-                        <strong>The Scientific Computing Dilemma:</strong> In complex scientific simulations and data pipelines (Python/NumPy, C++, Julia), edge-case boundary errors (e.g., negative Kelvin temperatures, division by zero, probability exceeding 1.0) propagate silently, corrupting terabytes of computation.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang enables computational scientists to declare formal mathematical invariants as compile-time refinement types. The Z3 SMT solver validates that simulation states conform strictly to physical laws before execution begins. Functional causal pipelines (<code>|&gt;</code>) execute with zero temporary memory allocations.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>Arbitrary Precision Decimals:</strong> Guaranteed exact accounting and numerical proofs without IEEE-754 precision loss.</li>
-                        <li><strong>Physical Boundary Invariants:</strong> Enforce laws of thermodynamics, speed of light bounds, and fluid dynamics conservation.</li>
-                        <li><strong>Vectorized Data Pipelines:</strong> Functional streaming pipelines compile down to AVX2/AVX-512 vector pipelines.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; SCIENTIFIC REFINEMENT TYPES &amp; CAUSAL SIMULATION
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; SCIENTIFIC REFINEMENT TYPES &amp; SIMULATION (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Physical Boundary Constraints verified at compile time</span>
 <span class="code-keyword">type</span> <span class="code-type">KelvinTemperature</span> = <span class="code-type">Float</span> <span class="code-keyword">where</span> self &gt;= 0.0;
 <span class="code-keyword">type</span> <span class="code-type">RelativisticVelocity</span> = <span class="code-type">Float</span> <span class="code-keyword">where</span> self &gt;= 0.0 &amp;&amp; self &lt; 299792458.0;
@@ -1417,60 +1227,60 @@
     |&gt; map(|c| compute_heat_diffusion(c))
     |&gt; sync_flux();
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Z3 SMT</span>
-                          <span class="win2k-kpi-lbl">Bound Prover</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 Floats</span>
-                          <span class="win2k-kpi-lbl">Drift Errors</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">AVX-512</span>
-                          <span class="win2k-kpi-lbl">Vector Engine</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Exact</span>
-                          <span class="win2k-kpi-lbl">Decimal Match</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Z3 SMT</span>
+                    <span class="tab-kpi-lbl">Bound Prover</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 Floats</span>
+                    <span class="tab-kpi-lbl">Drift Errors</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">AVX-512</span>
+                    <span class="tab-kpi-lbl">Vector Engine</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Exact</span>
+                    <span class="tab-kpi-lbl">Decimal Match</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 6: BARE-METAL OS & UNIKERNEL -->
+        <div class="win-tab-content" id="tab-os">
+          <fieldset class="win-groupbox">
+            <legend>Freestanding Bare-Metal Operating Systems &amp; UEFI Unikernels</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#128187;</span>
+                  Booting Directly on Silicon in &lt;15 Milliseconds
+                </h3>
+                <div class="tab-sub">Eliminating 40+ million lines of vulnerable Linux/Windows kernel code.</div>
+                <div class="tab-callout">
+                  <strong>The OS Burden:</strong> General-purpose operating systems add unpredictable context switching, TLB invalidation overhead, Spectre/Meltdown mitigation performance hits, and massive attack surfaces through legacy device drivers.
+                </div>
+                <p class="tab-text">
+                  Engine Lang compiles directly into freestanding <strong>UEFI 2.10 PE32+ unikernels</strong>. There is no Linux kernel, no systemd, and no container hypervisor runtime. The binary takes direct ownership of x86_64 Long Mode, sets up hardware CR3 2-MiB HugePages, memory-maps physical NVRAM directly, and starts serving verified transactions in 12 milliseconds.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>&lt; 15 ms Cold Boot:</strong> Instant power-on readiness for microVMs, edge appliances, and disaster recovery.</li>
+                  <li><strong>Zero Kernel Overhead:</strong> 100% of physical CPU cores and RAM dedicated exclusively to application workloads.</li>
+                  <li><strong>Immunized Against Rootkits:</strong> Without a shell, syscall table, or dynamic linker, standard kernel attack vectors cease to exist.</li>
+                </ul>
               </div>
 
-              <!-- TAB 6: Bare-Metal OS & Unikernel -->
-              <div class="win-tab-pane" id="tab-os">
-                <fieldset class="win2k-groupbox">
-                  <legend>Freestanding Bare-Metal Operating Systems &amp; UEFI Unikernels</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">RING 0 SOVEREIGNTY</span>
-                        Booting Directly on Silicon in &lt;15 Milliseconds
-                      </h3>
-                      <div class="win2k-subtitle">Eliminating 40+ million lines of vulnerable Linux/Windows kernel code.</div>
-                      <div class="win2k-callout">
-                        <strong>The OS Burden:</strong> General-purpose operating systems add unpredictable context switching, TLB invalidation overhead, Spectre/Meltdown mitigation performance hits, and massive attack surfaces through legacy device drivers.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang compiles directly into freestanding <strong>UEFI 2.10 PE32+ unikernels</strong>. There is no Linux kernel, no systemd, and no container hypervisor runtime. The binary takes direct ownership of x86_64 Long Mode, sets up hardware CR3 2-MiB HugePages, memory-maps physical NVRAM directly, and starts serving verified transactions in 12 milliseconds.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>&lt; 15 ms Cold Boot:</strong> Instant power-on readiness for microVMs, edge appliances, and disaster recovery.</li>
-                        <li><strong>Zero Kernel Overhead:</strong> 100% of physical CPU cores and RAM dedicated exclusively to application workloads.</li>
-                        <li><strong>Immunized Against Rootkits:</strong> Without a shell, syscall table, or dynamic linker, standard kernel attack vectors cease to exist.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; UEFI PE32+ BARE-METAL BOOTSTRAP EMITTER
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; UEFI PE32+ BARE-METAL BOOTSTRAP EMITTER (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Freestanding UEFI Entry Point - Bare Metal Execution</span>
 <span class="code-directive">@freestanding</span>(target: <span class="code-string">"x86_64-unknown-uefi"</span>)
 <span class="code-keyword">module</span> <span class="code-type">SovereignCore</span>::<span class="code-type">Unikernel</span>;
@@ -1489,60 +1299,60 @@
   start_bare_metal_quic_gateway();
   <span class="code-keyword">return</span> <span class="code-type">UefiStatus</span>::<span class="code-type">Success</span>;
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">12 ms</span>
-                          <span class="win2k-kpi-lbl">Cold Boot Time</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 bytes</span>
-                          <span class="win2k-kpi-lbl">Linux Kernel</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">PE32+</span>
-                          <span class="win2k-kpi-lbl">Binary Target</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Ring 0</span>
-                          <span class="win2k-kpi-lbl">Direct Silicon</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">12 ms</span>
+                    <span class="tab-kpi-lbl">Cold Boot Time</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 bytes</span>
+                    <span class="tab-kpi-lbl">Linux Kernel</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">PE32+</span>
+                    <span class="tab-kpi-lbl">Binary Target</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Ring 0</span>
+                    <span class="tab-kpi-lbl">Direct Silicon</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 7: ROBOTICS & EMBEDDED IOT -->
+        <div class="win-tab-content" id="tab-robotics">
+          <fieldset class="win-groupbox">
+            <legend>Hard Real-Time Robotics, Industrial Automation &amp; Embedded Hardware</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#129302;</span>
+                  Zero GC Jitter &amp; Safe Memory-Mapped I/O
+                </h3>
+                <div class="tab-sub">Sub-microsecond deterministic servo actuation without C pointer corruptions.</div>
+                <div class="tab-callout">
+                  <strong>The Industrial Hazard:</strong> Managed runtimes (Go, Java) stop world execution during garbage collection sweeps, causing robotic arms to shudder or CNC cutting heads to gouge workpieces. Meanwhile, unverified C/C++ memory errors risk hardware destruction.
+                </div>
+                <p class="tab-text">
+                  Engine Lang guarantees hard real-time execution via a deterministic non-volatile arena memory model without garbage collection. Physical hardware registers are mapped directly using <code>@mmio</code> and typed <code>register</code> blocks, where bit widths and legal voltage/pressure ranges are formally verified at compile time.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>Sub-Millisecond Industrial Latency:</strong> Deterministic control loops for 5-axis CNC cutters, semiconductor steppers, and robotic surgery arms.</li>
+                  <li><strong>Provable Hardware Safety:</strong> Refinement types mathematically prevent out-of-bounds register writes to physical motors and valves.</li>
+                  <li><strong>Crash-Durable Telemetry:</strong> Every sensor reading is atomically flushed to persistent memory via hardware <code>clwb</code> instructions.</li>
+                </ul>
               </div>
 
-              <!-- TAB 7: Robotics & Embedded IoT -->
-              <div class="win-tab-pane" id="tab-robotics">
-                <fieldset class="win2k-groupbox">
-                  <legend>Hard Real-Time Robotics, Industrial Automation &amp; Embedded Hardware</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">HARD REAL-TIME</span>
-                        Zero GC Jitter &amp; Safe Memory-Mapped I/O
-                      </h3>
-                      <div class="win2k-subtitle">Sub-microsecond deterministic servo actuation without C pointer corruptions.</div>
-                      <div class="win2k-callout">
-                        <strong>The Industrial Hazard:</strong> Managed runtimes (Go, Java) stop world execution during garbage collection sweeps, causing robotic arms to shudder or CNC cutting heads to gouge workpieces. Meanwhile, unverified C/C++ memory errors risk hardware destruction.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang guarantees hard real-time execution via a deterministic non-volatile arena memory model without garbage collection. Physical hardware registers are mapped directly using <code>@mmio</code> and typed <code>register</code> blocks, where bit widths and legal voltage/pressure ranges are formally verified at compile time.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>Sub-Millisecond Industrial Latency:</strong> Deterministic control loops for 5-axis CNC cutters, semiconductor steppers, and robotic surgery arms.</li>
-                        <li><strong>Provable Hardware Safety:</strong> Refinement types mathematically prevent out-of-bounds register writes to physical motors and valves.</li>
-                        <li><strong>Crash-Durable Telemetry:</strong> Every sensor reading is atomically flushed to persistent memory via hardware <code>clwb</code> instructions.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; HARDWARE MMIO REGISTER DECLARATION &amp; SERVO CONTROL
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; HARDWARE MMIO REGISTER DECLARATION &amp; SERVO CONTROL (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Direct MMIO Peripheral Register Mapping</span>
 <span class="code-directive">@mmio</span>(address: 0x40001000, size: 32)
 <span class="code-keyword">register</span> <span class="code-type">RoboticServoControl</span> {
@@ -1565,60 +1375,60 @@
   reg.target_angle_mrad = angle <span class="code-keyword">as</span> <span class="code-type">Word</span>;
   reg.enable_pwm = 1;
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 ns</span>
-                          <span class="win2k-kpi-lbl">GC Pause Jitter</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">@mmio</span>
-                          <span class="win2k-kpi-lbl">Hardware Direct</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">&lt; 850 ns</span>
-                          <span class="win2k-kpi-lbl">Actuation Loop</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">100%</span>
-                          <span class="win2k-kpi-lbl">Bounds Proven</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 ns</span>
+                    <span class="tab-kpi-lbl">GC Pause Jitter</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">@mmio</span>
+                    <span class="tab-kpi-lbl">Hardware Direct</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">&lt; 850 ns</span>
+                    <span class="tab-kpi-lbl">Actuation Loop</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">100%</span>
+                    <span class="tab-kpi-lbl">Bounds Proven</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 8: AVIATION & AEROSPACE -->
+        <div class="win-tab-content" id="tab-aero">
+          <fieldset class="win-groupbox">
+            <legend>Aviation, Aerospace &amp; Safety-Critical Fly-by-Wire Avionics</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#128640;</span>
+                  Zero-Panic Guarantee for Fly-by-Wire Systems
+                </h3>
+                <div class="tab-sub">DO-178C Level A safety compliance through formal SMT mathematical proofs.</div>
+                <div class="tab-callout">
+                  <strong>The Avionics Imperative:</strong> In commercial aircraft fly-by-wire computers, satellite guidance, and space launch vehicles, a single null dereference, unhandled arithmetic overflow, or memory corruption can cause loss of life and billions of dollars in lost payload.
+                </div>
+                <p class="tab-text">
+                  Engine Lang delivers a mathematically proven <strong>Zero-Panic Guarantee</strong>. The compiler translates every state transition into SMT-LIB2 queries for the embedded Z3 solver. If any combination of inputs could trigger division by zero, out-of-range elevator deflection, or an illegal state transition, <code>enginec check</code> rejects the binary during compilation.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>Catastrophe Immunity:</strong> Flight envelope limits (pitch, roll, airspeed) are proven invariant contracts that cannot be exceeded by software logic.</li>
+                  <li><strong>Instant Power-Loss Survival:</strong> Telemetry registers persist instantly via hardware CLWB cache line flushes without battery-backed disk sync.</li>
+                  <li><strong>Satellite Constellation Mesh:</strong> Inter-satellite optical links synchronize spacecraft telemetry across orbital planes via causal Delta-CRDTs.</li>
+                </ul>
               </div>
 
-              <!-- TAB 8: Aviation & Aerospace -->
-              <div class="win-tab-pane" id="tab-aero">
-                <fieldset class="win2k-groupbox">
-                  <legend>Aviation, Aerospace &amp; Safety-Critical Fly-by-Wire Avionics</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">AEROSPACE GRADE</span>
-                        Zero-Panic Guarantee for Fly-by-Wire Systems
-                      </h3>
-                      <div class="win2k-subtitle">DO-178C Level A safety compliance through formal SMT mathematical proofs.</div>
-                      <div class="win2k-callout">
-                        <strong>The Avionics Imperative:</strong> In commercial aircraft fly-by-wire computers, satellite guidance, and space launch vehicles, a single null dereference, unhandled arithmetic overflow, or memory corruption can cause loss of life and billions of dollars in lost payload.
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang delivers a mathematically proven <strong>Zero-Panic Guarantee</strong>. The compiler translates every state transition into SMT-LIB2 queries for the embedded Z3 solver. If any combination of inputs could trigger division by zero, out-of-range elevator deflection, or an illegal state transition, <code>enginec check</code> rejects the binary during compilation.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>Catastrophe Immunity:</strong> Flight envelope limits (pitch, roll, airspeed) are proven invariant contracts that cannot be exceeded by software logic.</li>
-                        <li><strong>Instant Power-Loss Survival:</strong> Telemetry registers persist instantly via hardware CLWB cache line flushes without battery-backed disk sync.</li>
-                        <li><strong>Satellite Constellation Mesh:</strong> Inter-satellite optical links synchronize spacecraft telemetry across orbital planes via causal Delta-CRDTs.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; INVIOLABLE FLIGHT ENVELOPE CONTRACT
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; INVIOLABLE FLIGHT ENVELOPE CONTRACT (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Flight Envelope Protection Limits verified by Z3 SMT</span>
 <span class="code-keyword">type</span> <span class="code-type">PitchDegrees</span> = <span class="code-type">Float</span> <span class="code-keyword">where</span> self &gt;= -30.0 &amp;&amp; self &lt;= 30.0;
 <span class="code-keyword">type</span> <span class="code-type">RollDegrees</span> = <span class="code-type">Float</span> <span class="code-keyword">where</span> self &gt;= -67.0 &amp;&amp; self &lt;= 67.0;
@@ -1641,60 +1451,60 @@
     clamp_actuator_hardware(cmd, vector.pitch);
   }
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 Panics</span>
-                          <span class="win2k-kpi-lbl">Possible at Run</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">DO-178C</span>
-                          <span class="win2k-kpi-lbl">Level A Design</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">Hardware</span>
-                          <span class="win2k-kpi-lbl">CLWB Durability</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">&lt; 1 &micro;s</span>
-                          <span class="win2k-kpi-lbl">Response Jitter</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 Panics</span>
+                    <span class="tab-kpi-lbl">Possible at Run</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">DO-178C</span>
+                    <span class="tab-kpi-lbl">Level A Design</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">Hardware</span>
+                    <span class="tab-kpi-lbl">CLWB Durability</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">&lt; 1 &micro;s</span>
+                    <span class="tab-kpi-lbl">Response Jitter</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- TAB 9: SOVEREIGN CAUSAL LEDGER -->
+        <div class="win-tab-content" id="tab-blockchain">
+          <fieldset class="win-groupbox">
+            <legend>Sovereign Causal Mesh: The Zero-Energy Alternative to Blockchain</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#128279;</span>
+                  Causal Commit DAGs Without Proof-of-Work
+                </h3>
+                <div class="tab-sub">Cryptographic immutable lineage and Byzantine fault tolerance with zero electrical waste.</div>
+                <div class="tab-callout">
+                  <strong>The Blockchain Dilemma:</strong> Traditional blockchains consume enormous electrical power for Proof-of-Work mining, impose exorbitant gas fees, and suffer from recurring smart-contract hacks ($3B+ lost annually to reentrancy, integer overflows, and flash loan exploits).
+                </div>
+                <p class="tab-text">
+                  Engine Lang provides the auditability and decentralization of blockchains without the electrical waste or gas fees. State transitions form a cryptographic causal directed acyclic graph (<code>-&gt;</code>) embedding BLAKE3/SHA-256 hashes of preceding transactions. SMT verification mathematically proves that reentrancy and unauthorized state mutations cannot compile.
+                </p>
+                <ul class="tab-checklist">
+                  <li><strong>National Registries &amp; Titles:</strong> Immutable land title deeds, vehicle registration (Detran), and public tax assessments without blockchain gas costs.</li>
+                  <li><strong>Zero Megawatt Waste:</strong> Replaces wasteful hashing algorithms with mathematical causal consensus over Delta-CRDT vector clocks.</li>
+                  <li><strong>Exploit-Proof Smart Contracts:</strong> Contracts are formally verified at compile-time by Z3; reentrancy bugs are physically uncompilable.</li>
+                </ul>
               </div>
 
-              <!-- TAB 9: Sovereign Causal Ledger -->
-              <div class="win-tab-pane" id="tab-blockchain">
-                <fieldset class="win2k-groupbox">
-                  <legend>Sovereign Causal Mesh: The Zero-Energy Alternative to Blockchain</legend>
-                  <div class="win2k-layout-grid">
-                    <div>
-                      <h3 class="win2k-h3">
-                        <span class="win2k-badge">GREEN SOVEREIGNTY</span>
-                        Causal Commit DAGs Without Proof-of-Work
-                      </h3>
-                      <div class="win2k-subtitle">Cryptographic immutable lineage and Byzantine fault tolerance with zero electrical waste.</div>
-                      <div class="win2k-callout">
-                        <strong>The Blockchain Dilemma:</strong> Traditional blockchains consume enormous electrical power for Proof-of-Work mining, impose exorbitant gas fees, and suffer from recurring smart-contract hacks ($3B+ lost annually to reentrancy, integer overflows, and flash loan exploits).
-                      </div>
-                      <p class="win2k-text">
-                        Engine Lang provides the auditability and decentralization of blockchains without the electrical waste or gas fees. State transitions form a cryptographic causal directed acyclic graph (<code>-&gt;</code>) embedding BLAKE3/SHA-256 hashes of preceding transactions. SMT verification mathematically proves that reentrancy and unauthorized state mutations cannot compile.
-                      </p>
-                      <ul class="win2k-features-list">
-                        <li><strong>National Registries &amp; Titles:</strong> Immutable land title deeds, vehicle registration (Detran), and public tax assessments without blockchain gas costs.</li>
-                        <li><strong>Zero Megawatt Waste:</strong> Replaces wasteful hashing algorithms with mathematical causal consensus over Delta-CRDT vector clocks.</li>
-                        <li><strong>Exploit-Proof Smart Contracts:</strong> Contracts are formally verified at compile-time by Z3; reentrancy bugs are physically uncompilable.</li>
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div class="win2k-subtitle" style="font-weight: bold; color: #000080; margin-bottom: 6px;">
-                        &bull; CRYPTOGRAPHIC COMMIT LINEAGE &amp; PROVABLE AUDIT
-                      </div>
-                      <div class="win2k-inset-code">
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; CRYPTOGRAPHIC COMMIT LINEAGE &amp; AUDIT (.eng)
+                </div>
+                <div class="win-inset-dark">
 <span class="code-comment">// Cryptographic Causal Lineage: Root Epoch to Leaf Transition</span>
 <span class="code-directive">@persistent</span>
 <span class="code-keyword">entity</span> <span class="code-type">LandTitleDeed</span> {
@@ -1713,286 +1523,328 @@
     deed -&gt; assign_owner(new_owner) -&gt; notarize_public_ledger();
   }
 }
-                      </div>
+                </div>
 
-                      <div class="win2k-kpi-bar">
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 Watts</span>
-                          <span class="win2k-kpi-lbl">PoW Mining Waste</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">$0.00</span>
-                          <span class="win2k-kpi-lbl">Gas Transaction Fee</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">BLAKE3</span>
-                          <span class="win2k-kpi-lbl">Causal Hashes</span>
-                        </div>
-                        <div class="win2k-kpi-cell">
-                          <span class="win2k-kpi-val">0 Exploits</span>
-                          <span class="win2k-kpi-lbl">SMT Proven</span>
-                        </div>
-                      </div>
-                    </div>
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 Watts</span>
+                    <span class="tab-kpi-lbl">PoW Mining Waste</span>
                   </div>
-                </fieldset>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">$0.00</span>
+                    <span class="tab-kpi-lbl">Gas Transaction Fee</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">BLAKE3</span>
+                    <span class="tab-kpi-lbl">Causal Hashes</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">0 Exploits</span>
+                    <span class="tab-kpi-lbl">SMT Proven</span>
+                  </div>
+                </div>
               </div>
-
             </div>
-            <!-- End Tab Content Frame -->
-          </div>
-
-          <!-- Windows 2000 Status Bar -->
-          <div class="win2k-statusbar">
-            <div class="win2k-status-pane">Ready &mdash; Inviolable execution environment</div>
-            <div class="win2k-status-pane">Z3 SMT-LIB2: Formally Verified</div>
-            <div class="win2k-status-pane">Storage: Hardware NVRAM (CLWB)</div>
-            <div class="win2k-status-pane">Wire: Delta-CRDT Mesh</div>
-            <div class="win2k-status-pane">Power: -85% Watts</div>
-          </div>
+          </fieldset>
         </div>
-      </section>
 
-      <!-- Code & Terminal Showcase -->
-      <section class="showcase-section">
-        <div class="showcase-grid">
+      </div>
+
+      <!-- Windows 2000 Status Bar -->
+      <div class="win-statusbar">
+        <div class="win-status-pane">Ready &mdash; Inviolable execution environment</div>
+        <div class="win-status-pane">Z3 SMT-LIB2: Formally Verified</div>
+        <div class="win-status-pane">Storage: Hardware NVRAM (CLWB)</div>
+        <div class="win-status-pane">Wire: Delta-CRDT Mesh</div>
+        <div class="win-status-pane">Power: -85% Watts</div>
+      </div>
+    </section>
+
+    <!-- WINDOW 2: CODE & TERMINAL DUAL SHOWCASE -->
+    <section class="win-window">
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#128187;</span>
+          <span>Dual Verification Environment: examples/04_causal_blog.eng vs engine-genesis-node</span>
+        </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
+
+      <div class="win-menubar">
+        <span><u>V</u>iew Source</span>
+        <span><u>R</u>un SMT Check</span>
+        <span><u>I</u>nspect SLS Superblock</span>
+      </div>
+
+      <div style="padding: 14px; background: var(--win-gray);">
+        <div class="tab-2col">
           <!-- Left: Engine Lang Source Code -->
-          <div class="window">
-            <div class="window-header">
-              <span>examples/04_causal_blog.eng</span>
-              <span>SYNTAX: ENGINE LANG</span>
+          <div>
+            <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+              &bull; SOURCE FILE: examples/04_causal_blog.eng
             </div>
-            <div class="window-body">
-              <span class="code-comment">// Inviolable Domain Invariants proven at Compile Time</span><br>
-              <span class="code-keyword">type</span> <span class="code-type">Slug</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> len(self) &gt;= 3 &amp;&amp; len(self) &lt;= 80;<br>
-              <span class="code-keyword">type</span> <span class="code-type">Email</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> contains(self, "@");<br>
-              <span class="code-keyword">type</span> <span class="code-type">ViewCount</span> = <span class="code-type">Int</span> <span class="code-keyword">where</span> self &gt;= 0;<br><br>
+            <div class="win-inset-dark">
+<span class="code-comment">// Inviolable Domain Invariants proven at Compile Time</span><br>
+<span class="code-keyword">type</span> <span class="code-type">Slug</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> len(self) &gt;= 3 &amp;&amp; len(self) &lt;= 80;<br>
+<span class="code-keyword">type</span> <span class="code-type">Email</span> = <span class="code-type">Text</span> <span class="code-keyword">where</span> contains(self, "@");<br>
+<span class="code-keyword">type</span> <span class="code-type">ViewCount</span> = <span class="code-type">Int</span> <span class="code-keyword">where</span> self &gt;= 0;<br><br>
 
-              <span class="code-comment">// Single-Level Store: Hardware-Direct NVRAM Persistence</span><br>
-              <span class="code-directive">@persistent</span><br>
-              <span class="code-keyword">entity</span> <span class="code-type">Post</span> {<br>
-              &nbsp;&nbsp;id: <span class="code-type">UUID</span>,<br>
-              &nbsp;&nbsp;title: <span class="code-type">NonEmptyText</span>,<br>
-              &nbsp;&nbsp;slug: <span class="code-type">Slug</span>,<br>
-              &nbsp;&nbsp;views: <span class="code-type">ViewCount</span>,<br>
-              &nbsp;&nbsp;embedding: <span class="code-type">Vector</span>[1536],<br>
-              &nbsp;&nbsp;<span class="code-keyword">invariant</span> { len(title) &gt; 0 }<br>
-              }<br><br>
+<span class="code-comment">// Single-Level Store: Hardware-Direct NVRAM Persistence</span><br>
+<span class="code-directive">@persistent</span><br>
+<span class="code-keyword">entity</span> <span class="code-type">Post</span> {<br>
+&nbsp;&nbsp;id: <span class="code-type">UUID</span>,<br>
+&nbsp;&nbsp;title: <span class="code-type">NonEmptyText</span>,<br>
+&nbsp;&nbsp;slug: <span class="code-type">Slug</span>,<br>
+&nbsp;&nbsp;views: <span class="code-type">ViewCount</span>,<br>
+&nbsp;&nbsp;embedding: <span class="code-type">Vector</span>[1536],<br>
+&nbsp;&nbsp;<span class="code-keyword">invariant</span> { len(title) &gt; 0 }<br>
+}<br><br>
 
-              <span class="code-comment">// Native Causal Pipeline & Vector Cosine Match</span><br>
-              <span class="code-keyword">fn</span> <span class="code-type">recommend_posts</span>(query_vec: <span class="code-type">Vector</span>[1536]) {<br>
-              &nbsp;&nbsp;<span class="code-type">Post</span>::all()<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; filter(|p| p.views &gt; 100)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; sort_by(|p| p.embedding &lt;=&gt; query_vec)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;|&gt; take(5);<br>
-              }
+<span class="code-comment">// Native Causal Pipeline &amp; Vector Cosine Match</span><br>
+<span class="code-keyword">fn</span> <span class="code-type">recommend_posts</span>(query_vec: <span class="code-type">Vector</span>[1536]) {<br>
+&nbsp;&nbsp;<span class="code-type">Post</span>::all()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;|&gt; filter(|p| p.views &gt; 100)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;|&gt; sort_by(|p| p.embedding &lt;=&gt; query_vec)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;|&gt; take(5);<br>
+}
             </div>
           </div>
 
           <!-- Right: Terminal Genesis Node -->
-          <div class="window">
-            <div class="window-header">
-              <span>genesis-node — bash</span>
-              <span>ENVIRONMENT: DOCKER / DAX</span>
+          <div>
+            <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+              &bull; TERMINAL: engine-genesis-node (Docker / DAX)
             </div>
-            <div class="window-body">
-              <span class="code-comment"># Spin up Genesis Node with embedded Z3 & SLS</span><br>
-              <span class="code-keyword">$</span> docker compose up -d<br>
-              [+] Running 2/2<br>
-              &nbsp;✔ Network engine-genesis-net  Created<br>
-              &nbsp;✔ Container engine-genesis-node  Started (healthy)<br><br>
+            <div class="win-inset-dark">
+<span class="code-comment"># Spin up Genesis Node with embedded Z3 &amp; SLS</span><br>
+<span class="code-keyword">$</span> docker compose up -d<br>
+[+] Running 2/2<br>
+&nbsp;&#10004; Network engine-genesis-net  Created<br>
+&nbsp;&#10004; Container engine-genesis-node  Started (healthy)<br><br>
 
-              <span class="code-comment"># Perform Compile-Time Z3 Formal Verification</span><br>
-              <span class="code-keyword">$</span> docker exec engine-genesis-node enginec check 04_causal_blog.eng<br>
-              <span class="code-highlight">✅ Grammar: Deterministic LL(1) parse succeeded</span><br>
-              <span class="code-highlight">[SMT-PROVEN] Refinement type 'Slug' verified</span><br>
-              <span class="code-highlight">[SMT-PROVEN] Refinement type 'Email' verified</span><br>
-              <span class="code-highlight">[SMT-PROVEN] Entity invariant for '@persistent Post' verified</span><br>
-              ✨ Formal Verification Succeeded: 0 runtime panics possible.<br><br>
+<span class="code-comment"># Perform Compile-Time Z3 Formal Verification</span><br>
+<span class="code-keyword">$</span> docker exec engine-genesis-node enginec check 04_causal_blog.eng<br>
+<span class="code-hl">&#9989; Grammar: Deterministic LL(1) parse succeeded</span><br>
+<span class="code-hl">[SMT-PROVEN] Refinement type 'Slug' verified</span><br>
+<span class="code-hl">[SMT-PROVEN] Refinement type 'Email' verified</span><br>
+<span class="code-hl">[SMT-PROVEN] Entity invariant for '@persistent Post' verified</span><br>
+&#10024; Formal Verification Succeeded: 0 runtime panics possible.<br><br>
 
-              <span class="code-comment"># Inspect Single-Level Store Superblock</span><br>
-              <span class="code-keyword">$</span> docker exec engine-genesis-node enginec inspect /app/data/engine.db<br>
-              Container Magic:     0x454E474E ('ENG\x01')<br>
-              Page Size:           4096 bytes (HugePage: 2 MiB)<br>
-              CRC-64/NVME:         0x0B3270B44B4A0AA6 [VALID]<br>
-              Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
+<span class="code-comment"># Inspect Single-Level Store Superblock</span><br>
+<span class="code-keyword">$</span> docker exec engine-genesis-node enginec inspect /app/data/engine.db<br>
+Container Magic:     0x454E474E ('ENG')<br>
+Page Size:           4096 bytes (HugePage: 2 MiB)<br>
+CRC-64/NVME:         0x0B3270B44B4A0AA6 [VALID]<br>
+Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- The 5 Layers Overview -->
-      <section class="layers-section" id="layers">
-        <div class="section-title-group">
-          <div class="section-tag">// ARCHITECTURAL DECOMPOSITION</div>
-          <h2 class="section-h2">The 5 System Layers</h2>
-          <p class="section-desc">
-            Organized to give developers, systems engineers, and autonomous AI agents clear, verifiable boundaries from source syntax to raw bare metal.
-          </p>
+    <!-- WINDOW 3: THE 5 SYSTEM LAYERS -->
+    <section class="win-window" id="layers-win">
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#128397;</span>
+          <span>Architectural Decomposition: The 5 System Layers</span>
+        </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
+
+      <div style="padding: 16px; background: var(--win-gray);">
+        <p style="margin-bottom: 14px; font-size: 0.88rem; color: #222222;">
+          Organized to give systems engineers, autonomous AI agents, and kernel developers clear, mathematically verified boundaries from high-level syntax to bare metal.
+        </p>
+
+        <div class="layer-item-win">
+          <span class="layer-tag-win">LAYER 01</span>
+          <span class="layer-name-win">Deterministic Syntax &amp; SMT</span>
+          <span class="layer-desc-win">LL(1) recursive descent parser without backtracking; automated compile-time proof of type refinements via Z3 SMT-LIB2.</span>
+          <span class="layer-file-win">compiler/src/parser.rs</span>
         </div>
 
-        <div class="layers-list">
-          <div class="layer-row">
-            <span class="layer-id">LAYER 01</span>
-            <span class="layer-name">Deterministic Syntax & SMT</span>
-            <span class="layer-summary">LL(1) recursive descent parser without backtracking; automated compile-time proof of type refinements via Z3 SMT-LIB2.</span>
-            <span class="layer-path">compiler/src/parser.rs</span>
-          </div>
-
-          <div class="layer-row">
-            <span class="layer-id">LAYER 02</span>
-            <span class="layer-name">Single-Level Store (SLS)</span>
-            <span class="layer-summary">Persistent memory engine bound to NVRAM / CXL. Eliminates external databases with cache-line flush primitives (CLWB + SFENCE).</span>
-            <span class="layer-path">compiler/src/memory.rs</span>
-          </div>
-
-          <div class="layer-row">
-            <span class="layer-id">LAYER 03</span>
-            <span class="layer-name">Causal Mesh & Bridges</span>
-            <span class="layer-summary">Planetary Delta-CRDT vector clocks without coordinators, embedded PostgreSQL v3.0 protocol responder, and reactive HTTP gateway.</span>
-            <span class="layer-path">compiler/src/bridge.rs</span>
-          </div>
-
-          <div class="layer-row">
-            <span class="layer-id">LAYER 04</span>
-            <span class="layer-name">Silicon Codegen & OS</span>
-            <span class="layer-summary">Zero-UB machine code emitter with AVX2/AVX-512 SIMD vector cosine distance, and freestanding UEFI 2.10 PE32+ unikernel builder.</span>
-            <span class="layer-path">compiler/src/codegen.rs</span>
-          </div>
-
-          <div class="layer-row">
-            <span class="layer-id">LAYER 05</span>
-            <span class="layer-name">Genesis Toolchain & MSR</span>
-            <span class="layer-summary">CLI toolchain (`enginec`), LSP 3.17 daemon, multi-stage Docker Genesis containers, and MSR JSON 2.1 open protocol compliance.</span>
-            <span class="layer-path">compiler/src/main.rs</span>
-          </div>
+        <div class="layer-item-win">
+          <span class="layer-tag-win">LAYER 02</span>
+          <span class="layer-name-win">Single-Level Store (SLS)</span>
+          <span class="layer-desc-win">Persistent memory engine bound to NVRAM / CXL. Eliminates external databases with cache-line flush primitives (CLWB + SFENCE).</span>
+          <span class="layer-file-win">compiler/src/memory.rs</span>
         </div>
-      </section>
 
-      <!-- The Official Book -->
-      <section class="book-section">
-        <div class="book-card">
-          <div class="book-wireframe">
-            <div class="book-title-main">FROM THE SILICON ISLAND TO THE CAUSAL COSMOS</div>
-            <div class="book-title-sub">The Engineering Book of Engine Lang</div>
-            <div class="book-author">Lysander Vance</div>
+        <div class="layer-item-win">
+          <span class="layer-tag-win">LAYER 03</span>
+          <span class="layer-name-win">Causal Mesh &amp; Bridges</span>
+          <span class="layer-desc-win">Planetary Delta-CRDT vector clocks without coordinators, embedded PostgreSQL v3.0 protocol responder, and reactive HTTP gateway.</span>
+          <span class="layer-file-win">compiler/src/bridge.rs</span>
+        </div>
+
+        <div class="layer-item-win">
+          <span class="layer-tag-win">LAYER 04</span>
+          <span class="layer-name-win">Silicon Codegen &amp; OS</span>
+          <span class="layer-desc-win">Zero-UB machine code emitter with AVX2/AVX-512 SIMD vector cosine distance, and freestanding UEFI 2.10 PE32+ unikernel builder.</span>
+          <span class="layer-file-win">compiler/src/codegen.rs</span>
+        </div>
+
+        <div class="layer-item-win">
+          <span class="layer-tag-win">LAYER 05</span>
+          <span class="layer-name-win">Genesis Toolchain &amp; MSR</span>
+          <span class="layer-desc-win">CLI toolchain (<code>enginec</code>), LSP 3.17 daemon, multi-stage Docker Genesis containers, and MSR JSON 2.1 open protocol compliance.</span>
+          <span class="layer-file-win">compiler/src/main.rs</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOW 4: THE OFFICIAL BOOK -->
+    <section class="win-window">
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#128214;</span>
+          <span>The Official Engineering Book: From the Silicon Island to the Causal Cosmos</span>
+        </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
+
+      <div style="padding: 20px; background: var(--win-gray);">
+        <div class="tab-2col">
+          <div class="win-inset" style="text-align: center; padding: 24px;">
+            <div style="font-size: 0.76rem; font-family: var(--font-mono); color: #000080; font-weight: 700; margin-bottom: 6px;">
+              AUTHORITATIVE TECHNICAL TREATISE
+            </div>
+            <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #000000;">
+              FROM THE SILICON ISLAND TO THE CAUSAL COSMOS
+            </div>
+            <div style="font-size: 0.82rem; color: #555555; margin-bottom: 16px;">
+              The Engineering Book of Engine Lang &bull; 14 Chapters
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; border-top: 1px solid var(--win-shadow); padding-top: 8px; color: #222222;">
+              Lysander Vance &bull; The Vance Protocol Group
+            </div>
           </div>
-          <div class="book-info">
-            <h3>Read The Official Book Online</h3>
-            <p>
-              An authoritative 14-chapter technical treatise exploring how to transition from legacy memory-storage duality to a sovereign causal computing fabric. Available in full via the built-in mdBook reader.
+
+          <div>
+            <h4 style="font-size: 1.15rem; font-weight: 700; color: #000080; margin-bottom: 8px;">
+              Read The Complete 14-Chapter Treatise Online
+            </h4>
+            <p style="font-size: 0.86rem; color: #222222; line-height: 1.6; margin-bottom: 16px;">
+              An authoritative volume detailing how systems engineering transitions from legacy memory-storage duality to a sovereign causal computing fabric. Complete with mathematical proofs, memory layout diagrams, and unikernel boot specifications.
             </p>
 
-            <div class="book-volumes-grid">
-              <div class="vol-card">
-                <h5>Volume I</h5>
-                <p>The Silicon Island (Single-Node Memory Ledger & SMT Refinement)</p>
-              </div>
-              <div class="vol-card">
-                <h5>Volume II</h5>
-                <p>The Bridge of Worlds (Causal Mesh & Distributed Delta-CRDT)</p>
-              </div>
-              <div class="vol-card">
-                <h5>Volume III</h5>
-                <p>The Causal Cosmos (Bare-Metal Unikernel & AI Agent Swarms)</p>
-              </div>
-            </div>
-
-            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-              <a href="./book/" class="btn btn-solid">
-                Open Book in mdBook Reader →
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="./book/" class="win-btn win-btn-default win-btn-primary">
+                <span>&#128214;</span> Open in mdBook Reader &rarr;
               </a>
-              <a href="https://github.com/msrjson/engine-lang/tree/main/book" target="_blank" class="btn btn-outline">
-                View Markdown Sources
+              <a href="https://github.com/msrjson/engine-lang/tree/main/book" target="_blank" class="win-btn">
+                <span>&#128194;</span> View Markdown Sources
               </a>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Normative Specifications Grid -->
-      <section class="specs-section">
-        <div class="section-title-group">
-          <div class="section-tag">// NORMATIVE SPECIFICATIONS</div>
-          <h2 class="section-h2">Formal Specifications & Standards</h2>
-          <p class="section-desc">
-            All engineering design criteria are documented in public, unowned technical specifications.
-          </p>
+    <!-- WINDOW 5: NORMATIVE SPECIFICATIONS MATRIX -->
+    <section class="win-window">
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#128196;</span>
+          <span>Normative Specifications &amp; Open Standards Matrix</span>
         </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
 
-        <div class="specs-grid">
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank" class="spec-card">
+      <div style="padding: 16px; background: var(--win-gray);">
+        <div class="specs-grid-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">ENG-SPEC-03.1</div>
-              <div class="spec-name">Grammar & Type System</div>
-              <div class="spec-desc">Deterministic LL(1) EBNF grammar, 14 operator precedence levels, and refinement type semantics.</div>
+              <div class="spec-code-win">ENG-SPEC-03.1</div>
+              <div class="spec-title-win">Grammar &amp; Type System</div>
+              <div class="spec-desc-win">Deterministic LL(1) EBNF grammar, 14 operator precedence levels, and refinement type semantics.</div>
             </div>
-            <span class="spec-action">Read Specification ↗</span>
+            <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank" class="spec-card">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">ENG-SLS-01.1</div>
-              <div class="spec-name">Single-Level Store Binary</div>
-              <div class="spec-desc">Binary physical layout of .db containers: 64-byte alignment, NVRAM Ring Buffer, and CRC-64/NVME.</div>
+              <div class="spec-code-win">ENG-SLS-01.1</div>
+              <div class="spec-title-win">Single-Level Store Binary</div>
+              <div class="spec-desc-win">Physical layout of .db containers: 64-byte alignment, NVRAM Ring Buffer, and CRC-64/NVME.</div>
             </div>
-            <span class="spec-action">Read Specification ↗</span>
+            <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank" class="spec-card">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">ENG-CG-01.1</div>
-              <div class="spec-name">Silicon Codegen & Zero-UB</div>
-              <div class="spec-desc">Direct machine instruction synthesis, AVX-512 vector distance accelerator, and hardware memory barriers.</div>
+              <div class="spec-code-win">ENG-CG-01.1</div>
+              <div class="spec-title-win">Silicon Codegen &amp; Zero-UB</div>
+              <div class="spec-desc-win">Direct machine instruction synthesis, AVX-512 vector distance accelerator, and memory barriers.</div>
             </div>
-            <span class="spec-action">Read Specification ↗</span>
+            <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/BARE_METAL_UNIKERNEL_SPEC.md" target="_blank" class="spec-card">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/BARE_METAL_UNIKERNEL_SPEC.md" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">ENG-OS-01.1</div>
-              <div class="spec-name">Bare-Metal UEFI Unikernel</div>
-              <div class="spec-desc">Freestanding PE32+ binary format executing directly on bare-metal silicon without OS kernels.</div>
+              <div class="spec-code-win">ENG-OS-01.1</div>
+              <div class="spec-title-win">Bare-Metal UEFI Unikernel</div>
+              <div class="spec-desc-win">Freestanding PE32+ binary format executing directly on bare-metal silicon without OS kernels.</div>
             </div>
-            <span class="spec-action">Read Specification ↗</span>
+            <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/CONFRONTING_THE_LISP_TRAP.md" target="_blank" class="spec-card">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/CONFRONTING_THE_LISP_TRAP.md" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">ENG-TRAP-01.1</div>
-              <div class="spec-name">Confronting the Lisp Trap</div>
-              <div class="spec-desc">Rebuttal of the theoretical language trap through empirical codebase facts and PostgreSQL compatibility.</div>
+              <div class="spec-code-win">ENG-TRAP-01.1</div>
+              <div class="spec-title-win">Confronting the Lisp Trap</div>
+              <div class="spec-desc-win">Rebuttal of the language trap through empirical codebase facts and PostgreSQL wire compatibility.</div>
             </div>
-            <span class="spec-action">Read Specification ↗</span>
+            <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank" class="spec-card">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank" class="spec-card-win">
             <div>
-              <div class="spec-id">MSR-JSON-2.1</div>
-              <div class="spec-name">MSR Protocol Manifest</div>
-              <div class="spec-desc">Cryptographically verifiable software metadata for AI agent registries and decentralized discovery.</div>
+              <div class="spec-code-win">MSR-JSON-2.1</div>
+              <div class="spec-title-win">MSR Protocol Manifest</div>
+              <div class="spec-desc-win">Cryptographically verifiable software metadata for AI agent registries and decentralized discovery.</div>
             </div>
-            <span class="spec-action">Inspect Manifest ↗</span>
+            <span class="spec-link-win">Inspect Manifest &#8599;</span>
           </a>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
+  <!-- Windows 2000 System Footer & Taskbar -->
+  <footer class="win-footer-taskbar">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h4>Engine Lang</h4>
-          <p style="color: var(--zinc-400); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+      <div class="footer-cols-win">
+        <div class="footer-col-win">
+          <h5>Engine Lang Workstation</h5>
+          <p style="font-size: 0.83rem; line-height: 1.5; color: #222222; margin-bottom: 10px;">
             A decentralized, unowned systems programming language. Built as an open public good under Apache License 2.0.
           </p>
-          <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--zinc-300);">
+          <div style="font-family: var(--font-mono); font-size: 0.74rem; color: #000080; font-weight: bold;">
             Part of the MSR JSON Standard Protocol Ecosystem
           </div>
         </div>
-        <div class="footer-col">
-          <h4>Documentation</h4>
+
+        <div class="footer-col-win">
+          <h5>Documentation</h5>
           <ul>
             <li><a href="./book/">The Official Book</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank">Language Specification</a></li>
@@ -2001,17 +1853,19 @@
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/DISTRIBUTED_MESH_WIRE.md" target="_blank">Causal Mesh Wire Protocol</a></li>
           </ul>
         </div>
-        <div class="footer-col">
-          <h4>Community & RFCs</h4>
+
+        <div class="footer-col-win">
+          <h5>Governance &amp; RFCs</h5>
           <ul>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/CONTRIBUTING.md" target="_blank">Contributing Guide</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/SECURITY.md" target="_blank">Security Policy</a></li>
-            <li><a href="https://github.com/msrjson/engine-lang/issues" target="_blank">Issue Tracker & RFCs</a></li>
+            <li><a href="https://github.com/msrjson/engine-lang/issues" target="_blank">Issue Tracker &amp; RFCs</a></li>
           </ul>
         </div>
-        <div class="footer-col">
-          <h4>Artifacts</h4>
+
+        <div class="footer-col-win">
+          <h5>Artifacts</h5>
           <ul>
             <li><a href="Engine_Lang_Whitepaper_EN.pdf" download>Whitepaper (PDF)</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank">MSR Manifest (msr.json)</a></li>
@@ -2020,21 +1874,24 @@
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">
-        <div>© 2026 The Vance Protocol Group / Engine Lang Core Working Group. Apache License 2.0.</div>
-        <div>Purposely Monochrome · Sovereign Silicon Standard</div>
+
+      <div class="footer-bottom-win">
+        <div>&copy; 2026 The Vance Protocol Group / Engine Lang Core Working Group. Apache License 2.0.</div>
+        <div style="font-family: var(--font-mono); font-weight: bold; color: #000080;">Windows 2000 Workstation Architecture &bull; Sovereign Silicon Standard</div>
       </div>
     </div>
   </footer>
+
+  <!-- Instant Client-Side Tab Switching Script -->
   <script>
     function openWinTab(tabId) {
-      document.querySelectorAll('.win-tab-btn').forEach(function(btn) {
+      document.querySelectorAll('.win-tab').forEach(function(btn) {
         btn.classList.remove('active');
       });
-      document.querySelectorAll('.win-tab-pane').forEach(function(pane) {
+      document.querySelectorAll('.win-tab-content').forEach(function(pane) {
         pane.classList.remove('active');
       });
-      var activeBtn = document.querySelector('.win-tab-btn[data-tab="' + tabId + '"]');
+      var activeBtn = document.querySelector('.win-tab[data-tab="' + tabId + '"]');
       var activePane = document.getElementById(tabId);
       if (activeBtn) activeBtn.classList.add('active');
       if (activePane) activePane.classList.add('active');
