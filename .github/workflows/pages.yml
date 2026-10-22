@@ -49,6 +49,10 @@ jobs:
           # Copy Documentation Specs
           mkdir -p dist/docs
           cp -r docs/* dist/docs/
+          # Ensure Custom Domain CNAME
+          if [ -f "CNAME" ]; then
+            cp CNAME dist/CNAME
+          fi
           # Prevent Jekyll processing
           touch dist/.nojekyll
 

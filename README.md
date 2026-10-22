@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
 [![Version](https://img.shields.io/badge/version-v0.3.1--silicon-blue.svg)](CHANGELOG.md)
-[![Website & Book](https://img.shields.io/badge/website-online-success.svg)](https://msrjson.github.io/engine-lang/)
+[![Website & Book](https://img.shields.io/badge/website-online-success.svg)](https://enginelang.org/)
 [![MSR JSON Protocol](https://img.shields.io/badge/MSR--JSON-2.1.0-blue.svg)](msr.json)
 [![Spec Version](https://img.shields.io/badge/spec-ENG--SPEC--03.1-orange.svg)](docs/SPECIFICATION.md)
 [![SLS Binary](https://img.shields.io/badge/db-ENG--SLS--01.1-purple.svg)](docs/ENGINE_DB_SLS_LAYOUT.md)
