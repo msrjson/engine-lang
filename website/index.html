@@ -799,6 +799,7 @@
       <nav class="win-nav">
         <ul>
           <li><a href="#architectural-matrix" class="win-nav-link" onclick="openWinTab('tab-pillars')"><span>&#9881;</span> Solutions</a></li>
+          <li><a href="#sls-section-win" class="win-nav-link" onclick="openWinTab('tab-sls')"><span>&#128190;</span> engine.db (SLS)</a></li>
           <li><a href="./book/" class="win-nav-link"><span>&#128214;</span> The Book</a></li>
           <li><a href="https://github.com/msrjson/engine-lang/tree/main/docs" target="_blank" class="win-nav-link"><span>&#128196;</span> Specs</a></li>
           <li><a href="#layers-win" class="win-nav-link"><span>&#128397;</span> Layers</a></li>
@@ -841,6 +842,9 @@
       <div class="win-tabs-bar">
         <button type="button" class="win-tab active" data-tab="tab-pillars" onclick="openWinTab('tab-pillars')">
           <span>&#9881; Core Architecture &amp; Pillars</span>
+        </button>
+        <button type="button" class="win-tab" data-tab="tab-sls" onclick="openWinTab('tab-sls')">
+          <span>&#128190; SLS &amp; engine.db</span>
         </button>
         <button type="button" class="win-tab" data-tab="tab-ha" onclick="openWinTab('tab-ha')">
           <span>&#127760; HA &amp; Causal Mesh</span>
@@ -955,6 +959,85 @@
               <span class="win-ticker-val">UEFI PE32+ Unikernel</span>
             </div>
           </div>
+        </div>
+
+        <!-- TAB: SLS & ENGINE.DB PERSISTENCE -->
+        <div class="win-tab-content" id="tab-sls">
+          <fieldset class="win-groupbox">
+            <legend>Single-Level Store (SLS) Binary Architecture &amp; engine.db Specification (ENG-SLS-01.1)</legend>
+            <div class="tab-2col">
+              <div>
+                <h3 class="tab-h3">
+                  <span>&#128190;</span>
+                  What is engine.db? Continuous Hardware Memory Persistence
+                </h3>
+                <div class="tab-sub">Abolishing the memory-disk duality: memory-mapping directly to 64-bit virtual memory without external databases.</div>
+                
+                <div class="tab-callout">
+                  <strong>The Core Architectural Breakthrough:</strong> In traditional programming, memory (RAM) and storage (Disk) are separate worlds. You constantly serialize structs into SQL/JSON, push them through network sockets to PostgreSQL/Redis, and run background WAL journals. <strong>In Engine Lang, engine.db IS the memory of the program itself.</strong>
+                </div>
+
+                <p class="tab-text">
+                  Mounted via Direct Access (DAX) filesystems (e.g. <code>ext4 -o dax</code> or NVRAM / CXL buses), <code>engine.db</code> is mapped directly into the process's 64-bit virtual address space. The runtime bypasses the operating system page cache entirely, achieving nanosecond pointer dereferencing directly into durable physical memory.
+                </p>
+
+                <div style="font-weight: bold; color: #000080; font-size: 0.82rem; margin-bottom: 6px;">
+                  &bull; The 4 Contiguous Physical Regions of engine.db:
+                </div>
+                <ul class="tab-checklist">
+                  <li><strong>Region 0 (0 &ndash; 2 MiB) &mdash; Superblock &amp; Global Roots:</strong> 64-byte aligned superblock with Magic signature <code>0x454E4701</code> (<code>ENG\x01</code>), CRC-64/NVME integrity checksum, Monotonic Causal Epoch Counter, and an identical Mirror Superblock at offset 64 KiB for zero-downtime crash recovery.</li>
+                  <li><strong>Region 1 (2 &ndash; 6 MiB) &mdash; Lock-Free Free-Space Bitmap:</strong> 4 MiB managing 33,554,432 pages of 4 KiB each = <strong>128 GiB of addressable memory</strong>. Hardware-speed page allocation using single-cycle CPU instructions: <code>_tzcnt_u64</code> (Trailing Zero Count) and atomic <code>lock bts</code>.</li>
+                  <li><strong>Region 2 (6 &ndash; 16 MiB) &mdash; Causal Journal Ring Buffer:</strong> 10 MiB circular hardware WAL. Commits execute via cache-line flushes (<code>clwb</code>) followed by store serialization (<code>sfence</code>), making transactions durable the instant the CPU instruction finishes.</li>
+                  <li><strong>Region 3 (16 MiB+) &mdash; Continuous Entity Heap:</strong> Stores <code>@persistent entity</code> graphs. Connected by Universal 128-bit Causal Pointers (<code>engine_ptr_t</code>) composed of 32-bit Node ID + 32-bit Epoch ID + 64-bit Physical Offset.</li>
+                </ul>
+              </div>
+
+              <div>
+                <div style="font-weight: bold; color: #000080; font-size: 0.8rem; margin-bottom: 6px;">
+                  &bull; LIVE INSPECTION: enginec inspect /app/data/engine.db
+                </div>
+                <div class="win-inset-dark">
+<span class="code-comment">=== Engine Lang Single-Level Store (.db) Inspection ===</span><br>
+Container Path:      <span class="code-string">/app/data/engine.db</span><br>
+Magic Signature:     <span class="code-hl">0x454E4701 ('ENG\x01' Engine Lang Standard)</span><br>
+Specification Ver:   0x0003 (ENG-SLS-01.1 Core Standard)<br>
+System Flags:        0x0000 (DIRTY: false, ENCRYPTED: false)<br>
+Page Size:           4096 bytes (4 KiB standard page)<br>
+HugePage Size:       2097152 bytes (2 MiB boundary aligned)<br>
+Global Epoch:        #1 (Monotonic Atomic Causal)<br>
+Total Pages:         33,554,432 pages (<span class="code-hl">128 GiB addressable</span>)<br>
+Root Table Offset:   0x00001000 (Fast Graph Lookup)<br>
+Journal Region:      0x00600000 (Region 2 &bull; 10 MiB Ring WAL)<br>
+CRC-64/NVME:         <span class="code-string">0x0B3270B44B4A0AA6 [VALID &bull; VERIFIED]</span><br>
+Crash Consistency:   <span class="code-hl">VERIFIED (Hardware CLWB + SFENCE durable)</span><br>
+Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
+                </div>
+
+                <div class="tab-kpi-bar">
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">128 GiB</span>
+                    <span class="tab-kpi-lbl">Direct Memory</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">64-byte</span>
+                    <span class="tab-kpi-lbl">CLWB Align</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">&lt; 3 ms</span>
+                    <span class="tab-kpi-lbl">Crash Recover</span>
+                  </div>
+                  <div class="tab-kpi-cell">
+                    <span class="tab-kpi-val">CRC-64</span>
+                    <span class="tab-kpi-lbl">NVME Verified</span>
+                  </div>
+                </div>
+
+                <div style="margin-top: 14px; background: #ece8df; border-top: 1px solid var(--win-shadow); border-left: 1px solid var(--win-shadow); border-right: 1px solid var(--win-light); border-bottom: 1px solid var(--win-light); padding: 10px 12px; font-size: 0.8rem; line-height: 1.5;">
+                  <strong>Why No Database Administration?</strong> Because <code>engine.db</code> eliminates external DBMS software. There are no connection pools to tune, no vacuum processes, no SQL injection vectors, and no data migration downtime.
+                </div>
+              </div>
+            </div>
+          </fieldset>
         </div>
 
         <!-- TAB 2: HIGH AVAILABILITY & CAUSAL MESH -->
@@ -1641,6 +1724,85 @@ Page Size:           4096 bytes (HugePage: 2 MiB)<br>
 CRC-64/NVME:         0x0B3270B44B4A0AA6 [VALID]<br>
 Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOW 2.5: SINGLE-LEVEL STORE (engine.db) PHYSICAL ARCHITECTURE -->
+    <section class="win-window" id="sls-section-win">
+      <div class="win-titlebar">
+        <div class="win-title-text">
+          <span class="win-window-icon">&#128190;</span>
+          <span>Single-Level Store (SLS) Media Inspector &mdash; Physical Layout of engine.db (ENG-SLS-01.1)</span>
+        </div>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
+
+      <div class="win-menubar">
+        <span><u>P</u>hysical Map</span>
+        <span><u>H</u>ardware Barriers (CLWB)</span>
+        <span><u>C</u>rash Consistency</span>
+        <span><u>Z</u>ero-ORM Semantics</span>
+        <span><u>D</u>AX Mount</span>
+      </div>
+
+      <div style="padding: 16px; background: var(--win-gray);">
+        <p style="font-size: 0.88rem; color: #111111; line-height: 1.55; margin-bottom: 14px;">
+          The <code>engine.db</code> continuous state container abolishes the 50-year-old memory-storage divide. Below is the exact byte-level physical partitioning of the storage container, engineered for direct CPU execution on non-volatile memory (NVRAM), CXL.mem, and high-performance NVMe DAX filesystems.
+        </p>
+
+        <!-- Physical Memory Map ASCII Diagram inside Sunken Console -->
+        <div style="font-weight: bold; color: #000080; font-size: 0.82rem; margin-bottom: 6px;">
+          &bull; PHYSICAL MEMORY MAP OF THE engine.db CONTINUOUS CONTAINER
+        </div>
+        <div class="win-inset-dark" style="margin-bottom: 16px; font-size: 0.77rem; line-height: 1.45;">
++---------------------------------------------------------------------------------------------------------------+
+|                                    PHYSICAL MAP OF THE engine.db CONTAINER                                    |
++--------------------------+----------------------------+---------------------------+---------------------------+
+|    Region 0 (0 - 2 MiB)  |    Region 1 (2 - 6 MiB)    |    Region 2 (6 - 16 MiB)  |    Region 3 (16 MiB+)     |
+|   SUPERBLOCK &amp; ROOTS     |   FREE-SPACE BITMAP ALLOC  |    CAUSAL JOURNAL WAL     |   CONTINUOUS ENTITY HEAP  |
+|                          |                            |                           |                           |
+| &bull; Magic: 'ENG\x01'       | &bull; 4 MiB Lock-free map   | &bull; 10 MiB Ring Buffer   | &bull; Graph Node Entities    |
+| &bull; Monotonic Epoch #1   | &bull; 33,554,432 4KiB pages   | &bull; Shadow page remap    | &bull; Universal 128-bit ptrs |
+| &bull; CRC-64/NVME Verified | &bull; 128 GiB Memory range    | &bull; Hardware CLWB+SFENCE | &bull; Direct byte addressable|
+| &bull; Mirror at 64 KiB     | &bull; Single-cycle _tzcnt_u64 | &bull; Nanosecond rollback  | &bull; Zero serialization tax |
++--------------------------+----------------------------+---------------------------+---------------------------+
+| &lt;-- HugePage Boundary -&gt; | &lt;-- HugePage Boundary ---&gt; | &lt;-- HugePage Boundary --&gt; | &lt;-- HugePage Boundary --&gt; |
++---------------------------------------------------------------------------------------------------------------+
+        </div>
+
+        <!-- 3 Feature Comparison Columns -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div style="background: #ece8df; border-top: 1px solid var(--win-light); border-left: 1px solid var(--win-light); border-right: 1px solid var(--win-shadow); border-bottom: 1px solid var(--win-shadow); padding: 12px;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #000080; margin-bottom: 6px;">
+              1. Hardware CLWB + SFENCE
+            </div>
+            <p style="font-size: 0.8rem; color: #222222; line-height: 1.45;">
+              When an <code>atomic { ... }</code> mutation completes, modified cache lines are flushed directly to persistent memory via the CPU cache-line flush (<code>clwb</code>) instruction, followed by an <code>sfence</code> barrier. Changes are physically durable in single-digit nanoseconds without waiting for spinning disks or kernel flush daemons.
+            </p>
+          </div>
+
+          <div style="background: #ece8df; border-top: 1px solid var(--win-light); border-left: 1px solid var(--win-light); border-right: 1px solid var(--win-shadow); border-bottom: 1px solid var(--win-shadow); padding: 12px;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #000080; margin-bottom: 6px;">
+              2. Zero Serialization / No ORM
+            </div>
+            <p style="font-size: 0.8rem; color: #222222; line-height: 1.45;">
+              Every entity pointer (<code>&amp;Post</code>) is an actual hardware memory address inside <code>engine.db</code>. There is no conversion to JSON, no B-Tree page packing, and no SQL query parsing. Reading a million entities is as fast as walking an in-memory array (<code>lea [base + offset]</code>).
+            </p>
+          </div>
+
+          <div style="background: #ece8df; border-top: 1px solid var(--win-light); border-left: 1px solid var(--win-light); border-right: 1px solid var(--win-shadow); border-bottom: 1px solid var(--win-shadow); padding: 12px;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #000080; margin-bottom: 6px;">
+              3. Crash Recovery in &lt; 3 Milliseconds
+            </div>
+            <p style="font-size: 0.8rem; color: #222222; line-height: 1.45;">
+              If power is severed instantaneously, the system reboots, recalculates the CRC-64/NVME checksum of Region 0, replays any uncommitted shadow pointers from Region 2, and restores full execution readiness in under 3 milliseconds with zero data loss.
+            </p>
           </div>
         </div>
       </div>
