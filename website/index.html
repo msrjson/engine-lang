@@ -4,10 +4,134 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Engine Lang — Sovereign Systems Programming Language</title>
-  <meta name="description" content="An open, unowned systems programming language unifying Single-Level Store (SLS), Z3 SMT formal verification, and distributed causal mesh networks. Windows 2000 Workstation Architecture.">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <meta name="description" content="Engine Lang is an open, unowned systems programming language unifying Single-Level Store (SLS) persistent memory, Z3 SMT proofs, and causal mesh networks.">
+  <meta name="keywords" content="Engine Lang, systems programming language, Single-Level Store, SLS, engine.db, enginec, Z3 SMT, formal verification, NVRAM, causal mesh, CRDT, UEFI unikernel, bare-metal OS, memory-disk duality, MSR Protocol">
+  <meta name="author" content="The Vance Protocol Group / Engine Lang Core Working Group">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://enginelang.org/">
+  <meta name="theme-color" content="#000080">
+  <meta name="color-scheme" content="light">
+
+  <!-- Favicon & PWA Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="alternate icon" href="/favicon.ico">
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://enginelang.org/">
+  <meta property="og:site_name" content="Engine Lang">
+  <meta property="og:title" content="Engine Lang — Sovereign Systems Programming Language">
+  <meta property="og:description" content="An open, unowned systems programming language unifying Single-Level Store (SLS) persistent memory, Z3 SMT formal proofs, and distributed causal mesh networks.">
+  <meta property="og:image" content="https://enginelang.org/og-image.png">
+  <meta property="og:image:secure_url" content="https://enginelang.org/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Engine Lang Sovereign Systems Programming Architecture">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://enginelang.org/">
+  <meta name="twitter:title" content="Engine Lang — Sovereign Systems Programming Language">
+  <meta name="twitter:description" content="An open, unowned systems programming language unifying Single-Level Store (SLS) persistent memory, Z3 SMT formal proofs, and causal mesh networks.">
+  <meta name="twitter:image" content="https://enginelang.org/og-image.png">
+  <meta name="twitter:image:alt" content="Engine Lang Sovereign Systems Programming Architecture">
+
+  <!-- Structured Data (JSON-LD) for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://enginelang.org/#website",
+        "url": "https://enginelang.org/",
+        "name": "Engine Lang",
+        "description": "Sovereign Systems Programming Language unifying Single-Level Store, Z3 SMT formal verification, and distributed causal mesh networks.",
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://enginelang.org/#software",
+        "name": "Engine Lang",
+        "alternateName": "enginec",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Bare-Metal UEFI, Linux DAX, POSIX",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "softwareVersion": "0.3.1-silicon",
+        "description": "An open, unowned systems programming language unifying Single-Level Store (SLS) persistent memory, Z3 SMT formal verification, and distributed causal mesh networks.",
+        "url": "https://enginelang.org/",
+        "downloadUrl": "https://github.com/msrjson/engine-lang/releases",
+        "codeRepository": "https://github.com/msrjson/engine-lang",
+        "programmingLanguage": {
+          "@type": "ComputerLanguage",
+          "name": "Engine Lang",
+          "alternateName": "enginec"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "The Vance Protocol Group / Engine Lang Core Working Group",
+          "url": "https://enginelang.org/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://enginelang.org/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Engine Lang?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Engine Lang is an open, unowned systems programming language designed to unify persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT-LIB2), and distributed causal mesh replication into a single sovereign compilation unit."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Engine Lang eliminate the memory-disk duality?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Engine Lang uses a Single-Level Store (SLS) architecture where the program state container (engine.db) is mapped directly into 64-bit virtual address space via Direct Access (DAX) NVRAM filesystems. Memory is durable without external databases, SQL drivers, ORMs, or serialization overhead."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is engine.db in Engine Lang?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "engine.db is the continuous hardware-speed state container of Engine Lang. It features a 64-byte aligned superblock, lock-free free-space bitmap allocator, circular causal WAL with CPU cache-line flush (clwb) durability, and a continuous entity heap."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Engine Lang guarantee zero runtime panics?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Engine Lang integrates the Z3 SMT-LIB2 formal prover directly into the compiler toolchain. Refinement types and domain entity invariants are verified mathematically at compile time, eliminating buffer overflows, SQL injections, and null dereference exceptions."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the license and governance model of Engine Lang?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Engine Lang is a sovereign public good distributed freely under the Apache License 2.0. It has no corporate owner or single personal monopoly, guided by the open Vance Protocol Group and the Engine Lang Core Working Group."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -181,10 +305,18 @@
       font-size: 0.85rem;
       user-select: none;
     }
+    h2.win-title-text,
     .win-title-text {
       display: flex;
       align-items: center;
       gap: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      font-family: inherit;
+      line-height: inherit;
     }
     .win-window-icon {
       width: 16px;
@@ -727,7 +859,8 @@
       gap: 2rem;
       margin-bottom: 2rem;
     }
-    .footer-col-win h5 {
+    .footer-col-win h5,
+    .footer-col-win h3.footer-heading {
       font-size: 0.82rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -760,6 +893,53 @@
       font-size: 0.78rem;
       color: #444444;
       font-family: var(--font-system);
+    }
+
+    /* Windows 2000 FAQ Dialog Styles */
+    .win-faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .win-faq-item {
+      background: #ece8df;
+      border-top: 1px solid var(--win-light);
+      border-left: 1px solid var(--win-light);
+      border-right: 1px solid var(--win-shadow);
+      border-bottom: 1px solid var(--win-shadow);
+      padding: 12px 16px;
+      border-radius: 2px;
+    }
+    .win-faq-item[open] {
+      background: #f4f0e8;
+    }
+    .win-faq-question {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #000080;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .win-faq-question:hover {
+      color: #1084d0;
+    }
+    .win-faq-answer {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: #222222;
+      line-height: 1.6;
+      border-top: 1px dotted var(--win-shadow);
+      padding-top: 8px;
+    }
+    .win-faq-answer code {
+      background: #e0dcd4;
+      padding: 2px 5px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      border: 1px solid #b8b4ac;
     }
 
     @media (max-width: 960px) {
@@ -803,6 +983,7 @@
           <li><a href="./book/" class="win-nav-link"><span>&#128214;</span> The Book</a></li>
           <li><a href="https://github.com/msrjson/engine-lang/tree/main/docs" target="_blank" class="win-nav-link"><span>&#128196;</span> Specs</a></li>
           <li><a href="#layers-win" class="win-nav-link"><span>&#128397;</span> Layers</a></li>
+          <li><a href="#faq-win" class="win-nav-link"><span>&#10067;</span> FAQ</a></li>
           <li><a href="Engine_Lang_Whitepaper_EN.pdf" download class="win-nav-link"><span>&#128229;</span> Whitepaper.pdf</a></li>
           <li><a href="https://github.com/msrjson/engine-lang" target="_blank" class="win-nav-link win-nav-btn-primary"><span>&#128279;</span> GitHub &#8599;</a></li>
         </ul>
@@ -839,35 +1020,35 @@
       </div>
 
       <!-- Tab Strip (All Requested Domains Included) -->
-      <div class="win-tabs-bar">
-        <button type="button" class="win-tab active" data-tab="tab-pillars" onclick="openWinTab('tab-pillars')">
+      <div class="win-tabs-bar" role="tablist" aria-label="Engine Lang Domain Solutions">
+        <button type="button" class="win-tab active" data-tab="tab-pillars" role="tab" id="tab-btn-pillars" aria-controls="tab-pillars" aria-selected="true" onclick="openWinTab('tab-pillars')">
           <span>&#9881; Core Architecture &amp; Pillars</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-sls" onclick="openWinTab('tab-sls')">
+        <button type="button" class="win-tab" data-tab="tab-sls" role="tab" id="tab-btn-sls" aria-controls="tab-sls" aria-selected="false" onclick="openWinTab('tab-sls')">
           <span>&#128190; SLS &amp; engine.db</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-ha" onclick="openWinTab('tab-ha')">
+        <button type="button" class="win-tab" data-tab="tab-ha" role="tab" id="tab-btn-ha" aria-controls="tab-ha" aria-selected="false" onclick="openWinTab('tab-ha')">
           <span>&#127760; HA &amp; Causal Mesh</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-ai" onclick="openWinTab('tab-ai')">
+        <button type="button" class="win-tab" data-tab="tab-ai" role="tab" id="tab-btn-ai" aria-controls="tab-ai" aria-selected="false" onclick="openWinTab('tab-ai')">
           <span>&#129504; AI &amp; Agent Swarms</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-web" onclick="openWinTab('tab-web')">
+        <button type="button" class="win-tab" data-tab="tab-web" role="tab" id="tab-btn-web" aria-controls="tab-web" aria-selected="false" onclick="openWinTab('tab-web')">
           <span>&#9889; Web, ERP &amp; Media</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-data" onclick="openWinTab('tab-data')">
+        <button type="button" class="win-tab" data-tab="tab-data" role="tab" id="tab-btn-data" aria-controls="tab-data" aria-selected="false" onclick="openWinTab('tab-data')">
           <span>&#128208; Data Science &amp; Physics</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-os" onclick="openWinTab('tab-os')">
+        <button type="button" class="win-tab" data-tab="tab-os" role="tab" id="tab-btn-os" aria-controls="tab-os" aria-selected="false" onclick="openWinTab('tab-os')">
           <span>&#128187; Bare-Metal OS &amp; Unikernel</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-robotics" onclick="openWinTab('tab-robotics')">
+        <button type="button" class="win-tab" data-tab="tab-robotics" role="tab" id="tab-btn-robotics" aria-controls="tab-robotics" aria-selected="false" onclick="openWinTab('tab-robotics')">
           <span>&#129302; Robotics &amp; Embedded IoT</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-aero" onclick="openWinTab('tab-aero')">
+        <button type="button" class="win-tab" data-tab="tab-aero" role="tab" id="tab-btn-aero" aria-controls="tab-aero" aria-selected="false" onclick="openWinTab('tab-aero')">
           <span>&#128640; Aviation &amp; Aerospace</span>
         </button>
-        <button type="button" class="win-tab" data-tab="tab-blockchain" onclick="openWinTab('tab-blockchain')">
+        <button type="button" class="win-tab" data-tab="tab-blockchain" role="tab" id="tab-btn-blockchain" aria-controls="tab-blockchain" aria-selected="false" onclick="openWinTab('tab-blockchain')">
           <span>&#128279; Sovereign Causal Ledger</span>
         </button>
       </div>
@@ -876,13 +1057,13 @@
       <div class="win-tab-panel">
 
         <!-- TAB 1: CORE ARCHITECTURE & PILLARS (THE HERO) -->
-        <div class="win-tab-content active" id="tab-pillars">
+        <div class="win-tab-content active" id="tab-pillars" role="tabpanel" aria-labelledby="tab-btn-pillars">
           <div class="hero-meta-badge">
             SOVEREIGN PUBLIC GOOD &bull; APACHE 2.0 &bull; MSR PROTOCOL 2.1
           </div>
 
           <h1 class="hero-h1">
-            ABOLISHING THE MEMORY-DISK DUALITY.
+            Engine Lang &mdash; Abolishing the Memory-Disk Duality.
           </h1>
 
           <p class="hero-lead">
@@ -962,7 +1143,7 @@
         </div>
 
         <!-- TAB: SLS & ENGINE.DB PERSISTENCE -->
-        <div class="win-tab-content" id="tab-sls">
+        <div class="win-tab-content" id="tab-sls" role="tabpanel" aria-labelledby="tab-btn-sls">
           <fieldset class="win-groupbox">
             <legend>Single-Level Store (SLS) Binary Architecture &amp; engine.db Specification (ENG-SLS-01.1)</legend>
             <div class="tab-2col">
@@ -1041,7 +1222,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 2: HIGH AVAILABILITY & CAUSAL MESH -->
-        <div class="win-tab-content" id="tab-ha">
+        <div class="win-tab-content" id="tab-ha" role="tabpanel" aria-labelledby="tab-btn-ha">
           <fieldset class="win-groupbox">
             <legend>High Availability, Consensus &amp; Planetary Mesh</legend>
             <div class="tab-2col">
@@ -1116,7 +1297,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 3: AI & AGENT SWARMS -->
-        <div class="win-tab-content" id="tab-ai">
+        <div class="win-tab-content" id="tab-ai" role="tabpanel" aria-labelledby="tab-btn-ai">
           <fieldset class="win-groupbox">
             <legend>Native Machine Learning, Vector Spaces &amp; Autonomous Agent Swarms</legend>
             <div class="tab-2col">
@@ -1187,7 +1368,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 4: WEB, ERP & MEDIA -->
-        <div class="win-tab-content" id="tab-web">
+        <div class="win-tab-content" id="tab-web" role="tabpanel" aria-labelledby="tab-btn-web">
           <fieldset class="win-groupbox">
             <legend>Web Frameworks, High-Scale Publishing &amp; Enterprise ERP Systems</legend>
             <div class="tab-2col">
@@ -1260,7 +1441,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 5: DATA SCIENCE & PHYSICS -->
-        <div class="win-tab-content" id="tab-data">
+        <div class="win-tab-content" id="tab-data" role="tabpanel" aria-labelledby="tab-btn-data">
           <fieldset class="win-groupbox">
             <legend>Data Science, Mathematical Invariants &amp; Computational Physics</legend>
             <div class="tab-2col">
@@ -1336,7 +1517,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 6: BARE-METAL OS & UNIKERNEL -->
-        <div class="win-tab-content" id="tab-os">
+        <div class="win-tab-content" id="tab-os" role="tabpanel" aria-labelledby="tab-btn-os">
           <fieldset class="win-groupbox">
             <legend>Freestanding Bare-Metal Operating Systems &amp; UEFI Unikernels</legend>
             <div class="tab-2col">
@@ -1408,7 +1589,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 7: ROBOTICS & EMBEDDED IOT -->
-        <div class="win-tab-content" id="tab-robotics">
+        <div class="win-tab-content" id="tab-robotics" role="tabpanel" aria-labelledby="tab-btn-robotics">
           <fieldset class="win-groupbox">
             <legend>Hard Real-Time Robotics, Industrial Automation &amp; Embedded Hardware</legend>
             <div class="tab-2col">
@@ -1484,7 +1665,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 8: AVIATION & AEROSPACE -->
-        <div class="win-tab-content" id="tab-aero">
+        <div class="win-tab-content" id="tab-aero" role="tabpanel" aria-labelledby="tab-btn-aero">
           <fieldset class="win-groupbox">
             <legend>Aviation, Aerospace &amp; Safety-Critical Fly-by-Wire Avionics</legend>
             <div class="tab-2col">
@@ -1560,7 +1741,7 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
         </div>
 
         <!-- TAB 9: SOVEREIGN CAUSAL LEDGER -->
-        <div class="win-tab-content" id="tab-blockchain">
+        <div class="win-tab-content" id="tab-blockchain" role="tabpanel" aria-labelledby="tab-btn-blockchain">
           <fieldset class="win-groupbox">
             <legend>Sovereign Causal Mesh: The Zero-Energy Alternative to Blockchain</legend>
             <div class="tab-2col">
@@ -1646,10 +1827,10 @@ Reboot Recovery:     &lt; 3 ms (Instantaneous validation)
     <!-- WINDOW 2: CODE & TERMINAL DUAL SHOWCASE -->
     <section class="win-window">
       <div class="win-titlebar">
-        <div class="win-title-text">
+        <h2 class="win-title-text">
           <span class="win-window-icon">&#128187;</span>
           <span>Dual Verification Environment: examples/04_causal_blog.eng vs engine-genesis-node</span>
-        </div>
+        </h2>
         <div class="win-controls">
           <span class="win-ctrl-btn">&#9472;</span>
           <span class="win-ctrl-btn">&#9633;</span>
@@ -1732,10 +1913,10 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     <!-- WINDOW 2.5: SINGLE-LEVEL STORE (engine.db) PHYSICAL ARCHITECTURE -->
     <section class="win-window" id="sls-section-win">
       <div class="win-titlebar">
-        <div class="win-title-text">
+        <h2 class="win-title-text">
           <span class="win-window-icon">&#128190;</span>
           <span>Single-Level Store (SLS) Media Inspector &mdash; Physical Layout of engine.db (ENG-SLS-01.1)</span>
-        </div>
+        </h2>
         <div class="win-controls">
           <span class="win-ctrl-btn">&#9472;</span>
           <span class="win-ctrl-btn">&#9633;</span>
@@ -1811,10 +1992,10 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     <!-- WINDOW 3: THE 5 SYSTEM LAYERS -->
     <section class="win-window" id="layers-win">
       <div class="win-titlebar">
-        <div class="win-title-text">
+        <h2 class="win-title-text">
           <span class="win-window-icon">&#128397;</span>
           <span>Architectural Decomposition: The 5 System Layers</span>
-        </div>
+        </h2>
         <div class="win-controls">
           <span class="win-ctrl-btn">&#9472;</span>
           <span class="win-ctrl-btn">&#9633;</span>
@@ -1867,10 +2048,10 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     <!-- WINDOW 4: THE OFFICIAL BOOK -->
     <section class="win-window">
       <div class="win-titlebar">
-        <div class="win-title-text">
+        <h2 class="win-title-text">
           <span class="win-window-icon">&#128214;</span>
           <span>The Official Engineering Book: From the Silicon Island to the Causal Cosmos</span>
-        </div>
+        </h2>
         <div class="win-controls">
           <span class="win-ctrl-btn">&#9472;</span>
           <span class="win-ctrl-btn">&#9633;</span>
@@ -1896,9 +2077,9 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
           </div>
 
           <div>
-            <h4 style="font-size: 1.15rem; font-weight: 700; color: #000080; margin-bottom: 8px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #000080; margin-bottom: 8px;">
               Read The Complete 14-Chapter Treatise Online
-            </h4>
+            </h3>
             <p style="font-size: 0.86rem; color: #222222; line-height: 1.6; margin-bottom: 16px;">
               An authoritative volume detailing how systems engineering transitions from legacy memory-storage duality to a sovereign causal computing fabric. Complete with mathematical proofs, memory layout diagrams, and unikernel boot specifications.
             </p>
@@ -1919,10 +2100,10 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     <!-- WINDOW 5: NORMATIVE SPECIFICATIONS MATRIX -->
     <section class="win-window">
       <div class="win-titlebar">
-        <div class="win-title-text">
+        <h2 class="win-title-text">
           <span class="win-window-icon">&#128196;</span>
           <span>Normative Specifications &amp; Open Standards Matrix</span>
-        </div>
+        </h2>
         <div class="win-controls">
           <span class="win-ctrl-btn">&#9472;</span>
           <span class="win-ctrl-btn">&#9633;</span>
@@ -1932,7 +2113,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
 
       <div style="padding: 16px; background: var(--win-gray);">
         <div class="specs-grid-win">
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank" class="spec-card-win" aria-label="Read Specification ENG-SPEC-03.1">
             <div>
               <div class="spec-code-win">ENG-SPEC-03.1</div>
               <div class="spec-title-win">Grammar &amp; Type System</div>
@@ -1941,7 +2122,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank" class="spec-card-win" aria-label="Read Specification ENG-SLS-01.1">
             <div>
               <div class="spec-code-win">ENG-SLS-01.1</div>
               <div class="spec-title-win">Single-Level Store Binary</div>
@@ -1950,7 +2131,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank" class="spec-card-win" aria-label="Read Specification ENG-CG-01.1">
             <div>
               <div class="spec-code-win">ENG-CG-01.1</div>
               <div class="spec-title-win">Silicon Codegen &amp; Zero-UB</div>
@@ -1959,7 +2140,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/BARE_METAL_UNIKERNEL_SPEC.md" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/BARE_METAL_UNIKERNEL_SPEC.md" target="_blank" class="spec-card-win" aria-label="Read Specification ENG-OS-01.1">
             <div>
               <div class="spec-code-win">ENG-OS-01.1</div>
               <div class="spec-title-win">Bare-Metal UEFI Unikernel</div>
@@ -1968,7 +2149,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/CONFRONTING_THE_LISP_TRAP.md" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/docs/CONFRONTING_THE_LISP_TRAP.md" target="_blank" class="spec-card-win" aria-label="Read Specification ENG-TRAP-01.1">
             <div>
               <div class="spec-code-win">ENG-TRAP-01.1</div>
               <div class="spec-title-win">Confronting the Lisp Trap</div>
@@ -1977,7 +2158,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
             <span class="spec-link-win">Read Specification &#8599;</span>
           </a>
 
-          <a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank" class="spec-card-win">
+          <a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank" class="spec-card-win" aria-label="Inspect Manifest MSR-JSON-2.1">
             <div>
               <div class="spec-code-win">MSR-JSON-2.1</div>
               <div class="spec-title-win">MSR Protocol Manifest</div>
@@ -1989,6 +2170,91 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
       </div>
     </section>
 
+    <!-- WINDOW 6: FREQUENTLY ASKED QUESTIONS (FAQ) & ARCHITECTURAL INTELLIGENCE -->
+    <section class="win-window" id="faq-win">
+      <div class="win-titlebar">
+        <h2 class="win-title-text">
+          <span class="win-window-icon">&#10067;</span>
+          <span>Frequently Asked Questions &amp; Technical Architecture Knowledge Base &mdash; [faq.hlp]</span>
+        </h2>
+        <div class="win-controls">
+          <span class="win-ctrl-btn">&#9472;</span>
+          <span class="win-ctrl-btn">&#9633;</span>
+          <span class="win-ctrl-btn">&#10005;</span>
+        </div>
+      </div>
+
+      <div class="win-menubar">
+        <span><u>C</u>ontents</span>
+        <span><u>I</u>ndex</span>
+        <span><u>S</u>earch SMT Invariants</span>
+        <span><u>B</u>ack</span>
+        <span><u>P</u>rint</span>
+      </div>
+
+      <div style="padding: 16px; background: var(--win-gray);">
+        <p style="font-size: 0.88rem; color: #111111; line-height: 1.55; margin-bottom: 14px;">
+          Direct answers to foundational engineering questions regarding Single-Level Store (SLS), formal SMT proofs, causal mesh replication, and the sovereign public good governance of Engine Lang.
+        </p>
+
+        <div class="win-faq-list">
+          <details class="win-faq-item" open>
+            <summary class="win-faq-question">
+              <span>&#9654;</span> What is Engine Lang and what problem does it solve?
+            </summary>
+            <div class="win-faq-answer">
+              Engine Lang is an open, unowned systems programming language designed to unify persistent memory (Single-Level Store), compile-time mathematical proofs (Z3 SMT-LIB2), and distributed causal mesh replication into a single sovereign compilation unit. It abolishes the 50-year-old memory-disk duality, eliminating the serialization tax (serde), external databases, and runtime garbage collection overhead.
+            </div>
+          </details>
+
+          <details class="win-faq-item">
+            <summary class="win-faq-question">
+              <span>&#9654;</span> How does Engine Lang eliminate the memory-disk duality?
+            </summary>
+            <div class="win-faq-answer">
+              Engine Lang utilizes a Single-Level Store (SLS) architecture where the state container (<code>engine.db</code>) is memory-mapped directly into 64-bit virtual memory via Direct Access (DAX) NVRAM filesystems. Memory is durable by default. Data mutations are committed directly via hardware CPU cache-line flush (<code>clwb</code>) and <code>sfence</code> instructions, removing the need for relational databases, Redis caches, or SQL ORM translation layers.
+            </div>
+          </details>
+
+          <details class="win-faq-item">
+            <summary class="win-faq-question">
+              <span>&#9654;</span> What is engine.db in Engine Lang?
+            </summary>
+            <div class="win-faq-answer">
+              <code>engine.db</code> is the continuous, byte-addressable state container of Engine Lang. Specified in <strong>ENG-SLS-01.1</strong>, it contains 4 contiguous physical regions: Region 0 (64-byte aligned Superblock &amp; Mirror at 64 KiB), Region 1 (Lock-free Free-Space Bitmap allocating 128 GiB with single-cycle <code>_tzcnt_u64</code> instructions), Region 2 (Circular Causal WAL Ring Buffer), and Region 3 (Continuous 128-bit Entity Heap).
+            </div>
+          </details>
+
+          <details class="win-faq-item">
+            <summary class="win-faq-question">
+              <span>&#9654;</span> How does Engine Lang guarantee zero runtime panics and zero SQL injections?
+            </summary>
+            <div class="win-faq-answer">
+              By integrating the Z3 SMT formal prover directly into the <code>enginec</code> compiler. Refinement types (e.g. <code>type Slug = Text where len(self) &gt;= 3</code>) and entity domain invariants are validated mathematically prior to code emission. If an invalid transition or arithmetic boundary could trigger an out-of-bounds error or negative balance, the code fails compilation with a mathematical proof counterexample.
+            </div>
+          </details>
+
+          <details class="win-faq-item">
+            <summary class="win-faq-question">
+              <span>&#9654;</span> What is the license and ownership model of Engine Lang?
+            </summary>
+            <div class="win-faq-answer">
+              Engine Lang is a sovereign public good distributed freely under the <strong>Apache License 2.0</strong>. It possesses no corporate owner, foundation monopoly, or single personal proprietor, evolving in the public domain under the stewardship of <strong>The Vance Protocol Group / Engine Lang Core Working Group</strong>.
+            </div>
+          </details>
+
+          <details class="win-faq-item">
+            <summary class="win-faq-question">
+              <span>&#9654;</span> Can Engine Lang boot directly on bare metal without an operating system?
+            </summary>
+            <div class="win-faq-answer">
+              Yes. The <code>enginec</code> compiler supports generating freestanding UEFI 2.10 PE32+ binaries (unikernels) that boot directly on x86_64 silicon (such as QEMU/KVM, Firecracker, or physical bare-metal hardware) in under 12 milliseconds, eliminating OS kernel overhead and hypervisor vulnerabilities.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Windows 2000 System Footer & Taskbar -->
@@ -1996,7 +2262,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     <div class="container">
       <div class="footer-cols-win">
         <div class="footer-col-win">
-          <h5>Engine Lang Workstation</h5>
+          <h3 class="footer-heading">Engine Lang Workstation</h3>
           <p style="font-size: 0.83rem; line-height: 1.5; color: #222222; margin-bottom: 10px;">
             A decentralized, unowned systems programming language. Built as an open public good under Apache License 2.0.
           </p>
@@ -2006,18 +2272,20 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
         </div>
 
         <div class="footer-col-win">
-          <h5>Documentation</h5>
+          <h3 class="footer-heading">Documentation</h3>
           <ul>
             <li><a href="./book/">The Official Book</a></li>
+            <li><a href="#faq-win">Frequently Asked Questions (FAQ)</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/SPECIFICATION.md" target="_blank">Language Specification</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENGINE_DB_SLS_LAYOUT.md" target="_blank">SLS Binary Layout</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/ENG_SILICON_CODEGEN_SPEC.md" target="_blank">Silicon Codegen Spec</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/docs/DISTRIBUTED_MESH_WIRE.md" target="_blank">Causal Mesh Wire Protocol</a></li>
+            <li><a href="sitemap.xml" target="_blank">Sitemap (sitemap.xml)</a></li>
           </ul>
         </div>
 
         <div class="footer-col-win">
-          <h5>Governance &amp; RFCs</h5>
+          <h3 class="footer-heading">Governance &amp; RFCs</h3>
           <ul>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/CONTRIBUTING.md" target="_blank">Contributing Guide</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a></li>
@@ -2027,7 +2295,7 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
         </div>
 
         <div class="footer-col-win">
-          <h5>Artifacts</h5>
+          <h3 class="footer-heading">Artifacts</h3>
           <ul>
             <li><a href="Engine_Lang_Whitepaper_EN.pdf" download>Whitepaper (PDF)</a></li>
             <li><a href="https://github.com/msrjson/engine-lang/blob/main/msr.json" target="_blank">MSR Manifest (msr.json)</a></li>
@@ -2044,18 +2312,22 @@ Crash Consistency:   VERIFIED (Hardware CLWB + SFENCE durable)
     </div>
   </footer>
 
-  <!-- Instant Client-Side Tab Switching Script -->
+  <!-- Instant Client-Side Tab Switching Script with ARIA State Sync -->
   <script>
     function openWinTab(tabId) {
       document.querySelectorAll('.win-tab').forEach(function(btn) {
         btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
       });
       document.querySelectorAll('.win-tab-content').forEach(function(pane) {
         pane.classList.remove('active');
       });
       var activeBtn = document.querySelector('.win-tab[data-tab="' + tabId + '"]');
       var activePane = document.getElementById(tabId);
-      if (activeBtn) activeBtn.classList.add('active');
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-selected', 'true');
+      }
       if (activePane) activePane.classList.add('active');
     }
   </script>

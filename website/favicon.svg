@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#d4d0c8"/>
+  <rect x="2" y="2" width="28" height="28" fill="#000080"/>
+  <!-- 3D Bevel -->
+  <line x1="2" y1="2" x2="30" y2="2" stroke="#ffffff" stroke-width="2"/>
+  <line x1="2" y1="2" x2="2" y2="30" stroke="#ffffff" stroke-width="2"/>
+  <line x1="2" y1="30" x2="30" y2="30" stroke="#404040" stroke-width="2"/>
+  <line x1="30" y1="2" x2="30" y2="30" stroke="#404040" stroke-width="2"/>
+  <!-- Typography -->
+  <text x="16" y="21" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="12" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">ENG</text>
+</svg>
