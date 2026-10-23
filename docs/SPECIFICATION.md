@@ -15,6 +15,15 @@ Engine Lang is an infrastructure-agnostic, statically typed systems programming 
 - **Unit Return on Mutation**: Assignment operations (`=`, `+=`, `-=`, etc.) return the unit type `()`, preventing unintentional assignment expressions.
 - **Atomic Confinement**: Any mutation of persistent entities must occur inside an `atomic { ... }` block, compiling directly to hardware cache line writebacks (`clwb`) and memory fences (`sfence`).
 
+### 1.2. Dual Storage Paradigm & Quantum Era Preparedness
+Engine Lang provides developers with explicit control over persistent memory representation:
+- **Transparent SLS (`@persistent(storage: "engine.db")`)**: Default zero-overhead direct graph representation aligned to 64 bytes. Optimal for rapid prototyping, sub-microsecond local analytics, and embedded IoT edge nodes.
+- **Blinded UUIDv7 Quantum-Resistant Graph (`@persistent(storage: "uuid7_blinded", cipher: "pqc_kyber1024")`)**: Memory layout and persistent extensions resolve entities strictly through 128-bit RFC 9562 `UUIDv7` tokens. Graph edges and node topologies are cryptographically blinded with NIST FIPS 203/204 Post-Quantum Lattice algorithms (`ML-KEM-1024` and `ML-DSA-87`), preventing quantum side-channel profiling and memory snooping.
+
+### 1.3. Level-5 Human Ergonomics vs Deterministic Agent Machine Rigor
+- **Level-5 Human Simplicity**: Zero database setup, zero connection strings, zero migrations; clean and declarative syntax accessible to novice programmers, allowing "Hello World" in 3 lines while maintaining expressive power.
+- **AI Agent Precision**: LL(1) deterministic grammar without backtracking, automated Z3 SMT formal proof verification of all contracts and invariants, and hardware compilation directly to LLVM IR, bare-metal UEFI unikernels, or quantum-safe distributed networks.
+
 ---
 
 ## 2. Complete Formal Grammar (EBNF)

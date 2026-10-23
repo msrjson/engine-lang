@@ -106,6 +106,46 @@ pub struct EntityDecl {
     pub loc: SourceLocation,
 }
 
+impl EntityDecl {
+    pub fn is_persistent(&self) -> bool {
+        self.directives.iter().any(|d| d.name == "persistent")
+    }
+
+    pub fn storage_mode(&self) -> String {
+        for d in &self.directives {
+            if d.name == "persistent" {
+                for (arg_name, expr) in &d.args {
+                    if arg_name.as_deref() == Some("storage") {
+                        if let ExprKind::Literal(Literal::String(s)) = &expr.kind {
+                            return s.clone();
+                        }
+                    }
+                }
+            }
+        }
+        "engine.db".to_string()
+    }
+
+    pub fn is_blinded_uuid7(&self) -> bool {
+        self.storage_mode() == "uuid7_blinded"
+    }
+
+    pub fn pqc_cipher(&self) -> Option<String> {
+        for d in &self.directives {
+            if d.name == "persistent" {
+                for (arg_name, expr) in &d.args {
+                    if arg_name.as_deref() == Some("cipher") {
+                        if let ExprKind::Literal(Literal::String(s)) = &expr.kind {
+                            return Some(s.clone());
+                        }
+                    }
+                }
+            }
+        }
+        None
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct EntityField {
     pub directives: Vec<Directive>,

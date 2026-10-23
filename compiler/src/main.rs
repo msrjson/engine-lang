@@ -81,6 +81,14 @@ enum Commands {
         /// Initial size in Megabytes (minimum 16 MiB)
         #[arg(short, long, default_value = "32")]
         size_mib: u64,
+
+        /// Storage model mode: 'engine.db' (transparent graph) or 'uuid7_blinded' (quantum-resistant blinded graph)
+        #[arg(long, default_value = "engine.db")]
+        storage_mode: String,
+
+        /// Post-quantum cryptographic suite (e.g. 'ML-KEM-1024', 'ML-DSA-87')
+        #[arg(long)]
+        pqc: Option<String>,
     },
 
     /// Start the embedded PostgreSQL wire protocol virtual bridge (engine-bridge)
@@ -368,6 +376,17 @@ fn main() -> ExitCode {
                 println!("⚡ Polyglot Data Layer active: {} external datasource(s) synchronized with local SLS cache", datasources_count);
             }
 
+            let has_blinded_entities = module.declarations.iter().any(|d| {
+                if let ast::TopLevelDecl::Entity(e) = d {
+                    e.is_blinded_uuid7()
+                } else {
+                    false
+                }
+            });
+            if has_blinded_entities {
+                println!("🔒 Quantum-Resistant Blinded UUIDv7 Persistence active (Zero-Metadata Leakage)");
+            }
+
             println!("🌐 Causal mesh ready: Local node #1 active");
             println!("⚙️  Executing action 'main' via causal runtime engine...");
 
@@ -402,18 +421,35 @@ fn main() -> ExitCode {
             }
         },
 
-        Commands::InitDb { path, size_mib } => {
+        Commands::InitDb {
+            path,
+            size_mib,
+            storage_mode,
+            pqc,
+        } => {
             if let Some(parent) = path.parent() {
                 let _ = fs::create_dir_all(parent);
             }
             println!(
-                "📦 Creating {} MiB Single-Level Store (.db) at: {}",
+                "📦 Creating {} MiB Single-Level Store (.db) at: {} [mode: {}]",
                 size_mib,
-                path.display()
+                path.display(),
+                storage_mode
             );
-            match memory::EngineDbStorage::initialize_db(&path, size_mib) {
+            match memory::EngineDbStorage::initialize_db_with_mode(
+                &path,
+                size_mib,
+                &storage_mode,
+                pqc.as_deref(),
+            ) {
                 Ok(()) => {
-                    println!("✅ Successfully initialized Engine Lang storage container (Region 0 Superblock, Region 1 Bitmap, Region 2 Journal).");
+                    if storage_mode == "uuid7_blinded" || pqc.is_some() {
+                        println!("✅ Successfully initialized Quantum-Resistant Blinded UUIDv7 SLS container.");
+                        println!("   🔒 PQC Lattice Seal: Active (FIPS 203 ML-KEM-1024 / Crystals-Dilithium)");
+                        println!("   🏷️  Addressing: Strict UUIDv7 Monotonic Token Resolution (Zero-Metadata Leakage)");
+                    } else {
+                        println!("✅ Successfully initialized Engine Lang storage container (Region 0 Superblock, Region 1 Bitmap, Region 2 Journal).");
+                    }
                     ExitCode::SUCCESS
                 }
                 Err(err) => {
@@ -982,5 +1018,61 @@ action compute_distance() {
         let content = fs::read(&temp_efi).unwrap();
         assert_eq!(&content[0..2], b"MZ");
         let _ = fs::remove_file(temp_efi);
+    }
+
+    #[test]
+    fn test_uuidv7_generation_and_validation() {
+        let u1 = memory::UUIDv7::generate();
+        let u2 = memory::UUIDv7::generate();
+
+        assert!(u1.is_valid(), "u1 must be a valid RFC 9562 UUIDv7");
+        assert!(u2.is_valid(), "u2 must be a valid RFC 9562 UUIDv7");
+        assert_ne!(u1, u2, "Generated UUIDv7 values must be distinct");
+
+        let s1 = u1.to_string();
+        assert_eq!(s1.len(), 36, "UUIDv7 string length must be 36 characters");
+        assert_eq!(&s1[14..15], "7", "UUIDv7 version character must be '7'");
+
+        let parsed = memory::UUIDv7::parse(&s1).expect("Parsing valid UUIDv7 must succeed");
+        assert_eq!(u1, parsed);
+    }
+
+    #[test]
+    fn test_blinded_uuid7_graph_persistence() {
+        let node_id = memory::UUIDv7::generate();
+        let record = memory::UUIDv7BlindedStore::create_blinded_node(
+            node_id,
+            42, // Tenant
+            100, // Epoch
+            "pqc_kyber1024",
+        );
+
+        assert!(memory::UUIDv7BlindedStore::verify_blinded_record(&record));
+        assert_eq!(record.node_id, node_id);
+        assert_eq!(record.blinded_causal_epoch, 100);
+        assert_ne!(record.tenant_blind_hash, [0u8; 16]);
+        assert_ne!(record.pqc_signature_prefix, [0u8; 16]);
+    }
+
+    #[test]
+    fn test_blinded_uuid7_smt_verification() {
+        let code = r#"
+module Test::QuantumSafe;
+
+@persistent(storage: "uuid7_blinded", cipher: "pqc_kyber1024")
+entity SovereignNode {
+    id: UUIDv7,
+    trust_score: Int,
+    invariant { self.trust_score >= 0 }
+}
+"#;
+        let mut l = lexer::Lexer::new(code);
+        let tokens = l.tokenize().unwrap();
+        let mut p = parser::Parser::new(tokens);
+        let m = p.parse_module().unwrap();
+        let reports = smt::ModuleVerifier::verify_module(&m).unwrap();
+
+        assert!(reports.iter().any(|r| r.contains("Post-Quantum UUIDv7 Blinded Identity")));
+        assert!(reports.iter().any(|r| r.contains("Entity invariant")));
     }
 }

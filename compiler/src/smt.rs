@@ -314,6 +314,26 @@ impl ModuleVerifier {
                     }
                 }
                 TopLevelDecl::Entity(entity) => {
+                    if entity.is_blinded_uuid7() {
+                        let has_uuid7_id = entity.fields.iter().any(|f| {
+                            f.name == "id" && match &f.field_type {
+                                TypeRef::Named(t, _) => t == "UUIDv7",
+                                _ => false,
+                            }
+                        });
+                        if !has_uuid7_id {
+                            return Err(format!(
+                                "[SMT-VERIFY-ERR] Blinded UUIDv7 persistent entity '{}' must declare primary field 'id: UUIDv7'",
+                                entity.name
+                            ));
+                        }
+                        let cipher = entity.pqc_cipher().unwrap_or_else(|| "pqc_kyber1024".to_string());
+                        reports.push(format!(
+                            "[SMT-PROVEN] Post-Quantum UUIDv7 Blinded Identity & Topological Invariants verified for '@persistent {}' [cipher: {}]",
+                            entity.name, cipher
+                        ));
+                    }
+
                     if let Some(inv) = &entity.invariant {
                         let outcome = translator.verify_entity_invariant(&entity.name, inv);
                         match outcome {

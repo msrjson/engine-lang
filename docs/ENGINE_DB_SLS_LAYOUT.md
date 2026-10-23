@@ -60,6 +60,8 @@ Region 0 spans 2,097,152 bytes (2 MiB). The primordial header starts at offset z
   - `Bit 0 (DIRTY)`: Process did not shut down cleanly; triggers journal recovery on boot.
   - `Bit 1 (ENCRYPTED)`: Heap pages encrypted with AES-256-XTS via hardware key.
   - `Bit 2 (COMPACTING)`: Background Causal GC was active during power cutoff.
+  - `Bit 3 (UUID7_BLINDED)`: Blinded UUIDv7 graph persistence; all nodes and edges indexed purely via RFC 9562 UUIDv7 tokens with blinded memory topology.
+  - `Bit 4 (PQC_SEALED)`: Cryptographic state and causal records sealed with Post-Quantum Lattice algorithms (FIPS 203 ML-KEM-1024 / Crystals-Dilithium).
 - **Global Epoch Counter** (`0x10` - 8 bytes): Monotonically increasing atomic causal epoch counter.
 - **CRC-64/NVME** (`0x38` - 8 bytes): Cyclic redundancy checksum computed over the first 56 bytes.
 
@@ -165,6 +167,17 @@ References between entities (`Ref<T>`) are stored as 16-byte scalar addresses:
 - **Cluster Node ID** (32 bits): `0x0000_0000` indicates local host memory. Any non-zero value targets a remote node in the P2P mesh, triggering transparent RDMA/QUIC resolution.
 - **Epoch ID** (32 bits): Causal epoch of pointer generation.
 - **Physical File Offset** (64 bits): Absolute byte offset within the `.db` container file.
+
+### 5.3. Quantum-Resistant Blinded Graph Record (`BlindedGraphRecord` - 64 bytes)
+When storage mode is set to `uuid7_blinded` via `@persistent(storage: "uuid7_blinded")` or container flag `FLAG_UUID7_BLINDED`:
+- Physical file offsets are decoupled from memory references.
+- All nodes and edges in graph memory are indexed and navigated strictly via RFC 9562 `UUIDv7` tokens.
+- Layout:
+  - `+0x00` (16 bytes): Primary Monotonic Node Identifier (`UUIDv7`).
+  - `+0x10` (8 bytes): Blinded Causal Epoch (`uint64_t`).
+  - `+0x18` (16 bytes): Zero-Knowledge Tenant Seal (`uint128_t`).
+  - `+0x28` (16 bytes): Post-Quantum Lattice State Seal (`ML-KEM-1024` / `ML-DSA-87` prefix).
+  - `+0x38` (8 bytes): Node Flags (Bit 0: Encrypted Payload, Bit 1: Opaque Topology).
 
 ---
 

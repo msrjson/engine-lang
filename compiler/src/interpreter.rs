@@ -13,6 +13,7 @@ pub enum RuntimeValue {
     Boolean(bool),
     Vector(Vec<f64>),
     List(Vec<RuntimeValue>),
+    UUIDv7(String),
     Entity {
         name: String,
         fields: HashMap<String, RuntimeValue>,
@@ -31,6 +32,7 @@ impl std::fmt::Display for RuntimeValue {
             RuntimeValue::Boolean(b) => write!(f, "{}", b),
             RuntimeValue::Vector(v) => write!(f, "Vector[{}]", v.len()),
             RuntimeValue::List(l) => write!(f, "List[{}]", l.len()),
+            RuntimeValue::UUIDv7(u) => write!(f, "{}", u),
             RuntimeValue::Entity { name, fields } => write!(f, "{} {{ {:?} }}", name, fields),
             RuntimeValue::Unit => write!(f, "()"),
             RuntimeValue::None => write!(f, "None"),
@@ -283,6 +285,11 @@ impl<'a> Interpreter<'a> {
                 }
 
                 if let ExprKind::Identifier(fname) = &callee.kind {
+                    if fname == "uuidv7" || fname == "uuidv7_new" || fname == "UUIDv7::new" || fname == "generate_uuid" {
+                        let u = crate::memory::UUIDv7::generate();
+                        return Ok(RuntimeValue::UUIDv7(u.to_string()));
+                    }
+
                     if fname == "println" || fname.contains("println") {
                         let msg = eval_args
                             .iter()

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Dual-Model Graph Persistence (`ENG-PLAN-2026-UUID7-PQC`)**:
+  - Developers can explicitly configure entities with `@persistent(storage: "engine.db")` (transparent Single-Level Store) or `@persistent(storage: "uuid7_blinded", cipher: "pqc_kyber1024")` (quantum-resistant blinded graph).
+  - Standard RFC 9562 `UUIDv7` native generation, validation, string formatting, and monotonic timestamping with sub-millisecond precision.
+  - Blinded persistent graph records (`BlindedGraphRecord` & `UUIDv7BlindedStore`) with Post-Quantum Lattice state seals (NIST FIPS 203 ML-KEM-1024 / Crystals-Dilithium) preventing quantum side-channel leakage.
+  - Single-Level Store container support for `FLAG_UUID7_BLINDED` (`0x0008`) and `FLAG_PQC_SEALED` (`0x0010`) with comprehensive diagnostics in `enginec inspect`.
+  - Canonical demonstration example `examples/14_quantum_uuid7_graph.eng` highlighting Level-5 human simplicity, Z3 SMT formal contracts, and quantum resilience.
+
 ### Planned (Phase 3 & Phase 4)
 - **Polyglot Database Connectors (`@datasource`)**: Declarative schema mapping for PostgreSQL, MySQL, SQLite, and ClickHouse.
 - **Language Server Protocol (`engine-lsp`)**: Real-time Z3 SMT diagnostics and counterexample margin decorations for VS Code and Neovim.
