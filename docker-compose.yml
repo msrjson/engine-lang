@@ -27,6 +27,10 @@ services:
     image: engine-lang-engine-genesis
     container_name: engine-framework-test
     restart: unless-stopped
+    ports:
+      - "8091:8090"  # HTTP / @boundary Web Gateway de Teste
+      - "5443:5432"  # PostgreSQL Wire Protocol Bridge de Teste
+      - "9444:9443"  # Distributed Causal Mesh Wire Protocol de Teste
     volumes:
       - ./framework:/app/framework
       - ./data:/app/data

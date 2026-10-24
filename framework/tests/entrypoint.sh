@@ -34,10 +34,10 @@ echo "\n==================================================================="
 echo "✅ ALL DOCKER TEST CONTAINER CHECKS COMPLETED SUCCESSFULLY"
 echo "==================================================================="
 
-# If running as entrypoint PID 1 with KEEP_ALIVE=true, keep container running
+# If running as entrypoint PID 1 with KEEP_ALIVE=true, keep container running and serve HTTP/SQL boundaries
 if [ "$$" -eq 1 ] && [ "$KEEP_ALIVE" = "true" ] && [ "$1" != "once" ]; then
-    echo "⚡ Test container daemon active (sleep infinity for interactive testing)."
-    exec sleep infinity
+    echo "⚡ Test container daemon active. Starting Engine Web Gateway (:8090) and PostgreSQL bridge (:5432)..."
+    exec enginec serve --http-port 8090 --pg-port 5432 --host 0.0.0.0 --db /app/data/engine_test.db
 else
     echo "🏁 Test execution completed (exit code 0)."
     exit 0
