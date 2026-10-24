@@ -283,7 +283,20 @@ fn handle_http_request(stream: &mut TcpStream, state: Arc<Mutex<BlogState>>) -> 
     let path = parts[1];
 
     if method == "GET" && (path == "/" || path == "/index.html") {
-        let html = render_html_dashboard(&state.lock().unwrap());
+        let custom_index_paths = [
+            "/app/framework/public/index.html",
+            "./framework/public/index.html",
+            "../framework/public/index.html",
+            "public/index.html",
+        ];
+        let mut custom_html = None;
+        for p in &custom_index_paths {
+            if let Ok(content) = std::fs::read_to_string(p) {
+                custom_html = Some(content);
+                break;
+            }
+        }
+        let html = custom_html.unwrap_or_else(|| render_html_dashboard(&state.lock().unwrap()));
         send_response(stream, "200 OK", "text/html; charset=utf-8", &html)?;
     } else if method == "GET" && path == "/api/v1/categories" {
         let st = state.lock().unwrap();

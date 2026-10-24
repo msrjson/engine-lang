@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine Forge — The Full-Stack Web Framework for Engine Lang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #06090e;
+            --bg-surface: #0d121c;
+            --bg-card: #131b2a;
+            --bg-card-hover: #192438;
+            --border-subtle: #1e293b;
+            --border-active: #334155;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --code-bg: #090d16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        }
+
+        header {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .brand-name span {
+            color: var(--accent);
+        }
+
+        .system-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 var(--success-glow); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px transparent; }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; }
+        }
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 820px;
+            margin: 30px auto 60px;
+        }
+
+        .version-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.04em;
+        }
+
+        .hero h1 {
+            font-size: 58px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 19px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 680px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 26px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 18px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--border-active);
+            transform: translateY(-2px);
+        }
+
+        /* Metrics Strip */
+        .metrics-strip {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 60px;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--border-active);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .metric-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card);
+            border-color: rgba(59, 130, 246, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Console / Code Box */
+        .terminal-box {
+            width: 100%;
+            background: var(--code-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            background: #0d121c;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .terminal-dots span {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .terminal-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #e2e8f0;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .code-keyword { color: #f43f5e; font-weight: 600; }
+        .code-entity { color: #38bdf8; font-weight: 600; }
+        .code-prop { color: #cbd5e1; }
+        .code-attr { color: #a78bfa; }
+        .code-comment { color: #64748b; font-style: italic; }
+
+        /* Live Tester */
+        .tester-card {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: left;
+        }
+
+        .tester-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .tester-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .test-output {
+            background: var(--code-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 24px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 38px; }
+            .hero p { font-size: 16px; }
+            header { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="/" class="brand-logo">
+            <div class="logo-symbol">⚙️</div>
+            <div class="brand-name">Engine <span>Forge</span></div>
+        </a>
+        <div class="system-pill">
+            <span class="pulse-dot"></span>
+            <span>Kernel Online &bull; SLS Active (engine.db)</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="version-tag">ENG-SPEC-03.1 &bull; FRAMEWORK V0.1.0-ALPHA</div>
+            <h1>The Full-Stack Web Framework for Engine Lang</h1>
+            <p>
+                Experience Laravel-inspired developer ergonomics unified with native silicon persistence. Zero SQL queries, zero ORM hydration, and formal Z3 SMT contract proofs.
+            </p>
+            <div class="cta-group">
+                <button class="btn btn-primary" onclick="testEndpoint('/api/v1/posts')">⚡ Test API Endpoints</button>
+                <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/categories')">📁 Inspect SLS Categories</button>
+            </div>
+        </section>
+
+        <!-- System Architecture Metrics -->
+        <section class="metrics-strip">
+            <div class="metric-card">
+                <div class="metric-label">Persistence Engine</div>
+                <div class="metric-value">Single-Level Store</div>
+                <div class="metric-sub">Direct Non-Volatile Memory</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Durability Guarantee</div>
+                <div class="metric-value">CLWB + SFENCE</div>
+                <div class="metric-sub">Silicon Cache-Line Flushes</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Formal Verification</div>
+                <div class="metric-value">Z3 SMT Prover</div>
+                <div class="metric-sub">Zero Runtime Type Mismatches</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Edge Boundary Gateway</div>
+                <div class="metric-value">Port :8090</div>
+                <div class="metric-sub">Host Mapped to :8091</div>
+            </div>
+        </section>
+
+        <!-- Core Architectural Pillars -->
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <h3>Eloquent on Silicon</h3>
+                <p>
+                    Persistent entities map directly to <code>engine.db</code>. No migrations, no query builders, and zero serialization overhead. Sub-microsecond pointer dereference.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📐</div>
+                <h3>Formal SMT Validation</h3>
+                <p>
+                    Replaces runtime regex validators with mathematical proofs. Refinement types guarantee boundary safety and eliminate invalid state transitions at compile time.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Sanctum & Quantum Gates</h3>
+                <p>
+                    Cryptographic UUIDv7 persistent sessions, constant-time password verification, and strict tenant guards preventing memory boundary violations.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Artisan on Hardware</h3>
+                <p>
+                    Native console tooling directly integrated into the compiler. Inspect binary Superblocks, check Z3 proofs, and execute atomic mutations from the CLI.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Boundary Gateway</h3>
+                <p>
+                    Eliminates Nginx, PHP-FPM, and reverse proxies. Native HTTP boundary maps REST routes directly into typed action handlers.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Native AI Vectors</h3>
+                <p>
+                    First-class support for 1536-dimensional semantic vector embeddings directly on entities with hardware SIMD cosine similarity operators (<code>&lt;=&gt;</code>).
+                </p>
+            </div>
+        </section>
+
+        <!-- Code Architecture Sample -->
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <span class="dot-red"></span>
+                    <span class="dot-yellow"></span>
+                    <span class="dot-green"></span>
+                </div>
+                <div class="terminal-title">framework/app/models/user.eng</div>
+            </div>
+            <div class="terminal-body">
+<span class="code-comment">// Eloquent on Silicon: SMT Refinement & Atomic Durability</span>
+<span class="code-keyword">type</span> <span class="code-entity">SafeEmail</span> = <span class="code-prop">Text</span> <span class="code-keyword">where</span> len(value) &gt;= <span class="code-prop">5</span> &amp;&amp; len(value) &lt;= <span class="code-prop">254</span>;
+<span class="code-keyword">type</span> <span class="code-entity">PasswordHash</span> = <span class="code-prop">Text</span> <span class="code-keyword">where</span> len(value) == <span class="code-prop">64</span>;
+
+<span class="code-attr">@persistent</span>
+<span class="code-attr">@TenantGuard(strict: true)</span>
+<span class="code-keyword">entity</span> <span class="code-entity">User</span> {
+    id: <span class="code-prop">UUIDv7</span>,
+    email: <span class="code-entity">SafeEmail</span>,
+    password_hash: <span class="code-entity">PasswordHash</span>,
+    posts_count: <span class="code-prop">Int</span> <span class="code-keyword">where</span> value &gt;= <span class="code-prop">0</span>,
+
+    <span class="code-keyword">invariant</span> {
+        len(self.email) &gt;= <span class="code-prop">5</span> &amp;&amp;
+        self.posts_count &gt;= <span class="code-prop">0</span>
+    }
+}
+            </div>
+        </div>
+
+        <!-- Live Endpoint Tester -->
+        <section class="tester-card">
+            <h3>⚡ Live Boundary Gateway Inspector</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                Execute live requests against the Engine Forge kernel running inside this container.
+            </p>
+            <div class="tester-actions">
+                <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/categories')">GET /api/v1/categories</button>
+                <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/posts')">GET /api/v1/posts</button>
+                <button class="btn btn-secondary" onclick="testLogin()">POST /api/v1/auth/login</button>
+            </div>
+            <div id="output" class="test-output">// Select an action above to inspect live Single-Level Store response...</div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            &copy; 2026 <strong>Engine Forge</strong> &bull; Apache License 2.0 &bull; The Vance Protocol Group
+        </div>
+        <div>
+            Engine Lang Standard: <code>ENG-SPEC-03.1</code> &bull; Single-Level Store: <code>ENG-SLS-01.1</code>
+        </div>
+    </footer>
+
+    <script>
+        async function testEndpoint(endpoint) {
+            const out = document.getElementById('output');
+            out.textContent = `Fetching ${endpoint}...`;
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                out.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                out.textContent = `Error: ${err.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const out = document.getElementById('output');
+            out.textContent = 'Authenticating with Engine Forge Sanctum gate...';
+            try {
+                const res = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'architect@engine-lang.org' })
+                });
+                const data = await res.json();
+                out.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                out.textContent = `Error: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
+
