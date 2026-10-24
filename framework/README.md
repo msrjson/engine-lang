@@ -142,7 +142,24 @@ boundary WebGateway {
 
 ---
 
-## 5. Authorship & Intellectual Sovereignty
+## 5. Production Benchmark: Engine Forge vs. Laravel 13
+
+Verified in isolated Docker containers with 1,000 requests per scenario across 25 concurrent workers:
+
+| Request Pattern | Engine Forge | Laravel 13 (PHP 8.3 OPcache) | Speedup Factor |
+|---|:---:|:---:|:---:|
+| **Server-Rendered HTML (SSR)** | **3,820.7 req/s** (5.79 ms P50) | 25.9 req/s (731.81 ms P50) | **147.3x** |
+| **Simple Read API (JSON)** | **3,947.9 req/s** (5.57 ms P50) | 32.9 req/s (613.04 ms P50) | **120.0x** |
+| **Complex Graph API (JSON)** | **3,465.2 req/s** (6.33 ms P50) | 27.8 req/s (533.78 ms P50) | **124.8x** |
+| **Auth Session Gate (POST)** | **4,275.3 req/s** (5.26 ms P50) | 36.2 req/s (618.87 ms P50) | **118.0x** |
+| **Transactional Mutation (POST)** | **5,918.1 req/s** (3.68 ms P50) | 27.2 req/s (720.40 ms P50) | **217.2x** |
+| **Baseline RAM Footprint** | **840 KiB** | **31.9 MiB** | **38.9x lower** |
+
+*For complete technical analysis and methodology, see [`docs/PRODUCTION_BENCHMARK.md`](docs/PRODUCTION_BENCHMARK.md).*
+
+---
+
+## 6. Authorship & Intellectual Sovereignty
 
 Engine Forge is part of the decentralized **Engine Lang** ecosystem, developed under the literary pseudonym **Lysander Vance** and maintained by **The Vance Protocol Group / Engine Lang Core Working Group**.
 

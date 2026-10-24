@@ -29,3 +29,14 @@ data/*.efi
 *.log
 .env
 .env.*
+
+# Benchmark dependencies and runtime artifacts
+benchmarks/laravel-app/vendor/
+benchmarks/laravel-app/.env
+benchmarks/laravel-app/storage/*.key
+benchmarks/laravel-app/storage/framework/cache/data/*
+benchmarks/laravel-app/storage/framework/sessions/*
+benchmarks/laravel-app/storage/framework/views/*
+benchmarks/laravel-app/database/*.sqlite*
+vendor/
+

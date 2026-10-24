@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Production Latency & Performance Benchmark Suite (`benchmarks/` & `framework/docs/PRODUCTION_BENCHMARK.md`)**:
+  - Comprehensive real-time production benchmark comparing Engine Forge (Engine Lang SLS) with Laravel 13 (PHP 8.3 CLI Server with OPcache JIT + SQLite) across 5 core production request patterns.
+  - Multi-container Docker isolation testing with 1,000 requests per scenario across 25 parallel workers.
+  - Demonstrated up to **241.1x higher mutation throughput** (6,889.7 req/s vs 28.6 req/s), **147.3x faster server-rendered HTML**, and **99.5% latency reduction** (P50 3.15 ms vs 633.79 ms).
+  - Validated **38.9x lower baseline memory footprint** (840 KiB vs 31.9 MiB), demonstrating high-density multi-tenant capabilities.
+  - Added automated comparative harness `benchmarks/benchmark_comparison.py`, raw telemetry dataset `benchmarks/benchmark_results.json`, and technical analysis documentation.
 - **Engine Forge Full-Stack Web Framework (`framework/`)**:
   - Full-stack Laravel-inspired web framework written natively in Engine Lang (`.eng`) with Single-Level Store silicon persistence (`engine.db`) and Z3 SMT formal verification.
   - **Eloquent on Silicon**: `@persistent entity` models mapped directly into non-volatile silicon pages with hardware durability (`atomic { ... }` with `CLWB + SFENCE`), eliminating SQL migrations, query builders, and object hydration latency.
