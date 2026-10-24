@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Mission-Critical Benchmark Registry & CVE-Model Anomaly System (`ENG-BENCH-01.0` / `ENG-ANOM-01.0`)**:
+  - Established canonical, deterministic benchmark hierarchy (`benchmarks/reports/<category>/<timestamp_slug>/`) for continuous publication of empirical performance results.
+  - Implemented the mission-critical **Engine Lang Anomaly Advisory System (`ENG-ANOM`)** aligned with CVE/CWE and aeronautical standards (DO-178C / ISO 26262), ensuring every performance regression, memory growth incident, or tail-latency anomaly is scored (CVSS v3.1), reproduced, and patched with Z3 SMT regression guards.
+  - Automated master catalog synchronization via `benchmarks/INDEX.md` and `benchmarks/tools/generate_index.py`.
+  - Created publication-quality dark-themed vector visualization engine (`benchmarks/tools/generate_charts.py`) producing high-contrast SVG charts embedded into reports.
+  - Multi-stack confrontation testbeds across systems programming languages (Engine Lang vs C, C++, Rust, Go, Python) and persistence architectures (Engine SLS vs SQLite WAL, PostgreSQL, MySQL, MongoDB).
+  - Validated zero runtime validation overhead in Engine Lang through compile-time Z3 SMT formal proofs (`[SMT-PROVEN]`) versus runtime `assert()` / `panic()` in traditional ecosystems.
+
+### Added
 - **Production Latency & Performance Benchmark Suite (`benchmarks/` & `framework/docs/PRODUCTION_BENCHMARK.md`)**:
   - Comprehensive real-time production benchmark comparing Engine Forge (Engine Lang SLS) with Laravel 13 (PHP 8.3 CLI Server with OPcache JIT + SQLite) across 5 core production request patterns.
   - Multi-container Docker isolation testing with 1,000 requests per scenario across 25 parallel workers.

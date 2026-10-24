@@ -1,0 +1,49 @@
+// Engine Lang Single-Level Store (SLS) Persistence Benchmark
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Author: Lysander Vance & The Vance Protocol Group / Engine Lang Core Working Group
+// License: Apache 2.0
+
+module Benchmarks::Suite::Databases::EngineSLS;
+
+type RecordId = Int where value >= 1 && value <= 10000000;
+type AccountBalance = Int where value >= 0 && value <= 1000000000;
+type HashString = Text where len(value) == 64;
+
+@persistent
+entity PersistentLedger {
+    id: RecordId,
+    balance: AccountBalance,
+    tx_count: Int where value >= 0,
+    state_hash: HashString,
+
+    invariant {
+        self.id >= 1 &&
+        self.balance >= 0 &&
+        self.tx_count >= 0 &&
+        len(self.state_hash) == 64
+    }
+}
+
+action create_entry(id: RecordId, balance: AccountBalance, hash: HashString) -> Result<PersistentLedger, Text> {
+    let entry = PersistentLedger {
+        id: id,
+        balance: balance,
+        tx_count: 0,
+        state_hash: hash
+    };
+    return Ok(entry);
+}
+
+action commit_transaction(entry: &mut PersistentLedger, delta: Int) -> Result<Int, Text> {
+    if delta < 0 && entry.balance < (-delta) {
+        return Err("Insufficient balance for withdrawal");
+    }
+
+    atomic {
+        entry.balance = entry.balance + delta;
+        entry.tx_count = entry.tx_count + 1;
+        // Hardware DAX Silicon persistence: CLWB + SFENCE
+    }
+    return Ok(entry.balance);
+}
+

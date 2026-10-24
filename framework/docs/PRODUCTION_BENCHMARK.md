@@ -1,9 +1,9 @@
 # Engine Forge vs. Laravel 13: Production Latency & Performance Benchmark
 
-**Specification Reference**: `ENG-SPEC-03.1` / `ENG-SLS-01.1`  
-**Author**: Lysander Vance & The Vance Protocol Group / Engine Lang Core Working Group  
-**Status**: Official Technical Evaluation  
-**License**: Apache License 2.0  
+**Specification Reference**: `ENG-SPEC-03.1` / `ENG-SLS-01.1`
+**Author**: Lysander Vance & The Vance Protocol Group / Engine Lang Core Working Group
+**Status**: Official Technical Evaluation
+**License**: Apache License 2.0
 
 ---
 
@@ -40,7 +40,11 @@ The goal of this benchmark is to discover the production ceiling of the unified 
 
 ---
 
-## 3. Results Matrix
+## 3. Results Matrix & Visualizations
+
+![Throughput Confrontation](../../benchmarks/reports/frameworks/2026-10-24_120800_engine_vs_laravel/chart_rps_comparison.svg)
+
+![Median Latency P50](../../benchmarks/reports/frameworks/2026-10-24_120800_engine_vs_laravel/chart_latency_p50.svg)
 
 | Scenario | Request Pattern | Engine Lang (Req/s) | Laravel 13 (Req/s) | Latency P50 (Engine vs Laravel) | Latency P99 (Engine vs Laravel) | Speedup Factor |
 |---|---|:---:|:---:|:---:|:---:|:---:|
@@ -78,3 +82,4 @@ Measurements captured live during execution via `docker stats`:
 
 4. **Extreme Infrastructure Density**:
    Because each Engine Lang node consumes under 1 MiB of RAM, cloud hosts can accommodate hundreds of independent multi-tenant environments on standard commodity hardware, drastically reducing cloud hosting expenditure.
+

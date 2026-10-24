@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%" style="background:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<defs>
+  <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00f2fe"/><stop offset="100%" stop-color="#4facfe"/></linearGradient>
+  <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f857a6"/><stop offset="100%" stop-color="#ff5858"/></linearGradient>
+  <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#d97706"/></linearGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00f2fe" flood-opacity="0.25"/></filter>
+</defs>
+<text x="90" y="36" fill="#f0f6fc" font-size="18" font-weight="700" letter-spacing="-0.02em">Storage Engine Confrontation: Transactional Write Throughput</text>
+<text x="90" y="56" fill="#8b949e" font-size="12">Discrete ACID write mutations with hardware persistence durability (Thousands of TPS)</text>
+<rect x="718" y="36" width="12" height="12" rx="3" fill="url(#greenGrad)"/>
+<text x="735" y="47" fill="#c9d1d9" font-size="12" font-weight="500">Transactional Write TPS (k)</text>
+<line x1="90" y1="380.0" x2="750" y2="380.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="384.0" fill="#8b949e" font-size="11" text-anchor="end">0</text>
+<line x1="90" y1="320.0" x2="750" y2="320.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="324.0" fill="#8b949e" font-size="11" text-anchor="end">104</text>
+<line x1="90" y1="260.0" x2="750" y2="260.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="264.0" fill="#8b949e" font-size="11" text-anchor="end">207</text>
+<line x1="90" y1="200.0" x2="750" y2="200.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="204.0" fill="#8b949e" font-size="11" text-anchor="end">310</text>
+<line x1="90" y1="140.0" x2="750" y2="140.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="144.0" fill="#8b949e" font-size="11" text-anchor="end">414</text>
+<line x1="90" y1="80.0" x2="750" y2="80.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="84.0" fill="#8b949e" font-size="11" text-anchor="end">518</text>
+<text x="20" y="230.0" fill="#8b949e" font-size="11" text-anchor="middle" transform="rotate(-90 20 230.0)">Kilo TPS (Thousands/sec)</text>
+<text x="172.5" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Engine SLS (DAX)</text>
+<rect x="114.75" y="119.13043478260869" width="111.49999999999999" height="260.8695652173913" rx="4" fill="url(#greenGrad)" />
+<text x="170.5" y="113.13043478260869" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">450.0</text>
+<text x="337.5" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">SQLite 3.46 (WAL)</text>
+<rect x="279.75" y="300.40579710144925" width="111.49999999999999" height="79.59420289855073" rx="4" fill="url(#greenGrad)" />
+<text x="335.5" y="294.40579710144925" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">137.3</text>
+<text x="502.5" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Postgres (WAL)</text>
+<rect x="444.75" y="369.27536231884056" width="111.49999999999999" height="10.724637681159422" rx="4" fill="url(#greenGrad)" />
+<text x="667.5" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">MySQL (InnoDB)</text>
+<rect x="609.75" y="371.768115942029" width="111.49999999999999" height="8.231884057971014" rx="4" fill="url(#greenGrad)" />
+<line x1="90" y1="380" x2="750" y2="380" stroke="#30363d" stroke-width="1.5"/>
+<text x="750" y="435" fill="#6e7681" font-size="10" text-anchor="end">Engine Lang Core Working Group • Specification ENG-SPEC-03.1</text>
+</svg>

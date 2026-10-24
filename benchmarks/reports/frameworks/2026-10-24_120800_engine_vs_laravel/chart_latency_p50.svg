@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%" style="background:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<defs>
+  <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00f2fe"/><stop offset="100%" stop-color="#4facfe"/></linearGradient>
+  <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f857a6"/><stop offset="100%" stop-color="#ff5858"/></linearGradient>
+  <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#d97706"/></linearGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00f2fe" flood-opacity="0.25"/></filter>
+</defs>
+<text x="90" y="36" fill="#f0f6fc" font-size="18" font-weight="700" letter-spacing="-0.02em">Engine Forge vs. Laravel 13: Median Latency P50</text>
+<text x="90" y="56" fill="#8b949e" font-size="12">Median response time in milliseconds (Lower is Better)</text>
+<rect x="718" y="36" width="12" height="12" rx="3" fill="#ff5858"/>
+<text x="735" y="47" fill="#c9d1d9" font-size="12" font-weight="500">Laravel 13 (ms)</text>
+<rect x="578" y="36" width="12" height="12" rx="3" fill="url(#cyanGrad)"/>
+<text x="595" y="47" fill="#c9d1d9" font-size="12" font-weight="500">Engine Forge (ms)</text>
+<line x1="90" y1="380.0" x2="750" y2="380.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="384.0" fill="#8b949e" font-size="11" text-anchor="end">0</text>
+<line x1="90" y1="320.0" x2="750" y2="320.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="324.0" fill="#8b949e" font-size="11" text-anchor="end">168</text>
+<line x1="90" y1="260.0" x2="750" y2="260.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="264.0" fill="#8b949e" font-size="11" text-anchor="end">337</text>
+<line x1="90" y1="200.0" x2="750" y2="200.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="204.0" fill="#8b949e" font-size="11" text-anchor="end">505</text>
+<line x1="90" y1="140.0" x2="750" y2="140.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="144.0" fill="#8b949e" font-size="11" text-anchor="end">673</text>
+<line x1="90" y1="80.0" x2="750" y2="80.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="84.0" fill="#8b949e" font-size="11" text-anchor="end">842</text>
+<text x="20" y="230.0" fill="#8b949e" font-size="11" text-anchor="middle" transform="rotate(-90 20 230.0)">Latency P50 (ms)</text>
+<text x="156.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">SSR Welcome</text>
+<rect x="109.8" y="377.9360287743968" width="42.199999999999996" height="2.0639712256032245" rx="4" fill="url(#cyanGrad)" filter="url(#glow)"/>
+<rect x="156.0" y="119.13043478260869" width="42.199999999999996" height="260.8695652173913" rx="4" fill="#ff5858" />
+<text x="177.1" y="113.13043478260869" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">731.8</text>
+<text x="288.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Simple API</text>
+<rect x="241.8" y="378.0144525515354" width="42.199999999999996" height="1.9855474484645876" rx="4" fill="url(#cyanGrad)" filter="url(#glow)"/>
+<rect x="288.0" y="161.46858028604476" width="42.199999999999996" height="218.53141971395524" rx="4" fill="#ff5858" />
+<text x="309.1" y="155.46858028604476" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">613.0</text>
+<text x="420.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Graph API</text>
+<rect x="373.8" y="377.7435340486928" width="42.199999999999996" height="2.2564659513071526" rx="4" fill="url(#cyanGrad)" filter="url(#glow)"/>
+<rect x="420.0" y="189.72252835881017" width="42.199999999999996" height="190.27747164118983" rx="4" fill="#ff5858" />
+<text x="441.1" y="183.72252835881017" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">533.8</text>
+<text x="552.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Auth Gate</text>
+<rect x="505.8" y="378.12495878295806" width="42.199999999999996" height="1.8750412170419621" rx="4" fill="url(#cyanGrad)" filter="url(#glow)"/>
+<rect x="552.0" y="159.39035019187088" width="42.199999999999996" height="220.60964980812912" rx="4" fill="#ff5858" />
+<text x="573.1" y="153.39035019187088" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">618.9</text>
+<text x="684.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Mutation</text>
+<rect x="637.8" y="378.6881840914992" width="42.199999999999996" height="1.3118159085008407" rx="4" fill="url(#cyanGrad)" filter="url(#glow)"/>
+<rect x="684.0" y="123.19777704238982" width="42.199999999999996" height="256.8022229576102" rx="4" fill="#ff5858" />
+<text x="705.1" y="117.19777704238982" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">720.4</text>
+<line x1="90" y1="380" x2="750" y2="380" stroke="#30363d" stroke-width="1.5"/>
+<text x="750" y="435" fill="#6e7681" font-size="10" text-anchor="end">Engine Lang Core Working Group • Specification ENG-SPEC-03.1</text>
+</svg>

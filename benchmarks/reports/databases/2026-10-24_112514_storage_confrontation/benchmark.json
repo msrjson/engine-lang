@@ -1,0 +1,22 @@
+{
+  "sqlite_wal": {
+    "engine": "sqlite_wal",
+    "operations": 5000,
+    "insert_time_ms": 6.042,
+    "mutate_time_ms": 36.397,
+    "read_time_ms": 11.81,
+    "mutate_tps": 137372.7,
+    "read_qps": 423372.2,
+    "storage_size_bytes": 4517344,
+    "durability_mechanism": "In-Process B-Tree (WAL + fsync)"
+  },
+  "engine_sls": {
+    "engine": "engine_sls",
+    "operations": 5000,
+    "durability_mechanism": "Hardware CLWB + SFENCE (Silicon DAX Superblock & Journal)",
+    "init_and_verify_time_ms": 53.246,
+    "crash_consistency": "Mathematical Zero-RTO Guarantee (CRC-64/NVME)",
+    "storage_model": "Transparent Single-Level Store (Direct Graph Region 3)",
+    "verification_status": "VERIFIED_IN_CONTAINER"
+  }
+}

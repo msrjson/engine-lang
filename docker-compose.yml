@@ -13,6 +13,7 @@ services:
       - ./data:/app/data
       - ./examples:/app/examples
       - ./framework:/app/framework
+      - ./benchmarks:/app/benchmarks
     environment:
       - ENGINE_ENV=production
       - ENGINE_DB_PATH=/app/data/engine.db
@@ -34,6 +35,7 @@ services:
     volumes:
       - ./framework:/app/framework
       - ./data:/app/data
+      - ./benchmarks:/app/benchmarks
     environment:
       - ENGINE_ENV=testing
       - ENGINE_DB_PATH=/app/data/engine_test.db

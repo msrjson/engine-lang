@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%" style="background:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<defs>
+  <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00f2fe"/><stop offset="100%" stop-color="#4facfe"/></linearGradient>
+  <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f857a6"/><stop offset="100%" stop-color="#ff5858"/></linearGradient>
+  <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#d97706"/></linearGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00f2fe" flood-opacity="0.25"/></filter>
+</defs>
+<text x="90" y="36" fill="#f0f6fc" font-size="18" font-weight="700" letter-spacing="-0.02em">Multi-Language Confrontation: Entity Invariant & Mutation Ops/Sec</text>
+<text x="90" y="56" fill="#8b949e" font-size="12">100,000 iterations measuring memory state mutation & invariant enforcement (Millions/sec)</text>
+<rect x="718" y="36" width="12" height="12" rx="3" fill="url(#cyanGrad)"/>
+<text x="735" y="47" fill="#c9d1d9" font-size="12" font-weight="500">Million Ops/Sec</text>
+<line x1="90" y1="380.0" x2="750" y2="380.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="384.0" fill="#8b949e" font-size="11" text-anchor="end">0</text>
+<line x1="90" y1="320.0" x2="750" y2="320.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="324.0" fill="#8b949e" font-size="11" text-anchor="end">89</text>
+<line x1="90" y1="260.0" x2="750" y2="260.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="264.0" fill="#8b949e" font-size="11" text-anchor="end">179</text>
+<line x1="90" y1="200.0" x2="750" y2="200.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="204.0" fill="#8b949e" font-size="11" text-anchor="end">268</text>
+<line x1="90" y1="140.0" x2="750" y2="140.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="144.0" fill="#8b949e" font-size="11" text-anchor="end">357</text>
+<line x1="90" y1="80.0" x2="750" y2="80.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="80" y="84.0" fill="#8b949e" font-size="11" text-anchor="end">446</text>
+<text x="20" y="230.0" fill="#8b949e" font-size="11" text-anchor="middle" transform="rotate(-90 20 230.0)">Million Operations / Second</text>
+<text x="156.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Rust</text>
+<rect x="109.8" y="119.13043478260869" width="88.39999999999999" height="260.8695652173913" rx="4" fill="url(#cyanGrad)" />
+<text x="154.0" y="113.13043478260869" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">388.1</text>
+<text x="288.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Go</text>
+<rect x="241.8" y="167.59396390441728" width="88.39999999999999" height="212.40603609558272" rx="4" fill="url(#cyanGrad)" />
+<text x="286.0" y="161.59396390441728" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">316.0</text>
+<text x="420.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">C++</text>
+<rect x="373.8" y="214.10819712534868" width="88.39999999999999" height="165.89180287465132" rx="4" fill="url(#cyanGrad)" />
+<text x="418.0" y="208.10819712534868" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">246.8</text>
+<text x="552.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">C</text>
+<rect x="505.8" y="289.7946517594076" width="88.39999999999999" height="90.2053482405924" rx="4" fill="url(#cyanGrad)" />
+<text x="550.0" y="283.7946517594076" fill="#f0f6fc" font-size="10" font-weight="700" text-anchor="middle">134.2</text>
+<text x="684.0" y="404" fill="#c9d1d9" font-size="12" font-weight="600" text-anchor="middle">Python</text>
+<rect x="637.8" y="374.42770240749246" width="88.39999999999999" height="5.5722975925075335" rx="4" fill="url(#cyanGrad)" />
+<line x1="90" y1="380" x2="750" y2="380" stroke="#30363d" stroke-width="1.5"/>
+<text x="750" y="435" fill="#6e7681" font-size="10" text-anchor="end">Engine Lang Core Working Group • Specification ENG-SPEC-03.1</text>
+</svg>

@@ -1,0 +1,38 @@
+// Engine Lang Runtime Confrontation Workload
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Author: Lysander Vance & The Vance Protocol Group / Engine Lang Core Working Group
+// License: Apache 2.0
+
+module Benchmarks::Suite::Runtimes::Workload;
+
+type RecordId = Int where value >= 1 && value <= 10000000;
+type AccountBalance = Int where value >= 0 && value <= 1000000000;
+type HashString = Text where len(value) == 64;
+
+@persistent
+entity LedgerRecord {
+    id: RecordId,
+    balance: AccountBalance,
+    tx_count: Int where value >= 0,
+    state_hash: HashString,
+
+    invariant {
+        self.id >= 1 &&
+        self.balance >= 0 &&
+        self.tx_count >= 0 &&
+        len(self.state_hash) == 64
+    }
+}
+
+action mutate_record(record: &mut LedgerRecord, delta: Int) -> Result<Int, Text> {
+    if delta < 0 && record.balance < (-delta) {
+        return Err("Insufficient balance");
+    }
+
+    atomic {
+        record.balance = record.balance + delta;
+        record.tx_count = record.tx_count + 1;
+    }
+    return Ok(record.balance);
+}
+

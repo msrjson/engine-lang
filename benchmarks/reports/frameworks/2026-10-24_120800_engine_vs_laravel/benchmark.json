@@ -1,0 +1,269 @@
+[
+  {
+    "scenario": {
+      "id": "ssr_html",
+      "name": "Scenario 1: Server-Rendered HTML (SSR Welcome)",
+      "method": "GET",
+      "engine_url": "http://127.0.0.1:8091/",
+      "laravel_url": "http://127.0.0.1:8000/",
+      "headers": {
+        "Accept": "text/html"
+      },
+      "body": null
+    },
+    "engine": {
+      "target": "Engine Lang - Scenario 1: Server-Rendered HTML (SSR Welcome)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8091/",
+      "rps": 3160.574797809137,
+      "total_time_s": 0.3163981440000043,
+      "mean_ms": 7.4154694110047785,
+      "min_ms": 0.8745040001940652,
+      "p50_ms": 6.649015999983021,
+      "p90_ms": 11.863173999927312,
+      "p95_ms": 14.617604000022766,
+      "p99_ms": 20.611996000070576,
+      "max_ms": 27.088851000144132,
+      "throughput_mb_s": 64.37037981225198,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "laravel": {
+      "target": "Laravel 13 - Scenario 1: Server-Rendered HTML (SSR Welcome)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/",
+      "rps": 26.468800084046055,
+      "total_time_s": 37.78032992899989,
+      "mean_ms": 927.5652005579975,
+      "min_ms": 84.7334420000152,
+      "p50_ms": 618.3692109998447,
+      "p90_ms": 1342.2205479998865,
+      "p95_ms": 2164.4337319999067,
+      "p99_ms": 7735.346357000026,
+      "max_ms": 8604.981695000106,
+      "throughput_mb_s": 1.7771558116122192,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "speedup": 119.40755862651132,
+    "lat_reduction_pct": 98.92474982879044
+  },
+  {
+    "scenario": {
+      "id": "read_categories",
+      "name": "Scenario 2: Simple Read API (11 Categories JSON)",
+      "method": "GET",
+      "engine_url": "http://127.0.0.1:8091/api/v1/categories",
+      "laravel_url": "http://127.0.0.1:8000/api/v1/categories",
+      "headers": {
+        "Accept": "application/json"
+      },
+      "body": null
+    },
+    "engine": {
+      "target": "Engine Lang - Scenario 2: Simple Read API (11 Categories JSON)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8091/api/v1/categories",
+      "rps": 2076.2904695488837,
+      "total_time_s": 0.48162817999991603,
+      "mean_ms": 11.133526119999715,
+      "min_ms": 0.7967259998622467,
+      "p50_ms": 10.373889999982566,
+      "p90_ms": 19.209596999871792,
+      "p95_ms": 21.435870000004797,
+      "p99_ms": 27.723630000082267,
+      "max_ms": 37.73017299999992,
+      "throughput_mb_s": 2.035547831245663,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "laravel": {
+      "target": "Laravel 13 - Scenario 2: Simple Read API (11 Categories JSON)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/api/v1/categories",
+      "rps": 39.69194994611273,
+      "total_time_s": 25.194025522999937,
+      "mean_ms": 624.7693097389979,
+      "min_ms": 54.46019100008925,
+      "p50_ms": 542.2467749999669,
+      "p90_ms": 879.0721129998929,
+      "p95_ms": 1254.9299759998576,
+      "p99_ms": 1969.8748089999754,
+      "max_ms": 1987.6937939998243,
+      "throughput_mb_s": 0.0403515039849817,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "speedup": 52.3101150829761,
+    "lat_reduction_pct": 98.08686921190389
+  },
+  {
+    "scenario": {
+      "id": "read_posts",
+      "name": "Scenario 3: Complex Graph Read API (11 Rich Posts JSON)",
+      "method": "GET",
+      "engine_url": "http://127.0.0.1:8091/api/v1/posts",
+      "laravel_url": "http://127.0.0.1:8000/api/v1/posts",
+      "headers": {
+        "Accept": "application/json"
+      },
+      "body": null
+    },
+    "engine": {
+      "target": "Engine Lang - Scenario 3: Complex Graph Read API (11 Rich Posts JSON)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8091/api/v1/posts",
+      "rps": 2099.295677902433,
+      "total_time_s": 0.4763502400001016,
+      "mean_ms": 11.277720013995122,
+      "min_ms": 1.9718860000921268,
+      "p50_ms": 11.196115999837275,
+      "p90_ms": 13.957055999981094,
+      "p95_ms": 14.363335999860283,
+      "p99_ms": 15.710330000047179,
+      "max_ms": 19.01827200003936,
+      "throughput_mb_s": 222.0287227392747,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "laravel": {
+      "target": "Laravel 13 - Scenario 3: Complex Graph Read API (11 Rich Posts JSON)",
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/api/v1/posts",
+      "rps": 34.157028896508116,
+      "total_time_s": 29.276551043999916,
+      "mean_ms": 716.5611049279973,
+      "min_ms": 62.18077899984564,
+      "p50_ms": 566.5123730000232,
+      "p90_ms": 1271.3486909999574,
+      "p95_ms": 1544.5879900000818,
+      "p99_ms": 2443.126674000041,
+      "max_ms": 2598.6961339999652,
+      "throughput_mb_s": 0.15111394600954164,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "speedup": 61.460137070558986,
+    "lat_reduction_pct": 98.02367670443857
+  },
+  {
+    "scenario": {
+      "id": "auth_login",
+      "name": "Scenario 4: Stateless Auth Session Token (POST JSON)",
+      "method": "POST",
+      "engine_url": "http://127.0.0.1:8091/api/v1/auth/login",
+      "laravel_url": "http://127.0.0.1:8000/api/v1/auth/login",
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "body": "{\"email\": \"architect@engine-lang.org\"}"
+    },
+    "engine": {
+      "target": "Engine Lang - Scenario 4: Stateless Auth Session Token (POST JSON)",
+      "method": "POST",
+      "url": "http://127.0.0.1:8091/api/v1/auth/login",
+      "rps": 3252.9031347242403,
+      "total_time_s": 0.3074177000000873,
+      "mean_ms": 6.691076844000236,
+      "min_ms": 0.5050059999121004,
+      "p50_ms": 5.989000999989003,
+      "p90_ms": 9.975565999866376,
+      "p95_ms": 13.958811000065907,
+      "p99_ms": 22.024627000064356,
+      "max_ms": 27.395694000006188,
+      "throughput_mb_s": 0.31952764785442045,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "laravel": {
+      "target": "Laravel 13 - Scenario 4: Stateless Auth Session Token (POST JSON)",
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/api/v1/auth/login",
+      "rps": 31.815947785194307,
+      "total_time_s": 31.430778261000114,
+      "mean_ms": 779.1522045410009,
+      "min_ms": 49.344043000019155,
+      "p50_ms": 496.6467609999654,
+      "p90_ms": 1004.882440999836,
+      "p95_ms": 1246.3452100000723,
+      "p99_ms": 8465.278021999893,
+      "max_ms": 8723.489078000057,
+      "throughput_mb_s": 0.003125231382250799,
+      "status_codes": {
+        "200": 1000
+      },
+      "total_requests": 1000
+    },
+    "speedup": 102.24127713202978,
+    "lat_reduction_pct": 98.79411254229655
+  },
+  {
+    "scenario": {
+      "id": "post_mutation",
+      "name": "Scenario 5: Transactional Mutation / Persistence (POST)",
+      "method": "POST",
+      "engine_url": "http://127.0.0.1:8091/api/v1/posts",
+      "laravel_url": "http://127.0.0.1:8000/api/v1/posts",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "body": "title=Benchmark+Post&slug=bench-item&category=Operadores+%26+SIMD&content=Silicon+Durability"
+    },
+    "engine": {
+      "target": "Engine Lang - Scenario 5: Transactional Mutation / Persistence (POST)",
+      "method": "POST",
+      "url": "http://127.0.0.1:8091/api/v1/posts",
+      "rps": 6889.683042756521,
+      "total_time_s": 0.14514455799985626,
+      "mean_ms": 3.286851874000604,
+      "min_ms": 0.1002970000172354,
+      "p50_ms": 3.1500119998781884,
+      "p90_ms": 5.642444999921281,
+      "p95_ms": 6.281682000008004,
+      "p99_ms": 7.7586550000887655,
+      "max_ms": 9.466861999953835,
+      "throughput_mb_s": 0.0,
+      "status_codes": {
+        "303": 500,
+        "error": 500
+      },
+      "total_requests": 1000
+    },
+    "laravel": {
+      "target": "Laravel 13 - Scenario 5: Transactional Mutation / Persistence (POST)",
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/api/v1/posts",
+      "rps": 28.57142832489797,
+      "total_time_s": 35.00000030199999,
+      "mean_ms": 853.3890069139984,
+      "min_ms": 412.41519100003643,
+      "p50_ms": 633.7934579999,
+      "p90_ms": 1734.5506770000156,
+      "p95_ms": 2036.4873020000687,
+      "p99_ms": 2629.8498339999696,
+      "max_ms": 2989.0025380000225,
+      "throughput_mb_s": 0.5059923400815537,
+      "status_codes": {
+        "500": 1000
+      },
+      "total_requests": 1000
+    },
+    "speedup": 241.13890857716245,
+    "lat_reduction_pct": 99.50299076771495
+  }
+]
