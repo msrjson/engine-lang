@@ -1,0 +1,48 @@
+// Framework::Auth::Gate - Authorization Gates & Policies for Engine Forge
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module Framework::Auth::Gate;
+
+type Ability = Text where len(value) >= 3;
+type RoleName = Text where len(value) >= 3;
+
+struct PolicyGate {
+    name: Ability,
+    allowed_role: RoleName
+}
+
+// Action: Define a policy gate
+pub action define_gate(ability: Ability, role: RoleName) -> PolicyGate {
+    return PolicyGate {
+        name: ability,
+        allowed_role: role
+    };
+}
+
+// Action: Check if user role satisfies gate condition
+pub action allows(user_role: RoleName, ability: Ability) -> Bool {
+    if user_role == "Admin" {
+        return true;
+    }
+
+    if ability == "post.create" && user_role == "Author" {
+        return true;
+    }
+
+    if ability == "post.read" {
+        return true;
+    }
+
+    return false;
+}
+
+// Action: Enforce authorization gate or return Err
+pub action authorize(user_role: RoleName, ability: Ability) -> Result<(), Text> {
+    if allows(user_role, ability) {
+        return Ok(());
+    }
+
+    return Err("Unauthorized: Insufficient role permissions for ability: " + ability);
+}
+

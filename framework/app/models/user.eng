@@ -1,0 +1,63 @@
+// App::Models::User - Canonical Persistent User Model with SMT Contracts
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module App::Models::User;
+
+type Email = Text where len(value) >= 5 && is_alphanumeric(value);
+type PasswordHash = Text where len(value) == 64;
+type NonEmptyText = Text where len(value) > 0;
+type UserPostCount = Int where value >= 0;
+
+enum UserRole {
+    Admin,
+    Author,
+    Reader
+}
+
+// Persistent User Entity mapped to Single-Level Store (.db)
+@persistent
+@TenantGuard(strict: true)
+entity User {
+    id: UUIDv7,
+    email: Email,
+    name: NonEmptyText,
+    password_hash: PasswordHash,
+    role: UserRole,
+    posts_count: UserPostCount,
+
+    invariant {
+        len(self.email) >= 5 &&
+        len(self.password_hash) == 64 &&
+        self.posts_count >= 0
+    }
+}
+
+// Action: Register new author user
+pub action register_user(
+    email: Email,
+    name: NonEmptyText,
+    password_hash: PasswordHash
+) -> Result<User, Text> {
+    let new_user = User {
+        id: uuid::v7_now(),
+        email: email,
+        name: name,
+        password_hash: password_hash,
+        role: UserRole::Author,
+        posts_count: 0
+    };
+
+    return Ok(new_user);
+}
+
+// Action: Atomic increment of author posts count
+pub action increment_post_count(user: &mut User) -> Result<(), Text> {
+    atomic {
+        user.posts_count += 1;
+        // Hardware flush emitted: CLWB [user] + SFENCE
+    }
+
+    return Ok(());
+}
+

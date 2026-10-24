@@ -1,0 +1,44 @@
+# Engine Lang Framework Manifest
+# Standard specification compliance: ENG-SPEC-03.1 / ENG-SLS-01.1
+# The Vance Protocol Group / Engine Lang Core Working Group
+
+[package]
+name = "engine-forge"
+version = "0.1.0"
+authors = ["The Vance Protocol Group <architects@engine-lang.org>"]
+edition = "2026"
+license = "Apache-2.0"
+description = "First Full-Stack Laravel-inspired Web Framework for Engine Lang (.eng) with Silicon Persistence"
+
+[compiler]
+target_arch = "x86_64"
+opt_level = 3
+smt_solver = "z3"
+smt_timeout_ms = 5000
+strict_invariants = true
+enforce_atomic_mutations = true
+
+[storage]
+backend = "sls-db"
+mount_path = "./data/engine.db"
+initial_size_gib = 8
+max_size_gib = 128
+page_size_kib = 4
+huge_page_size_mib = 2
+dax_alignment_bytes = 64
+journal_size_mib = 10
+crc_algorithm = "crc64-nvme"
+sync_primitive = "clwb_sfence"
+
+[memory]
+global_epoch_interval_ms = 100
+causal_gc_low_priority_thread = true
+shadow_page_limit = 1024
+lockfree_bitmap_cas_retries = 32
+
+[boundary.http]
+enabled = true
+listen_port = 8090
+max_payload_bytes = 10485760
+keep_alive_timeout_secs = 60
+

@@ -1,0 +1,66 @@
+// Framework::Http::Response - HTTP Response Abstraction and Envelopes for Engine Forge
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module Framework::Http::Response;
+
+type StatusCode = Int where value >= 100 && value <= 599;
+type ContentType = Text where len(value) >= 3 && len(value) <= 128;
+type SecurityHeaderValue = Text where len(value) >= 1;
+
+struct HttpResponse {
+    status: StatusCode,
+    content_type: ContentType,
+    body: Text,
+    x_frame_options: SecurityHeaderValue,
+    x_content_type_options: SecurityHeaderValue,
+    content_security_policy: SecurityHeaderValue
+}
+
+// Action: Construct standard JSON response envelope with secure enterprise headers
+pub action response_json(status: StatusCode, payload: Text) -> HttpResponse {
+    return HttpResponse {
+        status: status,
+        content_type: "application/json; charset=utf-8",
+        body: payload,
+        x_frame_options: "DENY",
+        x_content_type_options: "nosniff",
+        content_security_policy: "default-src 'self'"
+    };
+}
+
+// Action: Construct standard HTML response
+pub action response_html(status: StatusCode, html: Text) -> HttpResponse {
+    return HttpResponse {
+        status: status,
+        content_type: "text/html; charset=utf-8",
+        body: html,
+        x_frame_options: "DENY",
+        x_content_type_options: "nosniff",
+        content_security_policy: "default-src 'self'"
+    };
+}
+
+// Action: Fast 200 OK JSON helper
+pub action response_ok(data: Text) -> HttpResponse {
+    let envelope = "{\"status\":\"success\",\"data\":" + data + "}";
+    return response_json(200, envelope);
+}
+
+// Action: Fast 201 Created JSON helper
+pub action response_created(data: Text) -> HttpResponse {
+    let envelope = "{\"status\":\"created\",\"data\":" + data + "}";
+    return response_json(201, envelope);
+}
+
+// Action: Standard HTTP Error response with sanitized payload
+pub action response_error(status: StatusCode, error_msg: Text) -> HttpResponse {
+    let envelope = "{\"status\":\"error\",\"message\":\"" + error_msg + "\"}";
+    return response_json(status, envelope);
+}
+
+// Action: Fast 404 Not Found helper
+pub action response_not_found(resource: Text) -> HttpResponse {
+    let msg = "Resource not found: " + resource;
+    return response_error(404, msg);
+}

@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Engine Forge Full-Stack Web Framework (`framework/`)**:
+  - Full-stack Laravel-inspired web framework written natively in Engine Lang (`.eng`) with Single-Level Store silicon persistence (`engine.db`) and Z3 SMT formal verification.
+  - **Eloquent on Silicon**: `@persistent entity` models mapped directly into non-volatile silicon pages with hardware durability (`atomic { ... }` with `CLWB + SFENCE`), eliminating SQL migrations, query builders, and object hydration latency.
+  - **HTTP Gateway & Boundary Engine**: Declarative `@boundary` HTTP ingress on port 8090, typed `HttpRequest` and `HttpResponse` envelopes with enterprise security headers (`X-Frame-Options`, `nosniff`, `CSP`).
+  - **Formal SMT Validation**: Mathematical proof of refinement types at compile-time (`SafeEmail`, `SafeSlug`, `SafeText`, `TenantIdentifier`, `PositiveAmount`) with dual-bounded constraints mitigating Memory Exhaustion (DoS).
+  - **Sanctum-Style Auth & Gates**: UUIDv7 persistent `AuthSession` with active epoch validation and atomic token rotation, constant-time password hash verification, and role-based policy gates.
+  - **Causal Event Bus**: Native planetary causal mesh event dispatching replacing external Redis queues.
+  - **Artisan on Silicon**: Embedded console command runner (`serve`, `inspect`, `check`, `routes`, `seed`).
+  - **Engineering Challenges & Security Hardening (`framework/docs/CHALLENGES_AND_SECURITY.md`)**: Full architectural analysis and remediation of 7 potential web vulnerabilities (VULN-01 to VULN-07).
+  - **Dedicated Docker Test Container**: Added `framework-test` service (`engine-framework-test`) in `docker-compose.yml` and canonical test suite (`framework/tests/framework_test_suite.eng`).
 - **Dual-Model Graph Persistence (`ENG-PLAN-2026-UUID7-PQC`)**:
   - Developers can explicitly configure entities with `@persistent(storage: "engine.db")` (transparent Single-Level Store) or `@persistent(storage: "uuid7_blinded", cipher: "pqc_kyber1024")` (quantum-resistant blinded graph).
   - Standard RFC 9562 `UUIDv7` native generation, validation, string formatting, and monotonic timestamping with sub-millisecond precision.

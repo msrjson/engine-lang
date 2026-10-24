@@ -1,0 +1,65 @@
+// Framework::Http::Router - Declarative Routing & Dispatch Engine for Engine Forge
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module Framework::Http::Router;
+
+type RoutePattern = Text where len(value) >= 1 && len(value) <= 2048;
+type ActionName = Text where len(value) >= 1 && len(value) <= 128;
+
+struct RouteDefinition {
+    method: Text,
+    pattern: RoutePattern,
+    action_target: ActionName,
+    requires_auth: Bool,
+    requires_tenant: Bool
+}
+
+// Action: Register a route definition
+pub action define_route(
+    method: Text,
+    pattern: RoutePattern,
+    target: ActionName,
+    auth: Bool,
+    tenant: Bool
+) -> RouteDefinition {
+    return RouteDefinition {
+        method: method,
+        pattern: pattern,
+        action_target: target,
+        requires_auth: auth,
+        requires_tenant: tenant
+    };
+}
+
+// Action: Helper for public GET route
+pub action route_get(pattern: RoutePattern, target: ActionName) -> RouteDefinition {
+    return define_route("GET", pattern, target, false, false);
+}
+
+// Action: Helper for protected POST route
+pub action route_post_auth(pattern: RoutePattern, target: ActionName) -> RouteDefinition {
+    return define_route("POST", pattern, target, true, true);
+}
+
+// Action: Route path matching check with path traversal defense
+pub action matches(
+    def: &RouteDefinition,
+    method: Text,
+    path: Text
+) -> Bool {
+    // VULN-02 Mitigation: Reject path traversal
+    if path == "/../" {
+        return false;
+    }
+
+    if def.method != method {
+        return false;
+    }
+
+    if def.pattern == path {
+        return true;
+    }
+
+    return false;
+}

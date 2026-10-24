@@ -12,6 +12,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./examples:/app/examples
+      - ./framework:/app/framework
     environment:
       - ENGINE_ENV=production
       - ENGINE_DB_PATH=/app/data/engine.db
@@ -21,6 +22,19 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  framework-test:
+    image: engine-lang-engine-genesis
+    container_name: engine-framework-test
+    restart: unless-stopped
+    volumes:
+      - ./framework:/app/framework
+      - ./data:/app/data
+    environment:
+      - ENGINE_ENV=testing
+      - ENGINE_DB_PATH=/app/data/engine_test.db
+      - KEEP_ALIVE=true
+    entrypoint: ["/app/framework/tests/entrypoint.sh"]
 
   engine-test:
     build:

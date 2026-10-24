@@ -1,0 +1,66 @@
+// App::Models::Post - Canonical Persistent Post Model with AI Vector Embeddings
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module App::Models::Post;
+
+type PostSlug = Text where len(value) >= 3 && is_alphanumeric(value);
+type PostTitle = Text where len(value) >= 3;
+type PostViewCount = Int where value >= 0;
+
+enum PostStatus {
+    Draft,
+    Published,
+    Archived
+}
+
+// Persistent Blog Article with Native 1536-Dimensional Semantic Vector
+@persistent
+entity Post {
+    id: UUIDv7,
+    author_id: UUIDv7,
+    title: PostTitle,
+    slug: PostSlug,
+    content: Text,
+    views: PostViewCount,
+    status: PostStatus,
+    embedding: Vector(1536),
+
+    invariant {
+        self.views >= 0 &&
+        len(self.title) >= 3 &&
+        len(self.slug) >= 3
+    }
+}
+
+// Action: Create new draft post
+pub action create_post(
+    author_id: UUIDv7,
+    title: PostTitle,
+    slug: PostSlug,
+    content: Text
+) -> Result<Post, Text> {
+    let new_post = Post {
+        id: uuid::v7_now(),
+        author_id: author_id,
+        title: title,
+        slug: slug,
+        content: content,
+        views: 0,
+        status: PostStatus::Draft,
+        embedding: vector::zeros(1536)
+    };
+
+    return Ok(new_post);
+}
+
+// Action: Atomically record a page view (Silicon durability via CLWB + SFENCE)
+pub action record_view(post: &mut Post) -> Result<PostViewCount, Text> {
+    atomic {
+        post.views += 1;
+        // Hardware flush emitted: CLWB [post] + SFENCE
+    }
+
+    return Ok(post.views);
+}
+

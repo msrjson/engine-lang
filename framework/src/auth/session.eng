@@ -1,0 +1,92 @@
+// Framework::Auth::Session - Persistent Authentication Sessions for Engine Forge
+// Architecture: ENG-SPEC-03.1 / ENG-SLS-01.1
+// Licensed under Apache 2.0 - The Vance Protocol Group
+
+module Framework::Auth::Session;
+
+type SessionToken = Text where len(value) >= 32 && len(value) <= 128;
+type EpochTime = Int where value >= 0;
+
+enum UserRole {
+    Admin,
+    Author,
+    Reader
+}
+
+// Persistent Authentication Session entity in Single-Level Store (.db)
+@persistent
+@TenantGuard(strict: true)
+entity AuthSession {
+    id: UUIDv7,
+    user_id: UUIDv7,
+    token: SessionToken,
+    role: UserRole,
+    expires_at: EpochTime,
+    is_revoked: Bool,
+
+    invariant {
+        len(self.token) >= 32 &&
+        self.expires_at >= 0
+    }
+}
+
+// Action: Create fresh persistent authentication session
+pub action create_session(
+    user_id: UUIDv7,
+    role: UserRole,
+    token_str: SessionToken,
+    expiry_epoch: EpochTime
+) -> Result<AuthSession, Text> {
+    let session = AuthSession {
+        id: uuid::v7_now(),
+        user_id: user_id,
+        token: token_str,
+        role: role,
+        expires_at: expiry_epoch,
+        is_revoked: false
+    };
+
+    return Ok(session);
+}
+
+// Action: VULN-04 Mitigation - Check if session is currently active and unexpired
+pub action is_session_active(session: &AuthSession, current_epoch: EpochTime) -> Bool {
+    if session.is_revoked {
+        return false;
+    }
+
+    if session.expires_at <= current_epoch {
+        return false;
+    }
+
+    if len(session.token) < 32 {
+        return false;
+    }
+
+    return true;
+}
+
+// Action: VULN-04 Mitigation - Rotate session token with hardware durability
+pub action rotate_token(
+    session: &mut AuthSession,
+    new_token: SessionToken,
+    new_expiry: EpochTime
+) -> Result<(), Text> {
+    atomic {
+        session.token = new_token;
+        session.expires_at = new_expiry;
+        // Hardware persistence flush: CLWB [session] + SFENCE
+    }
+
+    return Ok(());
+}
+
+// Action: Revoke authentication session
+pub action revoke_session(session: &mut AuthSession) -> Result<(), Text> {
+    atomic {
+        session.is_revoked = true;
+        // Hardware persistence flush: CLWB [session] + SFENCE
+    }
+
+    return Ok(());
+}
